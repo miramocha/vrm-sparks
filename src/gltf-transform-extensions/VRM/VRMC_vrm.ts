@@ -1,5 +1,5 @@
 import { Extension } from "@gltf-transform/core";
-import { VRMC_VRM } from "../constants.ts";
+import { VRMC_VRM } from "./constants.ts";
 
 const NAME = VRMC_VRM;
 

@@ -1,5 +1,5 @@
 import { Extension } from "@gltf-transform/core";
-import { VRMC_MATERIALS_MTOON } from "../constants.ts";
+import { VRMC_MATERIALS_MTOON } from "./constants.ts";
 
 const NAME = VRMC_MATERIALS_MTOON;
 

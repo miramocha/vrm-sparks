@@ -7,9 +7,12 @@ import VRM_vrm from "../gltf-transform-extensions/UniVRM/VRM_vrm.ts";
 import VRMC_vrm from "../gltf-transform-extensions/VRM/VRMC_vrm.ts";
 import VRMC_materials_mtoon from "../gltf-transform-extensions/VRM/VRMC_materials_mtoon.ts";
 import VRMC_springBone from "../gltf-transform-extensions/VRM/VRMC_springBone.ts";
-// import { UNIVRM } from "../gltf-transform-extensions/constants.ts";
 import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { VRMLoaderPlugin } from "@pixiv/three-vrm";
+
+import { UNIVRM } from "../gltf-transform-extensions/UniVRM/constants.ts";
+
+import VRM from "../gltf-transform-extensions/UniVRM/VRM.ts";
 
 export async function loadThreeVRM(file: File): Promise<GLTF> {
   const loader = new GLTFLoader();
@@ -31,7 +34,11 @@ export async function readVRMGLTFDocument(file: File): Promise<Document> {
   let document = await uniVRMNodeIO.readBinary(arrayBuffer);
 
   console.log("UniVRM Extensions:", document.getRoot().listExtensionsUsed());
-  // const uniVrmRoot = document.getRoot().getExtension<VRMRoot>(UNIVRM);
+  const uniVRMRoot = document.getRoot().getExtension<VRM>(UNIVRM);
+
+  if (uniVRMRoot) {
+    console.log("UNIVRM MATS:", uniVRMRoot.getMaterialProperties());
+  }
 
   if (
     !document
