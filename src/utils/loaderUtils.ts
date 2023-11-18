@@ -3,11 +3,11 @@ import {
   KHRMaterialsUnlit,
   KHRTextureTransform,
 } from "@gltf-transform/extensions";
-import VRM from "../gltf-transform-extensions/UniVRM/VRM.ts";
+import VRM_vrm from "../gltf-transform-extensions/UniVRM/VRM_vrm.ts";
 import VRMC_vrm from "../gltf-transform-extensions/VRM/VRMC_vrm.ts";
 import VRMC_materials_mtoon from "../gltf-transform-extensions/VRM/VRMC_materials_mtoon.ts";
 import VRMC_springBone from "../gltf-transform-extensions/VRM/VRMC_springBone.ts";
-import { UNIVRM } from "../gltf-transform-extensions/constants.ts";
+// import { UNIVRM } from "../gltf-transform-extensions/constants.ts";
 import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { VRMLoaderPlugin } from "@pixiv/three-vrm";
 
@@ -23,7 +23,7 @@ export async function loadThreeVRM(file: File): Promise<GLTF> {
 
 export async function readVRMGLTFDocument(file: File): Promise<Document> {
   const uniVRMNodeIO = new NodeIO().registerExtensions([
-    VRM,
+    VRM_vrm,
     KHRMaterialsUnlit,
     KHRTextureTransform,
   ]);
@@ -31,7 +31,8 @@ export async function readVRMGLTFDocument(file: File): Promise<Document> {
   let document = await uniVRMNodeIO.readBinary(arrayBuffer);
 
   console.log("UniVRM Extensions:", document.getRoot().listExtensionsUsed());
-  console.log(document.getRoot().getExtension(UNIVRM));
+  // const uniVrmRoot = document.getRoot().getExtension<VRMRoot>(UNIVRM);
+
   if (
     !document
       .getRoot()
