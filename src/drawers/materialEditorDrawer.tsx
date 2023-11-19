@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { ReactNode, useContext, useEffect, useState } from "react";
 import { Drawer, Flex, Empty, Button } from "antd";
 import { AppContext } from "../providers/appContextProvider.tsx";
 import { GLTFTransformExtensionUtils } from "../utils/GLTFTransformExtensionUtils.ts";
@@ -14,6 +14,11 @@ export default function MaterialEditorDrawer({
 }) {
   const appContext = useContext(AppContext);
   const [isEditingUniVRM, setIsEditingUniVRM] = useState<boolean>(true);
+  const [saveButton, setSaveButton] = useState<ReactNode>(
+    <Button type="primary" disabled block>
+      Save
+    </Button>
+  );
 
   useEffect(() => {
     if (appContext.gltfDocument) {
@@ -36,18 +41,16 @@ export default function MaterialEditorDrawer({
       closable={true}
       open={open}
       mask={false}
-      footer={
-        appContext.gltfDocument ? (
-          <Button type="primary" block>
-            Save
-          </Button>
-        ) : null
-      }
+      footer={saveButton}
     >
       <Flex vertical gap="small">
         {appContext.gltfDocument ? (
           <>
-            {isEditingUniVRM ? <UniVRMMaterialEditor /> : <VRMMaterialEditor />}
+            {isEditingUniVRM ? (
+              <UniVRMMaterialEditor setSaveButton={setSaveButton} />
+            ) : (
+              <VRMMaterialEditor />
+            )}
           </>
         ) : (
           <Empty description="No VRM Loaded" />

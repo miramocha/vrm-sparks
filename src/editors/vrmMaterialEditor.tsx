@@ -1,5 +1,5 @@
-import { useContext, useEffect, useState } from "react";
-import { Collapse, Select } from "antd";
+import { ReactNode, useContext, useEffect, useState } from "react";
+import { Button, Collapse, Select } from "antd";
 import { AppContext } from "../providers/appContextProvider.tsx";
 // import { GLTFTransformExtensionUtils } from "../utils/GLTFTransformExtensionUtils.ts";
 
@@ -7,9 +7,17 @@ import { AppContext } from "../providers/appContextProvider.tsx";
 
 type SelectOptions = { label?: string; value: number };
 
-export default function VRMMaterialEditor() {
+export default function VRMMaterialEditor({
+  setSaveButton,
+}: {
+  setSaveButton?: React.Dispatch<ReactNode>;
+}) {
   const appContext = useContext(AppContext);
   const [materialOptions, setMaterialOptions] = useState<SelectOptions[]>([]);
+
+  const handleSaveButtonClick = () => {
+    console.log("SAVING VRM");
+  };
 
   useEffect(() => {
     if (appContext.gltfDocument) {
@@ -24,6 +32,16 @@ export default function VRMMaterialEditor() {
       setMaterialOptions(materialOptions);
     }
   }, [appContext.gltfDocument]);
+
+  useEffect(() => {
+    if (setSaveButton) {
+      setSaveButton(
+        <Button type="primary" onClick={handleSaveButtonClick} block>
+          Save VRM Material
+        </Button>
+      );
+    }
+  }, [setSaveButton]);
 
   const accordionItems = [
     {

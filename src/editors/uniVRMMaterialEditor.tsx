@@ -1,5 +1,5 @@
-import { useContext, useEffect, useState } from "react";
-import { Collapse, Select } from "antd";
+import { ReactNode, useContext, useEffect, useState } from "react";
+import { Button, Collapse, Select } from "antd";
 import { AppContext } from "../providers/appContextProvider.tsx";
 import { GLTFTransformExtensionUtils } from "../utils/GLTFTransformExtensionUtils.ts";
 import * as UniVRMType from "@pixiv/types-vrm-0.0";
@@ -8,7 +8,11 @@ import * as UniVRMType from "@pixiv/types-vrm-0.0";
 
 type SelectOptions = { label?: string; value: number };
 
-export default function UniVRMMaterialEditor() {
+export default function UniVRMMaterialEditor({
+  setSaveButton,
+}: {
+  setSaveButton?: React.Dispatch<ReactNode>;
+}) {
   const appContext = useContext(AppContext);
   const [materialProperties, setMaterialProperties] = useState<
     UniVRMType.Material[]
@@ -16,6 +20,10 @@ export default function UniVRMMaterialEditor() {
   const [materialOptions, setMaterialOptions] = useState<SelectOptions[]>([]);
 
   // Serialize MaterialProps List after save
+
+  const handleSaveButtonClick = () => {
+    console.log("SAVING UNIVRM");
+  };
 
   useEffect(() => {
     if (appContext.gltfDocument) {
@@ -31,10 +39,20 @@ export default function UniVRMMaterialEditor() {
           value: index,
         }))
       );
-
-      console.log(materialProperties);
     }
   }, [appContext.gltfDocument]);
+
+  useEffect(() => {
+    if (setSaveButton) {
+      setSaveButton(
+        <Button type="primary" onClick={handleSaveButtonClick} block>
+          Save UniVRM Material
+        </Button>
+      );
+    }
+  }, [setSaveButton]);
+
+  console.log("rerendering", materialProperties);
 
   const accordionItems = [
     {
