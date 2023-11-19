@@ -5,7 +5,7 @@ import * as Icon from "@ant-design/icons";
 import OpenVrmDrawer from "./drawers/openVrmDrawer.tsx";
 // import ExportVrmDrawer from "./drawers/exportVrmDrawer";
 import MaterialEditorDrawer from "./drawers/materialEditorDrawer.tsx";
-// import TextureBrowserDrawer from "./drawers/textureBrowserDrawer";
+import TextureBrowserDrawer from "./drawers/textureBrowserDrawer.tsx";
 // import MetadataEditorDrawer from "./drawers/metadataEditor";
 // import ExpressionPreviewDrawer from "./drawers/expressionPreviewDrawer";
 // import SettingsDrawer from "./drawers/settingsDrawer";
@@ -42,6 +42,10 @@ export default function FloatingMenu() {
         open={currentOpenDrawer === "material-editor"}
         setOpen={buildOpenDrawerFunction("material-editor")}
       />
+      <TextureBrowserDrawer
+        open={currentOpenDrawer === "texture-browser"}
+        setOpen={buildOpenDrawerFunction("texture-browser")}
+      />
 
       <FloatButton.Group shape="circle" style={{ left: 24, top: 24 }}>
         <Divider children="Open/Export" orientation="left" />
@@ -70,6 +74,15 @@ export default function FloatingMenu() {
           }}
           type={currentOpenDrawer === "material-editor" ? "primary" : "default"}
         />
+        <FloatButton
+          icon={<Icon.FileImageOutlined />}
+          tooltip="Texture Browser"
+          onClick={() => {
+            toggleDrawer("texture-browser");
+          }}
+          type={currentOpenDrawer === "texture-browser" ? "primary" : "default"}
+        />
+
         <Divider children="Language" orientation="left" />
         <FloatButton description="🇺🇸 US" tooltip="English" type="primary" />
         <FloatButton description="🇯🇵 JP" tooltip="日本語" />

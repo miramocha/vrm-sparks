@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { Drawer, Flex, Collapse, Select, Empty } from "antd";
-import { AppContext } from "../providers/appContextProvider.ts";
+import { AppContext } from "../providers/appContextProvider.tsx";
 import { GLTFTransformExtensionUtils } from "../utils/GLTFTransformExtensionUtils.ts";
 
 type SelectOptions = { label?: string; value: number };
@@ -16,26 +16,40 @@ export default function MaterialEditorDrawer({
   const [materialOptions, setMaterialOptions] = useState<Array<SelectOptions>>(
     []
   );
-
-  // const [gltfDocument, setGLTFDocument] = useState<GLTFDocument | null>(null);
+  const [isEditingUniVRM, setIsEditingUniVRM] = useState<boolean>(true);
 
   useEffect(() => {
-    if (
-      appContext.gltfDocument &&
-      GLTFTransformExtensionUtils.isUniVRMDocument(appContext.gltfDocument)
-    ) {
-      const materialProperties =
-        GLTFTransformExtensionUtils.getUniVRMExtensionProperties(
-          appContext.gltfDocument
-        )?.getMaterialProperties();
+    if (appContext.gltfDocument) {
+      const isEditingUniVRM = GLTFTransformExtensionUtils.isUniVRMDocument(
+        appContext.gltfDocument
+      );
+      setIsEditingUniVRM(isEditingUniVRM);
 
-      if (materialProperties) {
-        setMaterialOptions(
-          materialProperties.map((materialProperty, index) => ({
-            label: materialProperty.name,
-            value: index,
-          }))
-        );
+      if (isEditingUniVRM) {
+        const materialProperties =
+          GLTFTransformExtensionUtils.getUniVRMExtensionProperties(
+            appContext.gltfDocument
+          )?.getMaterialProperties();
+
+        if (materialProperties) {
+          setMaterialOptions(
+            materialProperties.map((materialProperty, index) => ({
+              label: materialProperty.name,
+              value: index,
+            }))
+          );
+        }
+      } else {
+        const materials = appContext.gltfDocument.getRoot().listMaterials();
+
+        if (materials) {
+          setMaterialOptions(
+            materials.map((material, index) => ({
+              label: material.getName(),
+              value: index,
+            }))
+          );
+        }
       }
     }
   }, [appContext.gltfDocument]);
