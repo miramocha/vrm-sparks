@@ -1,3 +1,4 @@
+import * as THREE from "three";
 import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { VRMLoaderPlugin } from "@pixiv/three-vrm";
 
@@ -12,19 +13,24 @@ import VRMC_vrm from "../gltf-transform-extensions/VRM/VRMC_vrm.ts";
 import VRMC_materials_mtoon from "../gltf-transform-extensions/VRM/VRMC_materials_mtoon.ts";
 import VRMC_springBone from "../gltf-transform-extensions/VRM/VRMC_springBone.ts";
 
-import * as UNIVRM_CONSTANTS from "../gltf-transform-extensions/UniVRM/constants.ts";
-import VRM from "../gltf-transform-extensions/UniVRM/VRM.ts";
 import { GLTFTransformExtensionUtils } from "./GLTFTransformExtensionUtils.ts";
 
 export class LoaderUtils {
   public static async loadThreeVRM(file: File): Promise<GLTF> {
+    const helperRoot = new THREE.Group();
+    helperRoot.renderOrder = 10000;
+
     const loader = new GLTFLoader();
     loader.register((parser) => {
-      return new VRMLoaderPlugin(parser, { autoUpdateHumanBones: true });
+      return new VRMLoaderPlugin(parser, {
+        autoUpdateHumanBones: true,
+        helperRoot,
+      });
     });
     const objectUrl = URL.createObjectURL(file);
+    const gltf = await loader.loadAsync(objectUrl);
 
-    return await loader.loadAsync(objectUrl);
+    return gltf;
   }
 
   public static async readVRMGLTFDocument(file: File): Promise<Document> {
@@ -39,13 +45,7 @@ export class LoaderUtils {
     const documentIsUniVRM =
       GLTFTransformExtensionUtils.isUniVRMDocument(document);
 
-    if (documentIsUniVRM) {
-      const uniVRMRoot = document
-        .getRoot()
-        .getExtension<VRM>(UNIVRM_CONSTANTS.UNIVRM);
-
-      console.log("UNIVRM MATS:", uniVRMRoot?.getMaterialProperties());
-    } else {
+    if (!documentIsUniVRM) {
       const vrmNodeIO = new NodeIO().registerExtensions([
         VRMC_vrm,
         VRMC_materials_mtoon,
@@ -55,7 +55,6 @@ export class LoaderUtils {
       ]);
 
       document = await vrmNodeIO.readBinary(arrayBuffer);
-      console.log("VRM Extensions:", document.getRoot().listExtensionsUsed());
     }
 
     return document;

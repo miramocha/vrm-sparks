@@ -40,7 +40,9 @@ export default function ThreeJSRenderer() {
       <gridHelper />
       <axesHelper />
       {vrmGLTF ? (
-        <VrmModel vrm={vrmGLTF.userData.vrm} mixer={mainAnimationMixer} />
+        <>
+          <VrmModel vrm={vrmGLTF.userData.vrm} mixer={mainAnimationMixer} />
+        </>
       ) : null}
     </Canvas>
   );

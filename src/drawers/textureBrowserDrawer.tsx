@@ -19,7 +19,7 @@ export default function TextureBrowserDrawer({
   const [isEditingUniVRM, setIsEditingUniVRM] = useState<boolean>(true);
 
   const buildFileList = (gltfDocument: GLTFDocument) => {
-    const fileList: Array<UploadFile> = [];
+    const fileList: UploadFile[] = [];
     gltfDocument
       ?.getRoot()
       .listTextures()
@@ -49,7 +49,7 @@ export default function TextureBrowserDrawer({
         ?.createTexture(file.name)
         .setImage(new Uint8Array(await file.arrayBuffer()))
         .setMimeType(file.type);
-
+      ``;
       setFileList(buildFileList(appContext.gltfDocument));
     }
 
@@ -86,7 +86,7 @@ export default function TextureBrowserDrawer({
   );
 
   const upload = (
-    <Card>
+    <Card title="Image Upload">
       <Upload.Dragger
         accept="image/png, image/jpeg"
         maxCount={1}

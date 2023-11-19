@@ -33,5 +33,9 @@ export default function VrmModel({ vrm, mixer }: VrmModelProps) {
     }
   });
 
-  return <primitive object={vrm.scene} />;
+  return (
+    <>
+      <primitive object={vrm.scene} />{" "}
+    </>
+  );
 }

@@ -6,30 +6,32 @@ import {
 import * as UniVRMType from "@pixiv/types-vrm-0.0";
 import { UNIVRM } from "./constants.ts";
 
+const NAME = UNIVRM;
+
 interface IVRM extends IProperty {
   //   specVersion?: "0.0";
   exporterVersion: string;
-  metaJSONString: string;
-  humanoidJSONString: string;
-  firstPersonJSONString: string;
-  blendShapeMasterJSONString: string;
-  secondaryAnimationJSONString: string;
-  materialPropertiesJSONString: string;
+  serializedMeta: string;
+  serializedHumanoid: string;
+  serializedFirstPerson: string;
+  serializedBlendShapeMaster: string;
+  serializedSecondaryAnimation: string;
+  serializedMaterialProperties: string;
 }
 
 export default class VRM extends ExtensionProperty<IVRM> {
-  public static EXTENSION_NAME = UNIVRM;
-  public declare extensionName: typeof UNIVRM;
+  public static EXTENSION_NAME = NAME;
+  public declare extensionName: typeof NAME;
   public declare propertyType: "VRM";
   public declare parentTypes: [PropertyType.ROOT];
 
   protected init(): void {
-    this.extensionName = UNIVRM;
+    this.extensionName = NAME;
     this.propertyType = "VRM";
     this.parentTypes = [PropertyType.ROOT];
   }
 
-  public setExporterVersion(exporterVersion: string) {
+  public setExporterVersion(exporterVersion: string): this {
     return this.set("exporterVersion", exporterVersion);
   }
 
@@ -37,105 +39,103 @@ export default class VRM extends ExtensionProperty<IVRM> {
     return this.get("exporterVersion");
   }
 
-  public setMetaJSONString(metaJSONString: string): this {
-    return this.set("metaJSONString", metaJSONString);
+  public setSerializedMeta(serializedMeta: string): this {
+    return this.set("serializedMeta", serializedMeta);
   }
 
   public getMeta(): UniVRMType.Meta | undefined {
-    const metaJSONString = this.get("metaJSONString");
+    const serializedMeta = this.get("serializedMeta");
 
-    if (metaJSONString) {
-      return JSON.parse(metaJSONString) as UniVRMType.Meta;
+    if (serializedMeta) {
+      return JSON.parse(serializedMeta) as UniVRMType.Meta;
     }
 
     return undefined;
   }
 
-  public setHumanoidJSONString(humanoidJSONString: string): this {
-    return this.set("humanoidJSONString", humanoidJSONString);
+  public setSerializedHumanoid(serializedHumanoid: string): this {
+    return this.set("serializedHumanoid", serializedHumanoid);
   }
 
   public getHumanoid(): UniVRMType.Humanoid | undefined {
-    const humanoidJSONString = this.get("humanoidJSONString");
+    const serializedHumanoid = this.get("serializedHumanoid");
 
-    if (humanoidJSONString) {
-      return JSON.parse(humanoidJSONString) as UniVRMType.Humanoid;
+    if (serializedHumanoid) {
+      return JSON.parse(serializedHumanoid) as UniVRMType.Humanoid;
     }
 
     return undefined;
   }
 
-  public setFirstPersonJSONString(firstPersonJSONString: string): this {
-    return this.set("firstPersonJSONString", firstPersonJSONString);
+  public setSerializedFirstPerson(serializedFirstPerson: string): this {
+    return this.set("serializedFirstPerson", serializedFirstPerson);
   }
 
   public getFirstPerson(): UniVRMType.FirstPerson | undefined {
-    const firstPersonJSONString = this.get("firstPersonJSONString");
+    const serializedFirstPerson = this.get("serializedFirstPerson");
 
-    if (firstPersonJSONString) {
-      return JSON.parse(firstPersonJSONString) as UniVRMType.FirstPerson;
+    if (serializedFirstPerson) {
+      return JSON.parse(serializedFirstPerson) as UniVRMType.FirstPerson;
     }
 
     return undefined;
   }
 
-  public setBlendShapeMasterJSONString(
-    blendShapeMasterJSONString: string
+  public setSerializedBlendShapeMaster(
+    serializedBlendShapeMaster: string
   ): this {
-    return this.set("blendShapeMasterJSONString", blendShapeMasterJSONString);
+    return this.set("serializedBlendShapeMaster", serializedBlendShapeMaster);
   }
 
   public getBlendShapeMaster(): UniVRMType.BlendShape | undefined {
-    const blendShapeMasterJSONString = this.get("blendShapeMasterJSONString");
+    const serializedBlendShapeMaster = this.get("serializedBlendShapeMaster");
 
-    if (blendShapeMasterJSONString) {
-      return JSON.parse(blendShapeMasterJSONString) as UniVRMType.BlendShape;
+    if (serializedBlendShapeMaster) {
+      return JSON.parse(serializedBlendShapeMaster) as UniVRMType.BlendShape;
     }
 
     return undefined;
   }
 
-  public setSecondaryAnimationJSONString(
-    secondaryAnimationJSONString: string
+  public setSerializedSecondaryAnimation(
+    serializedSecondaryAnimation: string
   ): this {
     return this.set(
-      "secondaryAnimationJSONString",
-      secondaryAnimationJSONString
+      "serializedSecondaryAnimation",
+      serializedSecondaryAnimation
     );
   }
 
   public getSecondaryAnimation(): UniVRMType.SecondaryAnimation | undefined {
-    const secondaryAnimationJSONString = this.get(
-      "secondaryAnimationJSONString"
+    const serializedSecondaryAnimation = this.get(
+      "serializedSecondaryAnimation"
     );
 
-    if (secondaryAnimationJSONString) {
+    if (serializedSecondaryAnimation) {
       return JSON.parse(
-        secondaryAnimationJSONString
+        serializedSecondaryAnimation
       ) as UniVRMType.SecondaryAnimation;
     }
 
     return undefined;
   }
 
-  public setMaterialPropertiesJSONString(
-    materialPropertiesJSONString: string
+  public setSerializedMaterialProperties(
+    serializedMaterialProperties: string
   ): this {
     return this.set(
-      "materialPropertiesJSONString",
-      materialPropertiesJSONString
+      "serializedMaterialProperties",
+      serializedMaterialProperties
     );
   }
 
-  public getMaterialProperties(): Array<UniVRMType.Material> | undefined {
-    const materialPropertiesJSONString = this.get(
-      "materialPropertiesJSONString"
+  public getMaterialProperties(): UniVRMType.Material[] | undefined {
+    const serializedMaterialProperties = this.get(
+      "serializedMaterialProperties"
     );
 
-    if (materialPropertiesJSONString) {
-      return JSON.parse(
-        materialPropertiesJSONString
-      ) as Array<UniVRMType.Material>;
+    if (serializedMaterialProperties) {
+      return JSON.parse(serializedMaterialProperties) as UniVRMType.Material[];
     }
 
     return undefined;

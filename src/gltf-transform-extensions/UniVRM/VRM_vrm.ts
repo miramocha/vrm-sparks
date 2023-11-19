@@ -1,5 +1,5 @@
 import { Extension, ReaderContext, WriterContext } from "@gltf-transform/core";
-import * as VRMType from "@pixiv/types-vrm-0.0";
+import * as UniVRMType from "@pixiv/types-vrm-0.0";
 import VRM from "./VRM.ts";
 import { UNIVRM } from "./constants.ts";
 
@@ -10,7 +10,6 @@ export default class VRM_vrm extends Extension {
   public static readonly EXTENSION_NAME = NAME;
 
   public read(context: ReaderContext): this {
-    console.log("READING:", context.jsonDoc.json.extensions);
     if (
       context.jsonDoc.json.extensions &&
       context.jsonDoc.json.extensions[NAME]
@@ -18,38 +17,38 @@ export default class VRM_vrm extends Extension {
       const vrm = new VRM(this.document.getGraph());
       this.document.getRoot().setExtension(NAME, vrm);
 
-      const vrmJSON = context.jsonDoc.json.extensions[NAME] as VRMType.VRM;
+      const vrmJSON = context.jsonDoc.json.extensions[NAME] as UniVRMType.VRM;
 
       if (vrmJSON.exporterVersion) {
         vrm.setExporterVersion(vrmJSON.exporterVersion as string);
       }
 
       if (vrmJSON.meta) {
-        vrm.setMetaJSONString(JSON.stringify(vrmJSON.meta));
+        vrm.setSerializedMeta(JSON.stringify(vrmJSON.meta));
       }
 
       if (vrmJSON.humanoid) {
-        vrm.setHumanoidJSONString(JSON.stringify(vrmJSON.humanoid));
+        vrm.setSerializedHumanoid(JSON.stringify(vrmJSON.humanoid));
       }
 
       if (vrmJSON.firstPerson) {
-        vrm.setFirstPersonJSONString(JSON.stringify(vrmJSON.firstPerson));
+        vrm.setSerializedFirstPerson(JSON.stringify(vrmJSON.firstPerson));
       }
 
       if (vrmJSON.blendShapeMaster) {
-        vrm.setBlendShapeMasterJSONString(
+        vrm.setSerializedBlendShapeMaster(
           JSON.stringify(vrmJSON.blendShapeMaster)
         );
       }
 
       if (vrmJSON.secondaryAnimation) {
-        vrm.setSecondaryAnimationJSONString(
+        vrm.setSerializedSecondaryAnimation(
           JSON.stringify(vrmJSON.secondaryAnimation)
         );
       }
 
       if (vrmJSON.materialProperties) {
-        vrm.setMaterialPropertiesJSONString(
+        vrm.setSerializedMaterialProperties(
           JSON.stringify(vrmJSON.materialProperties)
         );
       }
@@ -64,7 +63,7 @@ export default class VRM_vrm extends Extension {
       context.jsonDoc.json.extensions[NAME]
     ) {
       const vrm = this.document.getRoot().getExtension<VRM>(NAME);
-      const vrmJSON = context.jsonDoc.json.extensions[NAME] as VRMType.VRM;
+      const vrmJSON = context.jsonDoc.json.extensions[NAME] as UniVRMType.VRM;
 
       if (vrm) {
         if (vrm.getExporterVersion()) {
