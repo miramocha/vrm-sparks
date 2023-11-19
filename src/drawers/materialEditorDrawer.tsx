@@ -2,7 +2,7 @@ import { ReactNode, useContext, useEffect, useState } from "react";
 import { Drawer, Flex, Empty, Button } from "antd";
 import { AppContext } from "../providers/appContextProvider.tsx";
 import { GLTFTransformExtensionUtils } from "../utils/GLTFTransformExtensionUtils.ts";
-import UniVRMMaterialEditor from "../editors/uniVRMMaterialEditor.tsx";
+import VRM0MaterialEditor from "../editors/vrm0MaterialEditor.tsx";
 import VRMMaterialEditor from "../editors/vrmMaterialEditor.tsx";
 
 export default function MaterialEditorDrawer({
@@ -13,7 +13,7 @@ export default function MaterialEditorDrawer({
   setOpen: React.Dispatch<boolean> | undefined;
 }) {
   const appContext = useContext(AppContext);
-  const [isEditingUniVRM, setIsEditingUniVRM] = useState<boolean>(true);
+  const [isEditingVRM0, setIsEditingVRM0] = useState<boolean>(true);
   const [saveButton, setSaveButton] = useState<ReactNode>(
     <Button type="primary" disabled block>
       Save
@@ -22,9 +22,10 @@ export default function MaterialEditorDrawer({
 
   useEffect(() => {
     if (appContext.gltfDocument) {
-      const updatedIsEditingUniVRM =
-        GLTFTransformExtensionUtils.isUniVRMDocument(appContext.gltfDocument);
-      setIsEditingUniVRM(updatedIsEditingUniVRM);
+      const updatedIsEditingVRM0 = GLTFTransformExtensionUtils.isVRM0Document(
+        appContext.gltfDocument
+      );
+      setIsEditingVRM0(updatedIsEditingVRM0);
     }
   }, [appContext.gltfDocument]);
 
@@ -46,8 +47,8 @@ export default function MaterialEditorDrawer({
       <Flex vertical gap="small">
         {appContext.gltfDocument ? (
           <>
-            {isEditingUniVRM ? (
-              <UniVRMMaterialEditor setSaveButton={setSaveButton} />
+            {isEditingVRM0 ? (
+              <VRM0MaterialEditor setSaveButton={setSaveButton} />
             ) : (
               <VRMMaterialEditor setSaveButton={setSaveButton} />
             )}

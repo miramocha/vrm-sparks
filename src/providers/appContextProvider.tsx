@@ -5,7 +5,7 @@ import { Document as GLTFDocument, NodeIO } from "@gltf-transform/core";
 import { AnimationMixer } from "three";
 import { LoaderUtils } from "../utils/LoaderUtils.ts";
 import { GLTFTransformExtensionUtils } from "../utils/GLTFTransformExtensionUtils.ts";
-import VRM_vrm from "../gltf-transform-extensions/UniVRM/VRM_vrm.ts";
+import VRM0_vrm from "../gltf-transform-extensions/VRM0/VRM0_vrm.ts";
 import {
   KHRMaterialsUnlit,
   KHRTextureTransform,
@@ -14,22 +14,27 @@ import {
 type GetContextState<T> = () => T | null;
 
 export class AppContextController {
-  async reloadGLTFDocument() {
+  async reloadGLTFDocument(): Promise<File | null> {
     if (this.gltfDocument) {
       const nodeIO = new NodeIO();
 
-      if (GLTFTransformExtensionUtils.isUniVRMDocument(this.gltfDocument)) {
+      if (GLTFTransformExtensionUtils.isVRM0Document(this.gltfDocument)) {
         nodeIO.registerExtensions([
           KHRMaterialsUnlit,
           KHRTextureTransform,
-          VRM_vrm,
+          VRM0_vrm,
         ]);
       }
 
       const fileBuffer = await nodeIO.writeBinary(this.gltfDocument);
       const file = new File([fileBuffer], "exportedVrm.vrm");
+      console.log("NEW FILE BUILT", file);
       this.vrmGLTF = await LoaderUtils.loadThreeVRM(file);
+
+      return file;
     }
+
+    return null;
   }
 
   // GLTF Document
@@ -60,8 +65,11 @@ export class AppContextController {
   }
   set vrmGLTF(vrmGLTF: GLTF) {
     if (this.vrmGLTF) {
+      console.log("DISPOSING GLTF", vrmGLTF.userData.vrm);
       VRMUtils.deepDispose(this.vrmGLTF.scene);
     }
+
+    console.log("SETTING GLTF", vrmGLTF);
 
     if (vrmGLTF && vrmGLTF?.userData.vrm) {
       VRMUtils.removeUnnecessaryVertices(vrmGLTF.scene);

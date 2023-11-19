@@ -8,10 +8,10 @@ import {
   KHRTextureTransform,
 } from "@gltf-transform/extensions";
 
-import VRM_vrm from "../gltf-transform-extensions/UniVRM/VRM_vrm.ts";
-import VRMC_vrm from "../gltf-transform-extensions/VRM/VRMC_vrm.ts";
-import VRMC_materials_mtoon from "../gltf-transform-extensions/VRM/VRMC_materials_mtoon.ts";
-import VRMC_springBone from "../gltf-transform-extensions/VRM/VRMC_springBone.ts";
+import VRM0_vrm from "../gltf-transform-extensions/VRM0/VRM0_vrm.ts";
+import VRMC_vrm from "../gltf-transform-extensions/VRM1/VRMC_vrm.ts";
+import VRMC_materials_mtoon from "../gltf-transform-extensions/VRM1/VRMC_materials_mtoon.ts";
+import VRMC_springBone from "../gltf-transform-extensions/VRM1/VRMC_springBone.ts";
 
 import { GLTFTransformExtensionUtils } from "./GLTFTransformExtensionUtils.ts";
 
@@ -30,22 +30,23 @@ export class LoaderUtils {
     const objectUrl = URL.createObjectURL(file);
     const gltf = await loader.loadAsync(objectUrl);
 
+    console.log("GLTF LOADED", gltf);
+
     return gltf;
   }
 
   public static async readVRMGLTFDocument(file: File): Promise<Document> {
-    const uniVRMNodeIO = new NodeIO().registerExtensions([
-      VRM_vrm,
+    const vrm0NodeIO = new NodeIO().registerExtensions([
+      VRM0_vrm,
       KHRMaterialsUnlit,
       KHRTextureTransform,
     ]);
     const arrayBuffer = new Uint8Array(await file.arrayBuffer());
-    let document = await uniVRMNodeIO.readBinary(arrayBuffer);
+    let document = await vrm0NodeIO.readBinary(arrayBuffer);
 
-    const documentIsUniVRM =
-      GLTFTransformExtensionUtils.isUniVRMDocument(document);
+    const documentIsVRM0 = GLTFTransformExtensionUtils.isVRM0Document(document);
 
-    if (!documentIsUniVRM) {
+    if (!documentIsVRM0) {
       const vrmNodeIO = new NodeIO().registerExtensions([
         VRMC_vrm,
         VRMC_materials_mtoon,
@@ -56,6 +57,8 @@ export class LoaderUtils {
 
       document = await vrmNodeIO.readBinary(arrayBuffer);
     }
+
+    console.log("DOCUMENT READ", document.getRoot().listTextures());
 
     return document;
   }

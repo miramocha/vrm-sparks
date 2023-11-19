@@ -3,10 +3,10 @@ import {
   IProperty,
   PropertyType,
 } from "@gltf-transform/core";
-import * as UniVRMType from "@pixiv/types-vrm-0.0";
-import { UNIVRM } from "./constants.ts";
+import * as VRM0Type from "@pixiv/types-vrm-0.0";
+import { VRM0 } from "./constants.ts";
 
-const NAME = UNIVRM;
+const NAME = VRM0;
 
 interface IVRM extends IProperty {
   //   specVersion?: "0.0";
@@ -39,78 +39,75 @@ export default class VRM extends ExtensionProperty<IVRM> {
     return this.get("exporterVersion");
   }
 
-  public setSerializedMeta(serializedMeta: string): this {
-    return this.set("serializedMeta", serializedMeta);
+  public setMeta(meta: VRM0Type.Meta): this {
+    return this.set("serializedMeta", JSON.stringify(meta));
   }
 
-  public setMeta(meta: UniVRMType.Meta): this {
-    return this.setSerializedMeta(JSON.stringify(meta));
-  }
-
-  public getMeta(): UniVRMType.Meta | undefined {
+  public getMeta(): VRM0Type.Meta | undefined {
     const serializedMeta = this.get("serializedMeta");
 
     if (serializedMeta) {
-      return JSON.parse(serializedMeta) as UniVRMType.Meta;
+      return JSON.parse(serializedMeta) as VRM0Type.Meta;
     }
 
     return undefined;
   }
 
-  public setSerializedHumanoid(serializedHumanoid: string): this {
-    return this.set("serializedHumanoid", serializedHumanoid);
+  public setHumanoid(meta: VRM0Type.Humanoid): this {
+    return this.set("serializedMeta", JSON.stringify(meta));
   }
 
-  public getHumanoid(): UniVRMType.Humanoid | undefined {
+  public getHumanoid(): VRM0Type.Humanoid | undefined {
     const serializedHumanoid = this.get("serializedHumanoid");
 
     if (serializedHumanoid) {
-      return JSON.parse(serializedHumanoid) as UniVRMType.Humanoid;
+      return JSON.parse(serializedHumanoid) as VRM0Type.Humanoid;
     }
 
     return undefined;
   }
 
-  public setSerializedFirstPerson(serializedFirstPerson: string): this {
-    return this.set("serializedFirstPerson", serializedFirstPerson);
+  public setFirstPerson(firstPerson: VRM0Type.FirstPerson): this {
+    return this.set("serializedFirstPerson", JSON.stringify(firstPerson));
   }
 
-  public getFirstPerson(): UniVRMType.FirstPerson | undefined {
+  public getFirstPerson(): VRM0Type.FirstPerson | undefined {
     const serializedFirstPerson = this.get("serializedFirstPerson");
 
     if (serializedFirstPerson) {
-      return JSON.parse(serializedFirstPerson) as UniVRMType.FirstPerson;
+      return JSON.parse(serializedFirstPerson) as VRM0Type.FirstPerson;
     }
 
     return undefined;
   }
 
-  public setSerializedBlendShapeMaster(
-    serializedBlendShapeMaster: string
-  ): this {
-    return this.set("serializedBlendShapeMaster", serializedBlendShapeMaster);
-  }
-
-  public getBlendShapeMaster(): UniVRMType.BlendShape | undefined {
-    const serializedBlendShapeMaster = this.get("serializedBlendShapeMaster");
-
-    if (serializedBlendShapeMaster) {
-      return JSON.parse(serializedBlendShapeMaster) as UniVRMType.BlendShape;
-    }
-
-    return undefined;
-  }
-
-  public setSerializedSecondaryAnimation(
-    serializedSecondaryAnimation: string
-  ): this {
+  public setBlendShapeMaster(blendShapeMaster: VRM0Type.BlendShape): this {
     return this.set(
-      "serializedSecondaryAnimation",
-      serializedSecondaryAnimation
+      "serializedBlendShapeMaster",
+      JSON.stringify(blendShapeMaster)
     );
   }
 
-  public getSecondaryAnimation(): UniVRMType.SecondaryAnimation | undefined {
+  public getBlendShapeMaster(): VRM0Type.BlendShape | undefined {
+    const serializedBlendShapeMaster = this.get("serializedBlendShapeMaster");
+
+    if (serializedBlendShapeMaster) {
+      return JSON.parse(serializedBlendShapeMaster) as VRM0Type.BlendShape;
+    }
+
+    return undefined;
+  }
+
+  public setSecondaryAnimation(
+    secondaryAnimation: VRM0Type.SecondaryAnimation
+  ) {
+    return this.set(
+      "serializedSecondaryAnimation",
+      JSON.stringify(secondaryAnimation)
+    );
+  }
+
+  public getSecondaryAnimation(): VRM0Type.SecondaryAnimation | undefined {
     const serializedSecondaryAnimation = this.get(
       "serializedSecondaryAnimation"
     );
@@ -118,36 +115,26 @@ export default class VRM extends ExtensionProperty<IVRM> {
     if (serializedSecondaryAnimation) {
       return JSON.parse(
         serializedSecondaryAnimation
-      ) as UniVRMType.SecondaryAnimation;
+      ) as VRM0Type.SecondaryAnimation;
     }
 
     return undefined;
   }
 
-  public setSerializedMaterialProperties(
-    serializedMaterialProperties: string
-  ): this {
+  public setMaterialProperties(materialProperties: VRM0Type.Material[]): this {
     return this.set(
       "serializedMaterialProperties",
-      serializedMaterialProperties
-    );
-  }
-
-  public setMaterialProperties(
-    materialProperties: UniVRMType.Material[]
-  ): this {
-    return this.setSerializedMaterialProperties(
       JSON.stringify(materialProperties)
     );
   }
 
-  public getMaterialProperties(): UniVRMType.Material[] | undefined {
+  public getMaterialProperties(): VRM0Type.Material[] | undefined {
     const serializedMaterialProperties = this.get(
       "serializedMaterialProperties"
     );
 
     if (serializedMaterialProperties) {
-      return JSON.parse(serializedMaterialProperties) as UniVRMType.Material[];
+      return JSON.parse(serializedMaterialProperties) as VRM0Type.Material[];
     }
 
     return undefined;

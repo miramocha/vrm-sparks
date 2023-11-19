@@ -3,7 +3,7 @@ import { Button, Collapse, Select } from "antd";
 import { AppContext } from "../providers/appContextProvider.tsx";
 // import { GLTFTransformExtensionUtils } from "../utils/GLTFTransformExtensionUtils.ts";
 
-// import { Material as UniVRMMaterial } from "@pixiv/types-vrm-0.0";
+// import { Material as VRM0Material } from "@pixiv/types-vrm-0.0";
 
 type SelectOptions = { label?: string; value: number };
 

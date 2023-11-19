@@ -2,67 +2,71 @@ import { ReactNode, useContext, useEffect, useState } from "react";
 import { Button, Collapse, Select } from "antd";
 import { AppContext } from "../providers/appContextProvider.tsx";
 import { GLTFTransformExtensionUtils } from "../utils/GLTFTransformExtensionUtils.ts";
-// import * as UniVRMType from "@pixiv/types-vrm-0.0";
+import * as VRM0Type from "@pixiv/types-vrm-0.0";
 
-// import { Material as UniVRMMaterial } from "@pixiv/types-vrm-0.0";
+// import * as VRM0Type from "@pixiv/types-vrm-0.0";
+
+// import { Material as VRM0Material } from "@pixiv/types-vrm-0.0";
 
 type SelectOptions = { label?: string; value: number };
 
-export default function UniVRMMaterialEditor({
+export default function VRM0MaterialEditor({
   setSaveButton,
 }: {
   setSaveButton?: React.Dispatch<ReactNode>;
 }) {
   const appContext = useContext(AppContext);
   // const [materialProperties, setMaterialProperties] = useState<
-  //   UniVRMType.Material[]
+  //   VRM0Type.Material[]
   // >([]);
   const [materialOptions, setMaterialOptions] = useState<SelectOptions[]>([]);
 
   useEffect(() => {
     if (appContext.gltfDocument) {
-      const updatedMaterialProperties =
-        GLTFTransformExtensionUtils.getUniVRMExtension(
+      const materialProperties =
+        GLTFTransformExtensionUtils.getVRM0Extension(
           appContext.gltfDocument
         )?.getMaterialProperties() || [];
 
       // setMaterialProperties(updatedMaterialProperties);
       setMaterialOptions(
-        updatedMaterialProperties.map((materialProperty, index) => ({
-          label: materialProperty.name,
-          value: index,
-        }))
+        materialProperties.map(
+          (materialProperty: VRM0Type.Material, index: number) => ({
+            label: materialProperty.name,
+            value: index,
+          })
+        )
       );
     }
 
     if (setSaveButton) {
       const handleSaveButtonClick = () => {
-        console.log("SAVING UNIVRM");
-        if (appContext.gltfDocument) {
-          const vrmExtension = GLTFTransformExtensionUtils.getUniVRMExtension(
-            appContext.gltfDocument
-          );
+        console.log("SAVING VRM0");
+        // if (appContext.gltfDocument) {
+        //   const vrmExtension = GLTFTransformExtensionUtils.getVRM0Extension(
+        //     appContext.gltfDocument
+        //   );
 
-          if (vrmExtension) {
-            const updatedMaterialProperties =
-              vrmExtension.getMaterialProperties() || [];
+        //   if (vrmExtension) {
+        //     const updatedMaterialProperties =
+        //       vrmExtension.getMaterialProperties() || [];
 
-            updatedMaterialProperties.forEach((materialProperty) => {
-              materialProperty.vectorProperties =
-                materialProperty.vectorProperties || [];
-              materialProperty.vectorProperties._Color = [1, 0, 0, 1];
-            });
+        //     updatedMaterialProperties.forEach((materialProperty) => {
+        //       materialProperty.vectorProperties =
+        //         materialProperty.vectorProperties || [];
+        //       materialProperty.vectorProperties._Color = [1, 0, 0, 1];
+        //     });
 
-            vrmExtension.setMaterialProperties(updatedMaterialProperties);
-          }
-        }
+        //     vrmExtension.setMaterialProperties(updatedMaterialProperties);
+        //   }
+        // }
 
         appContext.reloadGLTFDocument();
       };
 
       setSaveButton(
         <Button type="primary" onClick={handleSaveButtonClick} block>
-          Save UniVRM Material
+          Save VRM0 Material
         </Button>
       );
     }
@@ -107,7 +111,7 @@ export default function UniVRMMaterialEditor({
 
   return (
     <>
-      UniVRM
+      VRM0
       <Select options={materialOptions} />
       <Collapse accordion items={accordionItems} />
     </>

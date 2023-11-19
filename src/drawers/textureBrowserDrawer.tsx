@@ -16,7 +16,7 @@ export default function TextureBrowserDrawer({
 }) {
   const appContext = useContext(AppContext);
   const [fileList, setFileList] = useState<UploadFile[]>([]);
-  const [isEditingUniVRM, setIsEditingUniVRM] = useState<boolean>(true);
+  const [isEditingVRM0, setIsEditingVRM0] = useState<boolean>(true);
 
   const buildFileList = (gltfDocument: GLTFDocument) => {
     const fileList: UploadFile[] = [];
@@ -58,8 +58,8 @@ export default function TextureBrowserDrawer({
 
   useEffect(() => {
     if (appContext.gltfDocument) {
-      setIsEditingUniVRM(
-        GLTFTransformExtensionUtils.isUniVRMDocument(appContext.gltfDocument)
+      setIsEditingVRM0(
+        GLTFTransformExtensionUtils.isVRM0Document(appContext.gltfDocument)
       );
       setFileList(buildFileList(appContext.gltfDocument));
     }
@@ -120,7 +120,7 @@ export default function TextureBrowserDrawer({
       open={open}
       mask={false}
     >
-      {isEditingUniVRM ? "UniVRM" : "VRM"}
+      {isEditingVRM0 ? "VRM0" : "VRM"}
       <Tabs
         items={[
           { label: "Browse", key: "browse", children: browseTab },

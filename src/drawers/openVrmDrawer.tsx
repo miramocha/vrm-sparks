@@ -38,7 +38,7 @@ export default function OpenVrmDrawer({
       mask={false}
     >
       <Space direction="vertical" size="small" style={{ display: "flex" }}>
-        <Card title="Upload UniVRM/VRM">
+        <Card title="Upload VRM0/VRM">
           <Upload.Dragger
             accept=".vrm"
             maxCount={1}
