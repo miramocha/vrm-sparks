@@ -53,8 +53,8 @@ export default class VRM extends ExtensionProperty<IVRM> {
     return undefined;
   }
 
-  public setHumanoid(meta: VRM0Type.Humanoid): this {
-    return this.set("serializedMeta", JSON.stringify(meta));
+  public setHumanoid(humanoid: VRM0Type.Humanoid): this {
+    return this.set("serializedHumanoid", JSON.stringify(humanoid));
   }
 
   public getHumanoid(): VRM0Type.Humanoid | undefined {

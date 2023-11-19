@@ -58,10 +58,12 @@ export default class VRM0_vrm extends Extension {
       console.log("UNUSED:", unusedTextureIndexes);
       unusedTextureIndexes.forEach((index) => {
         const texture = context.textures[index];
-        texture.isDisposed();
-        // const material = new Material(this.document.getGraph());
-        // material.setBaseColorTexture(texture);
-        // context.materials;
+        const material = new Material(this.document.getRoot().getGraph());
+        material.setBaseColorTexture(texture);
+      });
+
+      context.textures.forEach((texture) => {
+        console.log(texture.getName(), texture.listParents());
       });
 
       if (vrmJSON.exporterVersion) {
@@ -217,72 +219,76 @@ export default class VRM0_vrm extends Extension {
       rootDef.extensions[NAME] = vrmJSON;
 
       if (vrm.getMaterialProperties()) {
-        this.document
-          .getRoot()
-          .listMaterials()
-          .forEach((material, materialIndex) => {
-            const materialDef = jsonDoc.json.materials![materialIndex];
-            materialDef.extensions = materialDef.extensions || {};
+        vrm.getMaterialProperties()?.forEach((materialPropertyDef, index) => {
+          const material = this.document.getRoot().listMaterials()[index];
 
-            const materialPropertyDef = (materialDef.extensions[NAME] = {
-              _MainTex: 0,
-              _ShadeTexture: 0,
-              _BumpMap: 0,
-              _EmissionMap: 0,
-              _SphereAdd: 0,
-              _RimTexture: 0,
-            });
+          const texturePropertiesDef: {
+            _MainTex: number | undefined;
+            _ShadeTexture: number | undefined;
+            _BumpMap: number | undefined;
+            _EmissionMap: number | undefined;
+            _SphereAdd: number | undefined;
+            _RimTexture: number | undefined;
+          } = {
+            _MainTex: undefined,
+            _ShadeTexture: undefined,
+            _BumpMap: undefined,
+            _EmissionMap: undefined,
+            _SphereAdd: undefined,
+            _RimTexture: undefined,
+          };
 
-            const materialProperty =
-              material.getExtension<MaterialProperty>(NAME);
+          const materialProperty =
+            material.getExtension<MaterialProperty>(NAME);
 
-            console.log("PROP FOUND", materialProperty?.getRimTexture());
-
-            if (materialProperty) {
-              if (materialProperty.getMainTexture()) {
-                materialPropertyDef._MainTex = context.createTextureInfoDef(
-                  materialProperty.getMainTexture()!,
-                  materialProperty.getMainTextureInfo()!
-                ).index;
-              }
-
-              if (materialProperty.getShadeTexture()) {
-                materialPropertyDef._ShadeTexture =
-                  context.createTextureInfoDef(
-                    materialProperty.getShadeTexture()!,
-                    materialProperty.getShadeTextureInfo()!
-                  ).index;
-              }
-
-              if (materialProperty.getBumpMapTexture()) {
-                materialPropertyDef._BumpMap = context.createTextureInfoDef(
-                  materialProperty.getBumpMapTexture()!,
-                  materialProperty.getBumpMapTextureInfo()!
-                ).index;
-              }
-
-              if (materialProperty.getEmissionMapTexture()) {
-                materialPropertyDef._EmissionMap = context.createTextureInfoDef(
-                  materialProperty.getEmissionMapTexture()!,
-                  materialProperty.getEmissionMapTextureInfo()!
-                ).index;
-              }
-
-              if (materialProperty.getSphereAddTexture()) {
-                materialPropertyDef._SphereAdd = context.createTextureInfoDef(
-                  materialProperty.getSphereAddTexture()!,
-                  materialProperty.getSphereAddTextureInfo()!
-                ).index;
-              }
-
-              if (materialProperty.getRimTexture()) {
-                materialPropertyDef._RimTexture = context.createTextureInfoDef(
-                  materialProperty.getRimTexture()!,
-                  materialProperty.getRimTextureInfo()!
-                ).index;
-              }
+          if (materialProperty) {
+            if (materialProperty.getMainTexture()) {
+              texturePropertiesDef._MainTex = context.createTextureInfoDef(
+                materialProperty.getMainTexture()!,
+                materialProperty.getMainTextureInfo()!
+              ).index;
             }
-          });
+
+            if (materialProperty.getShadeTexture()) {
+              texturePropertiesDef._ShadeTexture = context.createTextureInfoDef(
+                materialProperty.getShadeTexture()!,
+                materialProperty.getShadeTextureInfo()!
+              ).index;
+            }
+
+            if (materialProperty.getBumpMapTexture()) {
+              texturePropertiesDef._BumpMap = context.createTextureInfoDef(
+                materialProperty.getBumpMapTexture()!,
+                materialProperty.getBumpMapTextureInfo()!
+              ).index;
+            }
+
+            if (materialProperty.getEmissionMapTexture()) {
+              texturePropertiesDef._EmissionMap = context.createTextureInfoDef(
+                materialProperty.getEmissionMapTexture()!,
+                materialProperty.getEmissionMapTextureInfo()!
+              ).index;
+            }
+
+            if (materialProperty.getSphereAddTexture()) {
+              texturePropertiesDef._SphereAdd = context.createTextureInfoDef(
+                materialProperty.getSphereAddTexture()!,
+                materialProperty.getSphereAddTextureInfo()!
+              ).index;
+            }
+
+            if (materialProperty.getRimTexture()) {
+              texturePropertiesDef._RimTexture = context.createTextureInfoDef(
+                materialProperty.getRimTexture()!,
+                materialProperty.getRimTextureInfo()!
+              ).index;
+            }
+
+            materialPropertyDef.textureProperties = texturePropertiesDef;
+
+            console.log("WRITE MAT PROP", materialPropertyDef);
+          }
+        });
       }
     }
 

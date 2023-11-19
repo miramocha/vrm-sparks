@@ -29,7 +29,16 @@ export class AppContextController {
       const fileBuffer = await nodeIO.writeBinary(this.gltfDocument);
       const file = new File([fileBuffer], "exportedVrm.vrm");
       console.log("NEW FILE BUILT", file);
+
       this.vrmGLTF = await LoaderUtils.loadThreeVRM(file);
+
+      const link = document.createElement("a");
+      link.style.display = "none";
+      document.body.appendChild(link);
+      link.href = URL.createObjectURL(file);
+      link.download = file.name;
+      link.click();
+      document.body.removeChild(link);
 
       return file;
     }
@@ -72,8 +81,8 @@ export class AppContextController {
     console.log("SETTING GLTF", vrmGLTF);
 
     if (vrmGLTF && vrmGLTF?.userData.vrm) {
-      VRMUtils.removeUnnecessaryVertices(vrmGLTF.scene);
-      VRMUtils.removeUnnecessaryJoints(vrmGLTF.scene);
+      // VRMUtils.removeUnnecessaryVertices(vrmGLTF.scene);
+      // VRMUtils.removeUnnecessaryJoints(vrmGLTF.scene);
 
       const vrm: VRM = vrmGLTF.userData.vrm;
       if (vrm) {
