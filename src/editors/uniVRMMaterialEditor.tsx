@@ -19,11 +19,6 @@ export default function UniVRMMaterialEditor({
   // >([]);
   const [materialOptions, setMaterialOptions] = useState<SelectOptions[]>([]);
 
-  const handleSaveButtonClick = () => {
-    console.log("SAVING UNIVRM");
-    appContext.reloadGLTFDocument();
-  };
-
   useEffect(() => {
     if (appContext.gltfDocument) {
       const updatedMaterialProperties =
@@ -39,17 +34,41 @@ export default function UniVRMMaterialEditor({
         }))
       );
     }
-  }, [appContext.gltfDocument]);
 
-  useEffect(() => {
     if (setSaveButton) {
+      const handleSaveButtonClick = () => {
+        console.log("SAVING UNIVRM");
+        if (appContext.gltfDocument) {
+          const vrmExtension = GLTFTransformExtensionUtils.getUniVRMExtension(
+            appContext.gltfDocument
+          );
+
+          if (vrmExtension) {
+            const updatedMaterialProperties =
+              vrmExtension.getMaterialProperties() || [];
+
+            updatedMaterialProperties.forEach((materialProperty) => {
+              materialProperty.vectorProperties =
+                materialProperty.vectorProperties || [];
+              materialProperty.vectorProperties._Color = [1, 0, 0, 1];
+            });
+
+            vrmExtension.setMaterialProperties(updatedMaterialProperties);
+          }
+        }
+
+        appContext.reloadGLTFDocument();
+      };
+
       setSaveButton(
         <Button type="primary" onClick={handleSaveButtonClick} block>
           Save UniVRM Material
         </Button>
       );
     }
-  }, [setSaveButton]);
+  }, [appContext.gltfDocument, appContext, setSaveButton]);
+
+  useEffect(() => {}, [setSaveButton]);
 
   // console.log("rerendering", materialProperties);
 

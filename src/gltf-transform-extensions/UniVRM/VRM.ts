@@ -43,6 +43,10 @@ export default class VRM extends ExtensionProperty<IVRM> {
     return this.set("serializedMeta", serializedMeta);
   }
 
+  public setMeta(meta: UniVRMType.Meta): this {
+    return this.setSerializedMeta(JSON.stringify(meta));
+  }
+
   public getMeta(): UniVRMType.Meta | undefined {
     const serializedMeta = this.get("serializedMeta");
 
@@ -126,6 +130,14 @@ export default class VRM extends ExtensionProperty<IVRM> {
     return this.set(
       "serializedMaterialProperties",
       serializedMaterialProperties
+    );
+  }
+
+  public setMaterialProperties(
+    materialProperties: UniVRMType.Material[]
+  ): this {
+    return this.setSerializedMaterialProperties(
+      JSON.stringify(materialProperties)
     );
   }
 
