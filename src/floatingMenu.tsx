@@ -4,7 +4,7 @@ import * as Icon from "@ant-design/icons";
 
 import OpenVrmDrawer from "./drawers/openVrmDrawer.tsx";
 // import ExportVrmDrawer from "./drawers/exportVrmDrawer";
-// import MaterialEditorDrawer from "./drawers/materialEditorDrawer";
+import MaterialEditorDrawer from "./drawers/materialEditorDrawer.tsx";
 // import TextureBrowserDrawer from "./drawers/textureBrowserDrawer";
 // import MetadataEditorDrawer from "./drawers/metadataEditor";
 // import ExpressionPreviewDrawer from "./drawers/expressionPreviewDrawer";
@@ -38,10 +38,10 @@ export default function FloatingMenu() {
         open={currentOpenDrawer === "open-vrm"}
         setOpen={buildOpenDrawerFunction("open-vrm")}
       />
-      {/* <MaterialEditorDrawer
+      <MaterialEditorDrawer
         open={currentOpenDrawer === "material-editor"}
         setOpen={buildOpenDrawerFunction("material-editor")}
-      /> */}
+      />
 
       <FloatButton.Group shape="circle" style={{ left: 24, top: 24 }}>
         <Divider children="Open/Export" orientation="left" />

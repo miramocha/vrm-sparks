@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { Upload, Space, Card, Drawer } from "antd";
 import * as Icon from "@ant-design/icons";
 import { AppContext } from "../providers/appContextProvider.tsx";
-import { loadThreeVRM, readVRMGLTFDocument } from "../utils/LoaderUtils.ts";
+import { LoaderUtils } from "../utils/LoaderUtils.ts";
 
 export default function OpenVrmDrawer({
   open = false,
@@ -20,10 +20,10 @@ export default function OpenVrmDrawer({
   };
 
   const handleBeforeUpload = async (file: File) => {
-    const newVrmGLTF = await loadThreeVRM(file);
+    const newVrmGLTF = await LoaderUtils.loadThreeVRM(file);
     appContext.vrmGLTF = newVrmGLTF;
 
-    const document = await readVRMGLTFDocument(file);
+    const document = await LoaderUtils.readVRMGLTFDocument(file);
     appContext.gltfDocument = document;
 
     return false;

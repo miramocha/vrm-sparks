@@ -14,7 +14,7 @@ import VRMC_springBone from "../gltf-transform-extensions/VRM/VRMC_springBone.ts
 
 import * as UNIVRM_CONSTANTS from "../gltf-transform-extensions/UniVRM/constants.ts";
 import VRM from "../gltf-transform-extensions/UniVRM/VRM.ts";
-import GLTFTransformExtensionUtils from "./GltfTransformExtensionUtils.js";
+import { GLTFTransformExtensionUtils } from "./GLTFTransformExtensionUtils.ts";
 
 export class LoaderUtils {
   public static async loadThreeVRM(file: File): Promise<GLTF> {

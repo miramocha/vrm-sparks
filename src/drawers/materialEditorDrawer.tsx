@@ -1,15 +1,9 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-// import {
-//   useContext,
-// useEffect
-//   useState,
-// } from "react";
-import {
-  Drawer,
-  Flex,
-  // Collapse, Select, Empty
-} from "antd";
-// import { AppContext } from "../providers/appContextProvider.ts";
+import { useContext, useEffect, useState } from "react";
+import { Drawer, Flex, Collapse, Select, Empty } from "antd";
+import { AppContext } from "../providers/appContextProvider.ts";
+import { GLTFTransformExtensionUtils } from "../utils/GLTFTransformExtensionUtils.ts";
+
+type SelectOptions = { label?: string; value: number };
 
 export default function MaterialEditorDrawer({
   open = false,
@@ -18,15 +12,33 @@ export default function MaterialEditorDrawer({
   open: boolean;
   setOpen: React.Dispatch<boolean> | undefined;
 }) {
-  // const appContext = useContext(AppContext);
-  // const [materialOptions, setMaterialOptions] = useState([]);
+  const appContext = useContext(AppContext);
+  const [materialOptions, setMaterialOptions] = useState<Array<SelectOptions>>(
+    []
+  );
 
-  // useEffect(() => {
-  //   // setMaterialOptions(
-  //   // );
-  //   if (appContext.hasUniVRMDocument) {
-  //   }
-  // }, [appContext.hasUniVRMDocument, appContext.vrn]);
+  // const [gltfDocument, setGLTFDocument] = useState<GLTFDocument | null>(null);
+
+  useEffect(() => {
+    if (
+      appContext.gltfDocument &&
+      GLTFTransformExtensionUtils.isUniVRMDocument(appContext.gltfDocument)
+    ) {
+      const materialProperties =
+        GLTFTransformExtensionUtils.getUniVRMExtensionProperties(
+          appContext.gltfDocument
+        )?.getMaterialProperties();
+
+      if (materialProperties) {
+        setMaterialOptions(
+          materialProperties.map((materialProperty, index) => ({
+            label: materialProperty.name,
+            value: index,
+          }))
+        );
+      }
+    }
+  }, [appContext.gltfDocument]);
 
   const handleClose = () => {
     if (setOpen) {
@@ -43,7 +55,7 @@ export default function MaterialEditorDrawer({
       mask={false}
     >
       <Flex vertical gap="small">
-        {/* {materialOptions ? (
+        {appContext.gltfDocument ? (
           <>
             <Select
               value={0}
@@ -83,7 +95,7 @@ export default function MaterialEditorDrawer({
           </>
         ) : (
           <Empty description="No VRM Loaded" />
-        )} */}
+        )}
       </Flex>
     </Drawer>
   );
