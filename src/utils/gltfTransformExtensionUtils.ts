@@ -1,6 +1,6 @@
 import { Document } from "@gltf-transform/core";
 import * as UniVRMType from "@pixiv/types-vrm-0.0";
-import * as UNIVRM_CONSTANTS from "../gltf-transform-extensions/UniVRM/constants.ts";
+import * as UNIVRM_CONSTANTS from "../gltf-transform-extensions/UniVRM/constants.js";
 
 export default class GLTFTransformExtensionUtils {
   public static isUniVRMDocument(document: Document): boolean {
