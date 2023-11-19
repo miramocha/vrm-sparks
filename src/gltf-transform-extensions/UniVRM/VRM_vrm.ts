@@ -58,44 +58,51 @@ export default class VRM_vrm extends Extension {
   }
 
   public write(context: WriterContext): this {
-    if (
-      context.jsonDoc.json.extensions &&
-      context.jsonDoc.json.extensions[NAME]
-    ) {
-      const vrm = this.document.getRoot().getExtension<VRM>(NAME);
-      const vrmJSON = context.jsonDoc.json.extensions[NAME] as UniVRMType.VRM;
+    const jsonDoc = context.jsonDoc;
+    const vrm = this.document.getRoot().getExtension<VRM>(NAME);
 
-      if (vrm) {
-        console.log("WRITING VRM");
-        if (vrm.getExporterVersion()) {
-          vrmJSON.exporterVersion = vrm.getExporterVersion();
-        }
+    if (vrm) {
+      const vrmJSON = {} as UniVRMType.VRM;
+      const rootDef = jsonDoc.json;
+      rootDef.extensions = rootDef.extensions || {};
+      // const materialDef = jsonDoc.json.materials![materialIndex];
+      // materialDef.extensions = materialDef.extensions || {};
 
-        if (vrm.getMeta()) {
-          vrmJSON.meta = vrm.getMeta();
-        }
+      vrmJSON.specVersion = "0.0";
 
-        if (vrm.getHumanoid()) {
-          vrmJSON.humanoid = vrm.getHumanoid();
-        }
-
-        if (vrm.getFirstPerson()) {
-          vrmJSON.firstPerson = vrm.getFirstPerson();
-        }
-
-        if (vrm.getBlendShapeMaster()) {
-          vrmJSON.blendShapeMaster = vrm.getBlendShapeMaster();
-        }
-
-        if (vrm.getSecondaryAnimation()) {
-          vrmJSON.secondaryAnimation = vrm.getSecondaryAnimation();
-        }
-
-        if (vrm.getMaterialProperties()) {
-          vrmJSON.materialProperties = vrm.getMaterialProperties();
-        }
+      if (vrm.getExporterVersion()) {
+        vrmJSON.exporterVersion = vrm.getExporterVersion();
       }
+
+      if (vrm.getMeta()) {
+        vrmJSON.meta = vrm.getMeta();
+      }
+
+      if (vrm.getHumanoid()) {
+        vrmJSON.humanoid = vrm.getHumanoid();
+      }
+
+      if (vrm.getFirstPerson()) {
+        vrmJSON.firstPerson = vrm.getFirstPerson();
+      }
+
+      if (vrm.getBlendShapeMaster()) {
+        vrmJSON.blendShapeMaster = vrm.getBlendShapeMaster();
+      }
+
+      if (vrm.getSecondaryAnimation()) {
+        vrmJSON.secondaryAnimation = vrm.getSecondaryAnimation();
+      }
+
+      if (vrm.getMaterialProperties()) {
+        vrmJSON.materialProperties = vrm.getMaterialProperties();
+      }
+
+      rootDef.extensions[NAME] = vrmJSON;
     }
+
+    console.log("SAVING UNIVRM", jsonDoc.json);
+
     return this;
   }
 }

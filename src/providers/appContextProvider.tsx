@@ -4,6 +4,12 @@ import { VRM, VRMUtils } from "@pixiv/three-vrm";
 import { Document as GLTFDocument, NodeIO } from "@gltf-transform/core";
 import { AnimationMixer } from "three";
 import { LoaderUtils } from "../utils/LoaderUtils.ts";
+import { GLTFTransformExtensionUtils } from "../utils/GLTFTransformExtensionUtils.ts";
+import VRM_vrm from "../gltf-transform-extensions/UniVRM/VRM_vrm.ts";
+import {
+  KHRMaterialsUnlit,
+  KHRTextureTransform,
+} from "@gltf-transform/extensions";
 
 type GetContextState<T> = () => T | null;
 
@@ -11,6 +17,15 @@ export class AppContextController {
   async reloadGLTFDocument() {
     if (this.gltfDocument) {
       const nodeIO = new NodeIO();
+
+      if (GLTFTransformExtensionUtils.isUniVRMDocument(this.gltfDocument)) {
+        nodeIO.registerExtensions([
+          KHRMaterialsUnlit,
+          KHRTextureTransform,
+          VRM_vrm,
+        ]);
+      }
+
       const fileBuffer = await nodeIO.writeBinary(this.gltfDocument);
       const file = new File([fileBuffer], "exportedVrm.vrm");
       this.vrmGLTF = await LoaderUtils.loadThreeVRM(file);
