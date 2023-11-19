@@ -1,9 +1,30 @@
-import { Collapse } from "antd";
-// import { VRMCMaterialsMToon } from "@pixiv/types-vrmc-materials-mtoon-1.0";
+import { useContext, useEffect, useState } from "react";
+import { Collapse, Select } from "antd";
+import { AppContext } from "../providers/appContextProvider.tsx";
+// import { GLTFTransformExtensionUtils } from "../utils/GLTFTransformExtensionUtils.ts";
 
-// type SelectOptions = { label?: string; value: number };
+// import { Material as UniVRMMaterial } from "@pixiv/types-vrm-0.0";
 
-export default function UniVRMMaterialEditor() {
+type SelectOptions = { label?: string; value: number };
+
+export default function VRMMaterialEditor() {
+  const appContext = useContext(AppContext);
+  const [materialOptions, setMaterialOptions] = useState<SelectOptions[]>([]);
+
+  useEffect(() => {
+    if (appContext.gltfDocument) {
+      const materialOptions = appContext.gltfDocument
+        .getRoot()
+        .listMaterials()
+        .map((material, index) => ({
+          label: material.getName(),
+          value: index,
+        }));
+
+      setMaterialOptions(materialOptions);
+    }
+  }, [appContext.gltfDocument]);
+
   const accordionItems = [
     {
       key: "base",
@@ -40,6 +61,7 @@ export default function UniVRMMaterialEditor() {
   return (
     <>
       VRM
+      <Select options={materialOptions} />
       <Collapse accordion items={accordionItems} />
     </>
   );

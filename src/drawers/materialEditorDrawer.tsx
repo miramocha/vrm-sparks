@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { Drawer, Flex, Empty } from "antd";
+import { Drawer, Flex, Empty, Button } from "antd";
 import { AppContext } from "../providers/appContextProvider.tsx";
 import { GLTFTransformExtensionUtils } from "../utils/GLTFTransformExtensionUtils.ts";
 import UniVRMMaterialEditor from "../editors/uniVRMMaterialEditor.tsx";
@@ -36,6 +36,13 @@ export default function MaterialEditorDrawer({
       closable={true}
       open={open}
       mask={false}
+      footer={
+        appContext.gltfDocument ? (
+          <Button type="primary" block>
+            Save
+          </Button>
+        ) : null
+      }
     >
       <Flex vertical gap="small">
         {appContext.gltfDocument ? (

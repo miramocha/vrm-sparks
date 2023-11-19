@@ -46,6 +46,7 @@ export class LoaderUtils {
       GLTFTransformExtensionUtils.isUniVRMDocument(document);
 
     if (!documentIsUniVRM) {
+      console.log("LOADING VRM EXTENSION");
       const vrmNodeIO = new NodeIO().registerExtensions([
         VRMC_vrm,
         VRMC_materials_mtoon,

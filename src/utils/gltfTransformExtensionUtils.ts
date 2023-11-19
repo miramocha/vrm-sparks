@@ -15,9 +15,7 @@ export class GLTFTransformExtensionUtils {
   }
 
   public static getUniVRMExtension(document: Document): VRM | null {
-    const vrm = document
-      .getRoot()
-      .getExtension<VRM>(VRM_CONSTANTS.VRMC_MATERIALS_MTOON);
+    const vrm = document.getRoot().getExtension<VRM>(UNIVRM_CONSTANTS.UNIVRM);
 
     return vrm;
   }
