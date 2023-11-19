@@ -49,7 +49,7 @@ export default function MaterialEditorDrawer({
             {isEditingUniVRM ? (
               <UniVRMMaterialEditor setSaveButton={setSaveButton} />
             ) : (
-              <VRMMaterialEditor />
+              <VRMMaterialEditor setSaveButton={setSaveButton} />
             )}
           </>
         ) : (

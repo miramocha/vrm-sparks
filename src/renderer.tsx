@@ -39,7 +39,7 @@ export default function ThreeJSRenderer() {
       <pointLight distance={1} decay={6} position={[0, 0.5, -1.5]} />
       <gridHelper />
       <axesHelper />
-      {vrmGLTF ? (
+      {vrmGLTF?.userData?.vrm ? (
         <>
           <VrmModel vrm={vrmGLTF.userData.vrm} mixer={mainAnimationMixer} />
         </>
