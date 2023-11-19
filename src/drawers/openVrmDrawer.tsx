@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { Upload, Space, Card, Drawer } from "antd";
 import * as Icon from "@ant-design/icons";
 import { AppContext } from "../providers/appContextProvider.tsx";
-import { loadThreeVRM, readVRMGLTFDocument } from "../utils/loaderUtils.ts";
+import { loadThreeVRM, readVRMGLTFDocument } from "../utils/LoaderUtils.ts";
 
 export default function OpenVrmDrawer({
   open = false,

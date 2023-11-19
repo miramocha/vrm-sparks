@@ -3,7 +3,7 @@ import {
   IProperty,
   PropertyType,
 } from "@gltf-transform/core";
-import * as VRMType from "@pixiv/types-vrm-0.0";
+import * as UniVRMType from "@pixiv/types-vrm-0.0";
 import { UNIVRM } from "./constants.ts";
 
 interface IVRM extends IProperty {
@@ -41,11 +41,11 @@ export default class VRM extends ExtensionProperty<IVRM> {
     return this.set("metaJSONString", metaJSONString);
   }
 
-  public getMeta(): VRMType.Meta | undefined {
+  public getMeta(): UniVRMType.Meta | undefined {
     const metaJSONString = this.get("metaJSONString");
 
     if (metaJSONString) {
-      return JSON.parse(metaJSONString) as VRMType.Meta;
+      return JSON.parse(metaJSONString) as UniVRMType.Meta;
     }
 
     return undefined;
@@ -55,11 +55,11 @@ export default class VRM extends ExtensionProperty<IVRM> {
     return this.set("humanoidJSONString", humanoidJSONString);
   }
 
-  public getHumanoid(): VRMType.Humanoid | undefined {
+  public getHumanoid(): UniVRMType.Humanoid | undefined {
     const humanoidJSONString = this.get("humanoidJSONString");
 
     if (humanoidJSONString) {
-      return JSON.parse(humanoidJSONString) as VRMType.Humanoid;
+      return JSON.parse(humanoidJSONString) as UniVRMType.Humanoid;
     }
 
     return undefined;
@@ -69,11 +69,11 @@ export default class VRM extends ExtensionProperty<IVRM> {
     return this.set("firstPersonJSONString", firstPersonJSONString);
   }
 
-  public getFirstPerson(): VRMType.FirstPerson | undefined {
+  public getFirstPerson(): UniVRMType.FirstPerson | undefined {
     const firstPersonJSONString = this.get("firstPersonJSONString");
 
     if (firstPersonJSONString) {
-      return JSON.parse(firstPersonJSONString) as VRMType.FirstPerson;
+      return JSON.parse(firstPersonJSONString) as UniVRMType.FirstPerson;
     }
 
     return undefined;
@@ -85,11 +85,11 @@ export default class VRM extends ExtensionProperty<IVRM> {
     return this.set("blendShapeMasterJSONString", blendShapeMasterJSONString);
   }
 
-  public getBlendShapeMaster(): VRMType.BlendShape | undefined {
+  public getBlendShapeMaster(): UniVRMType.BlendShape | undefined {
     const blendShapeMasterJSONString = this.get("blendShapeMasterJSONString");
 
     if (blendShapeMasterJSONString) {
-      return JSON.parse(blendShapeMasterJSONString) as VRMType.BlendShape;
+      return JSON.parse(blendShapeMasterJSONString) as UniVRMType.BlendShape;
     }
 
     return undefined;
@@ -104,7 +104,7 @@ export default class VRM extends ExtensionProperty<IVRM> {
     );
   }
 
-  public getSecondaryAnimation(): VRMType.SecondaryAnimation | undefined {
+  public getSecondaryAnimation(): UniVRMType.SecondaryAnimation | undefined {
     const secondaryAnimationJSONString = this.get(
       "secondaryAnimationJSONString"
     );
@@ -112,7 +112,7 @@ export default class VRM extends ExtensionProperty<IVRM> {
     if (secondaryAnimationJSONString) {
       return JSON.parse(
         secondaryAnimationJSONString
-      ) as VRMType.SecondaryAnimation;
+      ) as UniVRMType.SecondaryAnimation;
     }
 
     return undefined;
@@ -127,13 +127,15 @@ export default class VRM extends ExtensionProperty<IVRM> {
     );
   }
 
-  public getMaterialProperties(): VRMType.Material[] | undefined {
+  public getMaterialProperties(): Array<UniVRMType.Material> | undefined {
     const materialPropertiesJSONString = this.get(
       "materialPropertiesJSONString"
     );
 
     if (materialPropertiesJSONString) {
-      return JSON.parse(materialPropertiesJSONString) as VRMType.Material[];
+      return JSON.parse(
+        materialPropertiesJSONString
+      ) as Array<UniVRMType.Material>;
     }
 
     return undefined;

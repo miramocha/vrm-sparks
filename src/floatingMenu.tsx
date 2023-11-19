@@ -38,6 +38,10 @@ export default function FloatingMenu() {
         open={currentOpenDrawer === "open-vrm"}
         setOpen={buildOpenDrawerFunction("open-vrm")}
       />
+      {/* <MaterialEditorDrawer
+        open={currentOpenDrawer === "material-editor"}
+        setOpen={buildOpenDrawerFunction("material-editor")}
+      /> */}
 
       <FloatButton.Group shape="circle" style={{ left: 24, top: 24 }}>
         <Divider children="Open/Export" orientation="left" />
@@ -57,7 +61,15 @@ export default function FloatingMenu() {
           }}
           type={currentOpenDrawer === "export-vrm" ? "primary" : "default"}
         />
-
+        <Divider children="Edit" orientation="left" />
+        <FloatButton
+          icon={<Icon.BgColorsOutlined />}
+          tooltip="Material Editor"
+          onClick={() => {
+            toggleDrawer("material-editor");
+          }}
+          type={currentOpenDrawer === "material-editor" ? "primary" : "default"}
+        />
         <Divider children="Language" orientation="left" />
         <FloatButton description="🇺🇸 US" tooltip="English" type="primary" />
         <FloatButton description="🇯🇵 JP" tooltip="日本語" />
