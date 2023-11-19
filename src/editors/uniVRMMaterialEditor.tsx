@@ -2,7 +2,7 @@ import { ReactNode, useContext, useEffect, useState } from "react";
 import { Button, Collapse, Select } from "antd";
 import { AppContext } from "../providers/appContextProvider.tsx";
 import { GLTFTransformExtensionUtils } from "../utils/GLTFTransformExtensionUtils.ts";
-import * as UniVRMType from "@pixiv/types-vrm-0.0";
+// import * as UniVRMType from "@pixiv/types-vrm-0.0";
 
 // import { Material as UniVRMMaterial } from "@pixiv/types-vrm-0.0";
 
@@ -14,15 +14,14 @@ export default function UniVRMMaterialEditor({
   setSaveButton?: React.Dispatch<ReactNode>;
 }) {
   const appContext = useContext(AppContext);
-  const [materialProperties, setMaterialProperties] = useState<
-    UniVRMType.Material[]
-  >([]);
+  // const [materialProperties, setMaterialProperties] = useState<
+  //   UniVRMType.Material[]
+  // >([]);
   const [materialOptions, setMaterialOptions] = useState<SelectOptions[]>([]);
-
-  // Serialize MaterialProps List after save
 
   const handleSaveButtonClick = () => {
     console.log("SAVING UNIVRM");
+    appContext.reloadGLTFDocument();
   };
 
   useEffect(() => {
@@ -32,7 +31,7 @@ export default function UniVRMMaterialEditor({
           appContext.gltfDocument
         )?.getMaterialProperties() || [];
 
-      setMaterialProperties(updatedMaterialProperties);
+      // setMaterialProperties(updatedMaterialProperties);
       setMaterialOptions(
         updatedMaterialProperties.map((materialProperty, index) => ({
           label: materialProperty.name,
@@ -52,7 +51,7 @@ export default function UniVRMMaterialEditor({
     }
   }, [setSaveButton]);
 
-  console.log("rerendering", materialProperties);
+  // console.log("rerendering", materialProperties);
 
   const accordionItems = [
     {

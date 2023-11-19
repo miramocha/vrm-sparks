@@ -66,6 +66,7 @@ export default class VRM_vrm extends Extension {
       const vrmJSON = context.jsonDoc.json.extensions[NAME] as UniVRMType.VRM;
 
       if (vrm) {
+        console.log("WRITING VRM");
         if (vrm.getExporterVersion()) {
           vrmJSON.exporterVersion = vrm.getExporterVersion();
         }

@@ -1,12 +1,22 @@
 import { useContext, createContext, ReactElement, useState } from "react";
 import { GLTF } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { VRM, VRMUtils } from "@pixiv/three-vrm";
-import { Document as GLTFDocument } from "@gltf-transform/core";
+import { Document as GLTFDocument, NodeIO } from "@gltf-transform/core";
 import { AnimationMixer } from "three";
+import { LoaderUtils } from "../utils/LoaderUtils.ts";
 
 type GetContextState<T> = () => T | null;
 
 export class AppContextController {
+  async reloadGLTFDocument() {
+    if (this.gltfDocument) {
+      const nodeIO = new NodeIO();
+      const fileBuffer = await nodeIO.writeBinary(this.gltfDocument);
+      const file = new File([fileBuffer], "exportedVrm.vrm");
+      this.vrmGLTF = await LoaderUtils.loadThreeVRM(file);
+    }
+  }
+
   // GLTF Document
   getGLTFDocument: GetContextState<GLTFDocument> | undefined;
   setGLTFDocument: React.Dispatch<GLTFDocument> | undefined;

@@ -17,6 +17,7 @@ export default function VRMMaterialEditor({
 
   const handleSaveButtonClick = () => {
     console.log("SAVING VRM");
+    appContext.reloadGLTFDocument();
   };
 
   useEffect(() => {
