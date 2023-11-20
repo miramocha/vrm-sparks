@@ -38,6 +38,8 @@ interface IMaterialProperty extends IProperty {
   sphereAddTextureInfo: TextureInfo;
   rimTexture: Texture;
   rimTextureInfo: TextureInfo;
+  outlineWidthTexture: Texture;
+  outlineWidthTextureInfo: TextureInfo;
 }
 
 export default class MaterialProperty extends ExtensionProperty<IMaterialProperty> {
@@ -84,6 +86,11 @@ export default class MaterialProperty extends ExtensionProperty<IMaterialPropert
       sphereAddTextureInfo: new TextureInfo(this.graph, "sphereAddTextureInfo"),
       rimTexture: null,
       rimTextureInfo: new TextureInfo(this.graph, "rimTextureInfo"),
+      outlineWidthTexture: null,
+      outlineWidthTextureInfo: new TextureInfo(
+        this.graph,
+        "outlineWidthTextureInfo"
+      ),
     });
   }
 
@@ -166,6 +173,21 @@ export default class MaterialProperty extends ExtensionProperty<IMaterialPropert
   }
   public setRimTexture(texture: Texture | null): this {
     return this.setRef("rimTexture", texture, {
+      channels: R | G | B | A,
+      isColor: true,
+    });
+  }
+
+  public getOutlineWidthTextureInfo(): TextureInfo | null {
+    return this.getRef("outlineWidthTexture")
+      ? this.getRef("outlineWidthTextureInfo")
+      : null;
+  }
+  public getOutlineWidthTexture(): Texture | null {
+    return this.getRef("outlineWidthTexture");
+  }
+  public setOutlineWidthTexture(texture: Texture | null): this {
+    return this.setRef("outlineWidthTexture", texture, {
       channels: R | G | B | A,
       isColor: true,
     });

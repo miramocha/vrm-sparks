@@ -1,6 +1,7 @@
 import { useContext, createContext, ReactElement, useState } from "react";
 import { GLTF } from "three/examples/jsm/loaders/GLTFLoader.js";
-import { VRM, VRMUtils } from "@pixiv/three-vrm";
+import { VRM as ThreeVRM, VRMUtils } from "@pixiv/three-vrm";
+import VRM from "../gltf-transform-extensions/VRM0/VRM.ts";
 import { Document as GLTFDocument, NodeIO } from "@gltf-transform/core";
 import { AnimationMixer } from "three";
 import { LoaderUtils } from "../utils/LoaderUtils.ts";
@@ -15,10 +16,33 @@ type GetContextState<T> = () => T | null;
 
 export class AppContextController {
   async reloadGLTFDocument(): Promise<File | null> {
-    if (this.gltfDocument) {
+    const gltfDocument = this.gltfDocument;
+
+    if (gltfDocument) {
+      gltfDocument
+        .getRoot()
+        .listMaterials()
+        .forEach((material) => {
+          material.setBaseColorHex(0x00ff00);
+        });
+      const vrmExtension = gltfDocument
+        .getRoot()
+        .getExtension<VRM>("VRM") as VRM;
+
+      const materialProperties = vrmExtension.getMaterialProperties() || [];
+      materialProperties?.forEach((materialProperty) => {
+        materialProperty.vectorProperties =
+          materialProperty.vectorProperties || {};
+
+        materialProperty.vectorProperties._Color = [0, 1, 0, 1];
+        materialProperty.vectorProperties._EmissionColor = [0, 0, 0, 1];
+      });
+
+      vrmExtension.setMaterialProperties(materialProperties);
+
       const nodeIO = new NodeIO();
 
-      if (GLTFTransformExtensionUtils.isVRM0Document(this.gltfDocument)) {
+      if (GLTFTransformExtensionUtils.isVRM0Document(gltfDocument)) {
         nodeIO.registerExtensions([
           KHRMaterialsUnlit,
           KHRTextureTransform,
@@ -26,11 +50,9 @@ export class AppContextController {
         ]);
       }
 
-      const fileBuffer = await nodeIO.writeBinary(this.gltfDocument);
+      const fileBuffer = await nodeIO.writeBinary(gltfDocument);
       const file = new File([fileBuffer], "exportedVrm.vrm");
       console.log("NEW FILE BUILT", file);
-
-      this.vrmGLTF = await LoaderUtils.loadThreeVRM(file);
 
       const link = document.createElement("a");
       link.style.display = "none";
@@ -39,6 +61,8 @@ export class AppContextController {
       link.download = file.name;
       link.click();
       document.body.removeChild(link);
+
+      this.vrmGLTF = await LoaderUtils.loadThreeVRM(file);
 
       return file;
     }
@@ -84,7 +108,7 @@ export class AppContextController {
       // VRMUtils.removeUnnecessaryVertices(vrmGLTF.scene);
       // VRMUtils.removeUnnecessaryJoints(vrmGLTF.scene);
 
-      const vrm: VRM = vrmGLTF.userData.vrm;
+      const vrm: ThreeVRM = vrmGLTF.userData.vrm;
       if (vrm) {
         VRMUtils.rotateVRM0(vrm);
       }

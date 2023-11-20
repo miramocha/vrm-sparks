@@ -1,14 +1,23 @@
 import {
   ExtensionProperty,
   IProperty,
+  Nullable,
   PropertyType,
+  Texture,
+  TextureInfo,
+  TextureChannel,
 } from "@gltf-transform/core";
 import * as VRM0Type from "@pixiv/types-vrm-0.0";
 import { VRM0 } from "./constants.ts";
 
+const { R, G, B, A } = TextureChannel;
+
 const NAME = VRM0;
 
 interface IVRM extends IProperty {
+  thumbnailTexture: Texture;
+  thumbnailTextureInfo: TextureInfo;
+
   //   specVersion?: "0.0";
   exporterVersion: string;
   serializedMeta: string;
@@ -29,6 +38,35 @@ export default class VRM extends ExtensionProperty<IVRM> {
     this.extensionName = NAME;
     this.propertyType = "VRM";
     this.parentTypes = [PropertyType.ROOT];
+  }
+
+  protected getDefaults(): Nullable<IVRM> {
+    return Object.assign(super.getDefaults() as IProperty, {
+      thumbnailTexture: null,
+      thumbnailTextureInfo: new TextureInfo(this.graph, "thumbnailTextureInfo"),
+      exporterVersion: "VRM Sparks 0.0",
+      serializedMeta: "{}",
+      serializedHumanoid: "{}",
+      serializedFirstPerson: "{}",
+      serializedBlendShapeMaster: "{}",
+      serializedSecondaryAnimation: "{}",
+      serializedMaterialProperties: "[]",
+    });
+  }
+
+  public getThumbnailTextureInfo(): TextureInfo | null {
+    return this.getRef("thumbnailTexture")
+      ? this.getRef("thumbnailTextureInfo")
+      : null;
+  }
+  public getThumbnailTexture(): Texture | null {
+    return this.getRef("thumbnailTexture");
+  }
+  public setThumbnailTexture(texture: Texture | null): this {
+    return this.setRef("thumbnailTexture", texture, {
+      channels: R | G | B | A,
+      isColor: true,
+    });
   }
 
   public setExporterVersion(exporterVersion: string): this {

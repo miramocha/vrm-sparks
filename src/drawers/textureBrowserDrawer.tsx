@@ -85,7 +85,7 @@ export default function TextureBrowserDrawer({
     <Empty description="No VRM Loaded" />
   );
 
-  const upload = (
+  const upload = appContext.gltfDocument ? (
     <Card title="Image Upload">
       <Upload.Dragger
         accept="image/png, image/jpeg"
@@ -100,7 +100,7 @@ export default function TextureBrowserDrawer({
         </p>
       </Upload.Dragger>
     </Card>
-  );
+  ) : null;
 
   // const importTab = appContext.gltfDocument ? (
   //   <Space direction="vertical" size="small" style={{ display: "flex" }}>

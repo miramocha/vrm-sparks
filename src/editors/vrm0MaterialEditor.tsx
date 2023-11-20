@@ -66,7 +66,8 @@ export default function VRM0MaterialEditor({
 
       setSaveButton(
         <Button type="primary" onClick={handleSaveButtonClick} block>
-          Save VRM0 Material
+          {/* Save VRM0 Material */}
+          MAKE IT GREEN
         </Button>
       );
     }

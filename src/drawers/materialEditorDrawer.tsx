@@ -1,5 +1,5 @@
 import { ReactNode, useContext, useEffect, useState } from "react";
-import { Drawer, Flex, Empty, Button } from "antd";
+import { Drawer, Flex, Empty } from "antd";
 import { AppContext } from "../providers/appContextProvider.tsx";
 import { GLTFTransformExtensionUtils } from "../utils/GLTFTransformExtensionUtils.ts";
 import VRM0MaterialEditor from "../editors/vrm0MaterialEditor.tsx";
@@ -14,11 +14,7 @@ export default function MaterialEditorDrawer({
 }) {
   const appContext = useContext(AppContext);
   const [isEditingVRM0, setIsEditingVRM0] = useState<boolean>(true);
-  const [saveButton, setSaveButton] = useState<ReactNode>(
-    <Button type="primary" disabled block>
-      Save
-    </Button>
-  );
+  const [saveButton, setSaveButton] = useState<ReactNode | null>(null);
 
   useEffect(() => {
     if (appContext.gltfDocument) {
