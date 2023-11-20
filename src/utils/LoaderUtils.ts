@@ -47,6 +47,7 @@ export class LoaderUtils {
     const documentIsVRM0 = GLTFTransformExtensionUtils.isVRM0Document(document);
 
     if (!documentIsVRM0) {
+      console.info("READING AS VRM1");
       const vrmNodeIO = new NodeIO().registerExtensions([
         VRMC_vrm,
         VRMC_materials_mtoon,
@@ -57,8 +58,6 @@ export class LoaderUtils {
 
       document = await vrmNodeIO.readBinary(arrayBuffer);
     }
-
-    console.log("DOCUMENT READ", document.getRoot().listTextures());
 
     return document;
   }

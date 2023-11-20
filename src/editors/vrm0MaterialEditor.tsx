@@ -1,5 +1,5 @@
 import { ReactNode, useContext, useEffect, useState } from "react";
-import { Button, Collapse, Select } from "antd";
+import { Avatar, Button, Collapse, List, Select } from "antd";
 import { AppContext } from "../providers/appContextProvider.tsx";
 import { GLTFTransformExtensionUtils } from "../utils/GLTFTransformExtensionUtils.ts";
 import * as VRM0Type from "@pixiv/types-vrm-0.0";
@@ -20,6 +20,12 @@ export default function VRM0MaterialEditor({
   //   VRM0Type.Material[]
   // >([]);
   const [materialOptions, setMaterialOptions] = useState<SelectOptions[]>([]);
+  const [currentMaterialIndex, setCurrentMaterialIndex] = useState<
+    number | null
+  >(null);
+  const [materialProperty, setMaterialProperty] =
+    useState<VRM0Type.Material | null>(null);
+  const [textureList, setTextureList] = useState<ReactNode | null>(null);
 
   useEffect(() => {
     if (appContext.gltfDocument) {
@@ -28,7 +34,6 @@ export default function VRM0MaterialEditor({
           appContext.gltfDocument
         )?.getMaterialProperties() || [];
 
-      // setMaterialProperties(updatedMaterialProperties);
       setMaterialOptions(
         materialProperties.map(
           (materialProperty: VRM0Type.Material, index: number) => ({
@@ -37,47 +42,104 @@ export default function VRM0MaterialEditor({
           })
         )
       );
+
+      setCurrentMaterialIndex(materialProperties?.length > 1 ? 0 : null);
     }
 
     if (setSaveButton) {
       const handleSaveButtonClick = () => {
         console.log("SAVING VRM0");
-        // if (appContext.gltfDocument) {
-        //   const vrmExtension = GLTFTransformExtensionUtils.getVRM0Extension(
-        //     appContext.gltfDocument
-        //   );
-
-        //   if (vrmExtension) {
-        //     const updatedMaterialProperties =
-        //       vrmExtension.getMaterialProperties() || [];
-
-        //     updatedMaterialProperties.forEach((materialProperty) => {
-        //       materialProperty.vectorProperties =
-        //         materialProperty.vectorProperties || [];
-        //       materialProperty.vectorProperties._Color = [1, 0, 0, 1];
-        //     });
-
-        //     vrmExtension.setMaterialProperties(updatedMaterialProperties);
-        //   }
-        // }
 
         appContext.reloadGLTFDocument();
       };
 
       setSaveButton(
         <Button type="primary" onClick={handleSaveButtonClick} block>
-          {/* Save VRM0 Material */}
-          MAKE IT GREEN
+          Save VRM0 Material
         </Button>
       );
     }
   }, [appContext.gltfDocument, appContext, setSaveButton]);
 
-  useEffect(() => {}, [setSaveButton]);
+  useEffect(() => {
+    const gltfDocument = appContext.gltfDocument;
+    if (gltfDocument && currentMaterialIndex !== null) {
+      const materialProperties =
+        GLTFTransformExtensionUtils.getVRM0Extension(
+          gltfDocument
+        )?.getMaterialProperties() || [];
 
-  // console.log("rerendering", materialProperties);
+      const currentMaterialProperty =
+        materialProperties[currentMaterialIndex] || null;
+      setMaterialProperty(currentMaterialProperty);
+
+      const textureItems: Array<{
+        slot: string;
+        name: string;
+        url: string | null;
+        textureIndex: number;
+      }> = [];
+
+      let textureList = null;
+      if (currentMaterialProperty) {
+        Object.keys(currentMaterialProperty.textureProperties || {}).forEach(
+          (key) => {
+            const textureIndex =
+              currentMaterialProperty?.textureProperties[key];
+
+            if (
+              textureIndex !== undefined &&
+              gltfDocument.getRoot().listTextures()
+            ) {
+              const texture = gltfDocument.getRoot().listTextures()[
+                textureIndex
+              ];
+
+              const imageBuffer = texture.getImage();
+              let url = null;
+
+              if (imageBuffer) {
+                url = URL.createObjectURL(new Blob([imageBuffer]));
+              }
+
+              textureItems.push({
+                slot: key,
+                name: texture.getName(),
+                url,
+                textureIndex,
+              });
+            }
+          }
+        );
+
+        textureList = (
+          <List
+            itemLayout="horizontal"
+            dataSource={textureItems}
+            renderItem={(textureItem) => (
+              <List.Item key={textureItem.slot}>
+                <List.Item.Meta
+                  avatar={
+                    <Avatar shape="square" size="large" src={textureItem.url} />
+                  }
+                  title={<span>{textureItem.slot}</span>}
+                  description={textureItem.name}
+                />
+              </List.Item>
+            )}
+          />
+        );
+      }
+      setTextureList(textureList);
+    }
+  }, [appContext.gltfDocument, currentMaterialIndex]);
 
   const accordionItems = [
+    {
+      key: "texture",
+      label: "Textures",
+      children: textureList,
+    },
     {
       key: "base",
       label: "Base",
@@ -106,14 +168,20 @@ export default function VRM0MaterialEditor({
     {
       key: "json",
       label: "JSON",
-      children: <code>{JSON.stringify({}, null, 2)}</code>,
+      children: <code>{JSON.stringify(materialProperty, null, 2)}</code>,
     },
   ];
 
   return (
     <>
       VRM0
-      <Select options={materialOptions} />
+      <Select
+        options={materialOptions}
+        value={currentMaterialIndex}
+        onChange={(value) => {
+          setCurrentMaterialIndex(value);
+        }}
+      />
       <Collapse accordion items={accordionItems} />
     </>
   );

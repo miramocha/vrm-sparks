@@ -28,7 +28,7 @@ export default function TextureBrowserDrawer({
         if (imageBuffer) {
           const uploadFile: UploadFile = {
             uid: `texture_${index}_${texture.getName()}`,
-            name: texture.getName(),
+            name: `${index} ${texture.getName()}`,
             status: "done",
             url: URL.createObjectURL(new Blob([imageBuffer])),
           };

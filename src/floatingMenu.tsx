@@ -3,7 +3,7 @@ import { FloatButton, Divider } from "antd";
 import * as Icon from "@ant-design/icons";
 
 import OpenVrmDrawer from "./drawers/openVrmDrawer.tsx";
-// import ExportVrmDrawer from "./drawers/exportVrmDrawer";
+import ExportVrmDrawer from "./drawers/exportVrmDrawer.tsx";
 import MaterialEditorDrawer from "./drawers/materialEditorDrawer.tsx";
 import TextureBrowserDrawer from "./drawers/textureBrowserDrawer.tsx";
 // import MetadataEditorDrawer from "./drawers/metadataEditor";
@@ -37,6 +37,10 @@ export default function FloatingMenu() {
       <OpenVrmDrawer
         open={currentOpenDrawer === "open-vrm"}
         setOpen={buildOpenDrawerFunction("open-vrm")}
+      />
+      <ExportVrmDrawer
+        open={currentOpenDrawer === "export-vrm"}
+        setOpen={buildOpenDrawerFunction("export-vrm")}
       />
       <MaterialEditorDrawer
         open={currentOpenDrawer === "material-editor"}

@@ -1,7 +1,7 @@
 import { useContext, createContext, ReactElement, useState } from "react";
 import { GLTF } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { VRM as ThreeVRM, VRMUtils } from "@pixiv/three-vrm";
-import VRM from "../gltf-transform-extensions/VRM0/VRM.ts";
+// import VRM from "../gltf-transform-extensions/VRM0/VRM.ts";
 import { Document as GLTFDocument, NodeIO } from "@gltf-transform/core";
 import { AnimationMixer } from "three";
 import { LoaderUtils } from "../utils/LoaderUtils.ts";
@@ -25,20 +25,20 @@ export class AppContextController {
         .forEach((material) => {
           material.setBaseColorHex(0x00ff00);
         });
-      const vrmExtension = gltfDocument
-        .getRoot()
-        .getExtension<VRM>("VRM") as VRM;
+      // const vrmExtension = gltfDocument
+      //   .getRoot()
+      //   .getExtension<VRM>("VRM") as VRM;
 
-      const materialProperties = vrmExtension.getMaterialProperties() || [];
-      materialProperties?.forEach((materialProperty) => {
-        materialProperty.vectorProperties =
-          materialProperty.vectorProperties || {};
+      // const materialProperties = vrmExtension.getMaterialProperties() || [];
+      // materialProperties?.forEach((materialProperty) => {
+      //   materialProperty.vectorProperties =
+      //     materialProperty.vectorProperties || {};
 
-        materialProperty.vectorProperties._Color = [0, 1, 0, 1];
-        materialProperty.vectorProperties._EmissionColor = [0, 0, 0, 1];
-      });
+      //   materialProperty.vectorProperties._Color = [0, 1, 0, 1];
+      //   materialProperty.vectorProperties._EmissionColor = [0, 0, 0, 1];
+      // });
 
-      vrmExtension.setMaterialProperties(materialProperties);
+      // vrmExtension.setMaterialProperties(materialProperties);
 
       const nodeIO = new NodeIO();
 
@@ -54,13 +54,13 @@ export class AppContextController {
       const file = new File([fileBuffer], "exportedVrm.vrm");
       console.log("NEW FILE BUILT", file);
 
-      const link = document.createElement("a");
-      link.style.display = "none";
-      document.body.appendChild(link);
-      link.href = URL.createObjectURL(file);
-      link.download = file.name;
-      link.click();
-      document.body.removeChild(link);
+      // const link = document.createElement("a");
+      // link.style.display = "none";
+      // document.body.appendChild(link);
+      // link.href = URL.createObjectURL(file);
+      // link.download = file.name;
+      // link.click();
+      // document.body.removeChild(link);
 
       this.vrmGLTF = await LoaderUtils.loadThreeVRM(file);
 

@@ -28,51 +28,40 @@ export default class VRM0_vrm extends Extension {
       console.log("TEXTURE JSON READ:", context.jsonDoc.json.textures);
       console.log("MATERIAL JSON READ:", context.jsonDoc.json.materials);
       const vrm = new VRM(this.document.getGraph());
-      this.document.getRoot().setExtension(NAME, vrm);
+
+      try {
+        this.document.getRoot().setExtension(NAME, vrm);
+        console.log("EXTENSION SET");
+      } catch (error) {
+        console.log("EXTENSION SET FAILED");
+        console.error(error);
+      }
 
       const vrmJSON = context.jsonDoc.json.extensions[NAME] as VRM0Type.VRM;
-      const unusedTextureIndexes = new Set<number>([
-        ...Array(context.jsonDoc.json.textures?.length || 0).keys(),
-      ]);
-
-      context.jsonDoc.json.materials?.forEach((materialDef) => {
-        const baseTextureIndex =
-          materialDef.pbrMetallicRoughness?.baseColorTexture?.index;
-        const normalTextureIndex = materialDef.normalTexture?.index;
-        const emissiveTextureIndex = materialDef.emissiveTexture?.index;
-
-        if (baseTextureIndex !== undefined) {
-          unusedTextureIndexes.delete(baseTextureIndex);
-        }
-
-        if (normalTextureIndex !== undefined) {
-          unusedTextureIndexes.delete(normalTextureIndex);
-        }
-
-        if (emissiveTextureIndex !== undefined) {
-          unusedTextureIndexes.delete(emissiveTextureIndex);
-        }
-      });
-
-      console.log("UNUSED:", unusedTextureIndexes);
+      console.log("VRM JSON", vrmJSON);
 
       if (vrmJSON.exporterVersion) {
         vrm.setExporterVersion(vrmJSON.exporterVersion as string);
       }
 
+      console.log("META", vrmJSON.meta);
       if (vrmJSON.meta) {
         vrm.setMeta(vrmJSON.meta);
 
         if (vrmJSON.meta.texture !== undefined) {
           const textureIndex = vrmJSON.meta.texture;
           const texture = context.textures[vrmJSON.meta.texture];
-          vrm.setThumbnailTexture(texture);
-          context.setTextureInfo(vrm.getThumbnailTextureInfo()!, {
-            index: textureIndex,
-          });
+
+          if (texture) {
+            vrm.setThumbnailTexture(texture);
+            context.setTextureInfo(vrm.getThumbnailTextureInfo()!, {
+              index: textureIndex,
+            });
+          }
         }
       }
 
+      console.info("READING HUMANOID");
       if (vrmJSON.humanoid) {
         vrm.setHumanoid(vrmJSON.humanoid);
       }
@@ -89,6 +78,7 @@ export default class VRM0_vrm extends Extension {
         vrm.setSecondaryAnimation(vrmJSON.secondaryAnimation);
       }
 
+      console.info("READING MATERIAL PROPERTIES");
       if (vrmJSON.materialProperties) {
         vrm.setMaterialProperties(vrmJSON.materialProperties);
 
@@ -97,8 +87,6 @@ export default class VRM0_vrm extends Extension {
         vrmJSON.materialProperties.forEach((materialPropertyDef, index) => {
           const texturePropertiesDef =
             materialPropertyDef.textureProperties || {};
-          // const vectorPropertiesDef =
-          //   materialPropertyDef.vectorProperties || {};
 
           if (materialPropertyDef.textureProperties) {
             Object.keys(materialPropertyDef.textureProperties).forEach(
