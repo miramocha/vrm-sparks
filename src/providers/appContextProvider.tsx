@@ -49,7 +49,7 @@ export class AppContextController {
           VRM0_vrm,
         ]);
       }
-
+      console.clear();
       const fileBuffer = await nodeIO.writeBinary(gltfDocument);
       const file = new File([fileBuffer], "exportedVrm.vrm");
       console.log("NEW FILE BUILT", file);

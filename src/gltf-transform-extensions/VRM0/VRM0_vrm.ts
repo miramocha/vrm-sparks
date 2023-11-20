@@ -8,8 +8,43 @@ import * as VRM0Type from "@pixiv/types-vrm-0.0";
 import VRM from "./VRM.ts";
 import { VRM0 } from "./constants.ts";
 import MaterialProperty from "./materialProperty.ts";
+// import { texture } from "three/examples/jsm/nodes/Nodes.js";
 
 const NAME = VRM0;
+
+function getVRM0TextureIndex(
+  context: ReaderContext,
+  textureIndex: number
+): number {
+  if (context.jsonDoc.json.textures) {
+    console.log(
+      textureIndex + " texture def:",
+      context.jsonDoc.json.textures[textureIndex]
+    );
+    const normalizedTextureIndex =
+      context.jsonDoc.json.textures[textureIndex].source;
+
+    if (textureIndex !== normalizedTextureIndex) {
+      console.log(
+        `TEXTURE OFFSET DETECTED: ${textureIndex} -> ${normalizedTextureIndex}`
+      );
+
+      if (normalizedTextureIndex) {
+        // console.log(
+        //   `CHECKING IMAGE: ${
+        //     context.textures[normalizedTextureIndex]
+        //       ? context.textures[normalizedTextureIndex].getName()
+        //       : null
+        //   }`
+        // );
+
+        return normalizedTextureIndex;
+      }
+    }
+  }
+
+  return textureIndex;
+}
 
 export default class VRM0_vrm extends Extension {
   public readonly extensionName = NAME;
@@ -20,6 +55,8 @@ export default class VRM0_vrm extends Extension {
   }
 
   public read(context: ReaderContext): this {
+    console.log("READ TEXTURES", context.textures);
+
     if (
       context.jsonDoc.json.extensions &&
       context.jsonDoc.json.extensions[NAME]
@@ -44,12 +81,14 @@ export default class VRM0_vrm extends Extension {
         vrm.setExporterVersion(vrmJSON.exporterVersion as string);
       }
 
-      console.log("META", vrmJSON.meta);
       if (vrmJSON.meta) {
         vrm.setMeta(vrmJSON.meta);
 
         if (vrmJSON.meta.texture !== undefined) {
-          const textureIndex = vrmJSON.meta.texture;
+          const textureIndex = getVRM0TextureIndex(
+            context,
+            vrmJSON.meta.texture
+          );
           const texture = context.textures[vrmJSON.meta.texture];
 
           if (texture) {
@@ -99,19 +138,29 @@ export default class VRM0_vrm extends Extension {
           const materialProperty = this.createMaterialProperty();
           const material = context.materials[index];
 
+          console.log("----CHECKING----", material.getName());
+
+          console.log("----MAIN----");
           if (texturePropertiesDef._MainTex !== undefined) {
-            const textureIndex = texturePropertiesDef._MainTex;
-            const texture = context.textures[texturePropertiesDef._MainTex];
+            const textureIndex = getVRM0TextureIndex(
+              context,
+              texturePropertiesDef._MainTex
+            );
+
+            const texture = context.textures[textureIndex];
             materialProperty.setMainTexture(texture);
             context.setTextureInfo(materialProperty.getMainTextureInfo()!, {
               index: textureIndex,
             });
           }
 
+          console.log("----SHADE----");
           if (texturePropertiesDef._ShadeTexture !== undefined) {
-            const textureIndex = texturePropertiesDef._ShadeTexture;
-            const texture =
-              context.textures[texturePropertiesDef._ShadeTexture];
+            const textureIndex = getVRM0TextureIndex(
+              context,
+              texturePropertiesDef._ShadeTexture
+            );
+            const texture = context.textures[textureIndex];
             materialProperty.setShadeTexture(texture);
             context.setTextureInfo(materialProperty.getShadeTextureInfo()!, {
               index: textureIndex,
@@ -119,8 +168,11 @@ export default class VRM0_vrm extends Extension {
           }
 
           if (texturePropertiesDef._BumpMap !== undefined) {
-            const textureIndex = texturePropertiesDef._BumpMap;
-            const texture = context.textures[texturePropertiesDef._BumpMap];
+            const textureIndex = getVRM0TextureIndex(
+              context,
+              texturePropertiesDef._BumpMap
+            );
+            const texture = context.textures[textureIndex];
             materialProperty.setBumpMapTexture(texture);
             context.setTextureInfo(materialProperty.getBumpMapTextureInfo()!, {
               index: textureIndex,
@@ -128,8 +180,11 @@ export default class VRM0_vrm extends Extension {
           }
 
           if (texturePropertiesDef._EmissionMap !== undefined) {
-            const textureIndex = texturePropertiesDef._EmissionMap;
-            const texture = context.textures[texturePropertiesDef._EmissionMap];
+            const textureIndex = getVRM0TextureIndex(
+              context,
+              texturePropertiesDef._EmissionMap
+            );
+            const texture = context.textures[textureIndex];
             materialProperty.setEmissionMapTexture(texture);
             context.setTextureInfo(
               materialProperty.getEmissionMapTextureInfo()!,
@@ -140,8 +195,11 @@ export default class VRM0_vrm extends Extension {
           }
 
           if (texturePropertiesDef._SphereAdd !== undefined) {
-            const textureIndex = texturePropertiesDef._SphereAdd;
-            const texture = context.textures[texturePropertiesDef._SphereAdd];
+            const textureIndex = getVRM0TextureIndex(
+              context,
+              texturePropertiesDef._SphereAdd
+            );
+            const texture = context.textures[textureIndex];
             materialProperty.setSphereAddTexture(texture);
             context.setTextureInfo(
               materialProperty.getSphereAddTextureInfo()!,
@@ -152,8 +210,11 @@ export default class VRM0_vrm extends Extension {
           }
 
           if (texturePropertiesDef._RimTexture !== undefined) {
-            const textureIndex = texturePropertiesDef._RimTexture;
-            const texture = context.textures[texturePropertiesDef._RimTexture];
+            const textureIndex = getVRM0TextureIndex(
+              context,
+              texturePropertiesDef._RimTexture
+            );
+            const texture = context.textures[textureIndex];
             materialProperty.setRimTexture(texture);
             context.setTextureInfo(materialProperty.getRimTextureInfo()!, {
               index: textureIndex,
@@ -161,9 +222,11 @@ export default class VRM0_vrm extends Extension {
           }
 
           if (texturePropertiesDef._OutlineWidthTexture !== undefined) {
-            const textureIndex = texturePropertiesDef._OutlineWidthTexture;
-            const texture =
-              context.textures[texturePropertiesDef._OutlineWidthTexture];
+            const textureIndex = getVRM0TextureIndex(
+              context,
+              texturePropertiesDef._OutlineWidthTexture
+            );
+            const texture = context.textures[textureIndex];
             materialProperty.setOutlineWidthTexture(texture);
             context.setTextureInfo(
               materialProperty.getOutlineWidthTextureInfo()!,
@@ -187,9 +250,9 @@ export default class VRM0_vrm extends Extension {
     const jsonDoc = context.jsonDoc;
     const vrm = this.document.getRoot().getExtension<VRM>(NAME);
 
-    console.log("JSON WRITE:", context.jsonDoc.json);
     console.log("TEXTURE JSON WRITE:", context.jsonDoc.json.textures);
     console.log("MATERIAL JSON WRITE:", context.jsonDoc.json.materials);
+    console.log("IMAGE JSON WRITE:", context.jsonDoc.json.images);
     if (vrm) {
       const vrmJSON = {} as VRM0Type.VRM;
       const rootDef = jsonDoc.json;
@@ -205,10 +268,18 @@ export default class VRM0_vrm extends Extension {
         vrmJSON.meta = vrm.getMeta() || {};
 
         if (vrm.getThumbnailTexture()) {
-          vrmJSON.meta.texture = context.createTextureInfoDef(
+          const newIndex = context.createTextureInfoDef(
             vrm.getThumbnailTexture()!,
             vrm.getThumbnailTextureInfo()!
           ).index;
+
+          console.log(
+            "thumbnail index changed from " +
+              vrmJSON.meta.texture +
+              " to " +
+              newIndex
+          );
+          vrmJSON.meta.texture = newIndex;
         }
       }
 
@@ -239,76 +310,77 @@ export default class VRM0_vrm extends Extension {
           const material = this.document.getRoot().listMaterials()[index];
 
           const texturePropertiesDef: {
-            _MainTex: number | undefined;
-            _ShadeTexture: number | undefined;
-            _BumpMap: number | undefined;
-            _EmissionMap: number | undefined;
-            _SphereAdd: number | undefined;
-            _RimTexture: number | undefined;
-            _OutlineWidthexture: number | undefined;
-          } = {
-            _MainTex: undefined,
-            _ShadeTexture: undefined,
-            _BumpMap: undefined,
-            _EmissionMap: undefined,
-            _SphereAdd: undefined,
-            _RimTexture: undefined,
-            _OutlineWidthexture: undefined,
-          };
+            _MainTex?: number | undefined;
+            _ShadeTexture?: number | undefined;
+            _BumpMap?: number | undefined;
+            _EmissionMap?: number | undefined;
+            _SphereAdd?: number | undefined;
+            _RimTexture?: number | undefined;
+            _OutlineWidthexture?: number | undefined;
+          } = {};
 
           const materialProperty =
             material.getExtension<MaterialProperty>(NAME);
 
           if (materialProperty) {
             if (materialProperty.getMainTexture()) {
-              texturePropertiesDef._MainTex = context.createTextureInfoDef(
+              const newIndex = context.createTextureInfoDef(
                 materialProperty.getMainTexture()!,
                 materialProperty.getMainTextureInfo()!
               ).index;
+              texturePropertiesDef._MainTex = newIndex;
             }
 
             if (materialProperty.getShadeTexture()) {
-              texturePropertiesDef._ShadeTexture = context.createTextureInfoDef(
+              const newIndex = context.createTextureInfoDef(
                 materialProperty.getShadeTexture()!,
                 materialProperty.getShadeTextureInfo()!
               ).index;
+
+              texturePropertiesDef._ShadeTexture = newIndex;
             }
 
             if (materialProperty.getBumpMapTexture()) {
-              texturePropertiesDef._BumpMap = context.createTextureInfoDef(
+              const newIndex = context.createTextureInfoDef(
                 materialProperty.getBumpMapTexture()!,
                 materialProperty.getBumpMapTextureInfo()!
               ).index;
+              texturePropertiesDef._BumpMap = newIndex;
             }
 
             if (materialProperty.getEmissionMapTexture()) {
-              texturePropertiesDef._EmissionMap = context.createTextureInfoDef(
+              const newIndex = context.createTextureInfoDef(
                 materialProperty.getEmissionMapTexture()!,
                 materialProperty.getEmissionMapTextureInfo()!
               ).index;
+              texturePropertiesDef._EmissionMap = newIndex;
             }
 
             if (materialProperty.getSphereAddTexture()) {
-              texturePropertiesDef._SphereAdd = context.createTextureInfoDef(
+              const newIndex = context.createTextureInfoDef(
                 materialProperty.getSphereAddTexture()!,
                 materialProperty.getSphereAddTextureInfo()!
               ).index;
+              texturePropertiesDef._SphereAdd = newIndex;
             }
 
             if (materialProperty.getRimTexture()) {
-              texturePropertiesDef._RimTexture = context.createTextureInfoDef(
+              const newIndex = context.createTextureInfoDef(
                 materialProperty.getRimTexture()!,
                 materialProperty.getRimTextureInfo()!
               ).index;
+              texturePropertiesDef._RimTexture = newIndex;
             }
 
             if (materialProperty.getOutlineWidthTexture()) {
-              texturePropertiesDef._OutlineWidthexture =
-                context.createTextureInfoDef(
-                  materialProperty.getOutlineWidthTexture()!,
-                  materialProperty.getOutlineWidthTextureInfo()!
-                ).index;
+              const newIndex = context.createTextureInfoDef(
+                materialProperty.getOutlineWidthTexture()!,
+                materialProperty.getOutlineWidthTextureInfo()!
+              ).index;
+              texturePropertiesDef._OutlineWidthexture = newIndex;
             }
+
+            console.log("WRITING ON OLD MAT PROP", materialPropertyDef);
 
             materialPropertyDef.textureProperties = texturePropertiesDef;
           }

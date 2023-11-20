@@ -84,13 +84,14 @@ export default function VRM0MaterialEditor({
       if (currentMaterialProperty) {
         Object.keys(currentMaterialProperty.textureProperties || {}).forEach(
           (key) => {
-            const textureIndex =
-              currentMaterialProperty?.textureProperties[key];
-
             if (
-              textureIndex !== undefined &&
+              currentMaterialProperty?.textureProperties &&
+              currentMaterialProperty.textureProperties[key] &&
               gltfDocument.getRoot().listTextures()
             ) {
+              const textureIndex =
+                currentMaterialProperty.textureProperties[key];
+
               const texture = gltfDocument.getRoot().listTextures()[
                 textureIndex
               ];
@@ -123,7 +124,7 @@ export default function VRM0MaterialEditor({
                     <Avatar shape="square" size="large" src={textureItem.url} />
                   }
                   title={<span>{textureItem.slot}</span>}
-                  description={textureItem.name}
+                  description={`${textureItem.textureIndex} ${textureItem.name}`}
                 />
               </List.Item>
             )}
@@ -182,7 +183,11 @@ export default function VRM0MaterialEditor({
           setCurrentMaterialIndex(value);
         }}
       />
-      <Collapse accordion items={accordionItems} />
+      <Collapse
+        accordion
+        defaultActiveKey={["textures"]}
+        items={accordionItems}
+      />
     </>
   );
 }
