@@ -20,6 +20,7 @@ export default function OpenVrmDrawer({
   };
 
   const handleBeforeUpload = async (file: File) => {
+    console.clear();
     const newVRMGLTF = await LoaderUtils.loadThreeVRM(file);
     appContext.vrmGLTF = newVRMGLTF;
 

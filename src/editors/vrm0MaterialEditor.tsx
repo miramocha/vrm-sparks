@@ -48,8 +48,6 @@ export default function VRM0MaterialEditor({
 
     if (setSaveButton) {
       const handleSaveButtonClick = () => {
-        console.log("SAVING VRM0");
-
         appContext.reloadGLTFDocument();
       };
 

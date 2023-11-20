@@ -16,7 +16,6 @@ export default function VRMMaterialEditor({
   const [materialOptions, setMaterialOptions] = useState<SelectOptions[]>([]);
 
   const handleSaveButtonClick = () => {
-    console.log("SAVING VRM");
     appContext.reloadGLTFDocument();
   };
 
