@@ -13,7 +13,7 @@ const { R, G, B, A } = TextureChannel;
 
 const NAME = VRM0;
 
-interface IMaterialProperty extends IProperty {
+interface IMaterialProperties extends IProperty {
   // floatProperties: { string: number };
   // keywordMap: { string: string | boolean | number };
   // name: string;
@@ -42,7 +42,7 @@ interface IMaterialProperty extends IProperty {
   outlineWidthTextureInfo: TextureInfo;
 }
 
-export default class MaterialProperty extends ExtensionProperty<IMaterialProperty> {
+export default class MaterialProperties extends ExtensionProperty<IMaterialProperties> {
   public static EXTENSION_NAME = NAME;
   public declare extensionName: typeof NAME;
   public declare propertyType: "VRM";
@@ -54,7 +54,7 @@ export default class MaterialProperty extends ExtensionProperty<IMaterialPropert
     this.parentTypes = [PropertyType.MATERIAL];
   }
 
-  protected getDefaults(): Nullable<IMaterialProperty> {
+  protected getDefaults(): Nullable<IMaterialProperties> {
     return Object.assign(super.getDefaults() as IProperty, {
       // floatProperties: { _ZWrite: 1 },
       // keywordMap: {},

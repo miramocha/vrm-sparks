@@ -23,7 +23,7 @@ export default function VRM0MaterialEditor({
   const [currentMaterialIndex, setCurrentMaterialIndex] = useState<
     number | null
   >(null);
-  const [materialProperty, setMaterialProperty] =
+  const [materialProperties, setMaterialProperties] =
     useState<VRM0Type.Material | null>(null);
   const [textureList, setTextureList] = useState<ReactNode | null>(null);
 
@@ -36,8 +36,8 @@ export default function VRM0MaterialEditor({
 
       setMaterialOptions(
         materialProperties.map(
-          (materialProperty: VRM0Type.Material, index: number) => ({
-            label: materialProperty.name,
+          (materialProperties: VRM0Type.Material, index: number) => ({
+            label: materialProperties.name,
             value: index,
           })
         )
@@ -67,9 +67,9 @@ export default function VRM0MaterialEditor({
           gltfDocument
         )?.getMaterialProperties() || [];
 
-      const currentMaterialProperty =
+      const currentMaterialProperties =
         materialProperties[currentMaterialIndex] || null;
-      setMaterialProperty(currentMaterialProperty);
+      setMaterialProperties(currentMaterialProperties);
 
       const textureItems: Array<{
         slot: string;
@@ -79,16 +79,16 @@ export default function VRM0MaterialEditor({
       }> = [];
 
       let textureList = null;
-      if (currentMaterialProperty) {
-        Object.keys(currentMaterialProperty.textureProperties || {}).forEach(
+      if (currentMaterialProperties) {
+        Object.keys(currentMaterialProperties.textureProperties || {}).forEach(
           (key) => {
             if (
-              currentMaterialProperty?.textureProperties &&
-              currentMaterialProperty.textureProperties[key] &&
+              currentMaterialProperties?.textureProperties &&
+              currentMaterialProperties.textureProperties[key] &&
               gltfDocument.getRoot().listTextures()
             ) {
               const textureIndex =
-                currentMaterialProperty.textureProperties[key];
+                currentMaterialProperties.textureProperties[key];
 
               const texture = gltfDocument.getRoot().listTextures()[
                 textureIndex
@@ -167,7 +167,7 @@ export default function VRM0MaterialEditor({
     {
       key: "json",
       label: "JSON",
-      children: <code>{JSON.stringify(materialProperty, null, 2)}</code>,
+      children: <code>{JSON.stringify(materialProperties, null, 2)}</code>,
     },
   ];
 

@@ -25,6 +25,7 @@ export default function OpenVrmDrawer({
     appContext.vrmGLTF = newVRMGLTF;
 
     const document = await LoaderUtils.readVRMGLTFDocument(file);
+    console.log(document);
     appContext.gltfDocument = document;
 
     return false;

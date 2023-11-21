@@ -30,12 +30,12 @@ export class AppContextController {
       //   .getExtension<VRM>("VRM") as VRM;
 
       // const materialProperties = vrmExtension.getMaterialProperties() || [];
-      // materialProperties?.forEach((materialProperty) => {
-      //   materialProperty.vectorProperties =
-      //     materialProperty.vectorProperties || {};
+      // materialProperties?.forEach((materialProperties) => {
+      //   materialProperties.vectorProperties =
+      //     materialProperties.vectorProperties || {};
 
-      //   materialProperty.vectorProperties._Color = [0, 1, 0, 1];
-      //   materialProperty.vectorProperties._EmissionColor = [0, 0, 0, 1];
+      //   materialProperties.vectorProperties._Color = [0, 1, 0, 1];
+      //   materialProperties.vectorProperties._EmissionColor = [0, 0, 0, 1];
       // });
 
       // vrmExtension.setMaterialProperties(materialProperties);
