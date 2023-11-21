@@ -30,8 +30,6 @@ export class LoaderUtils {
     const objectUrl = URL.createObjectURL(file);
     const gltf = await loader.loadAsync(objectUrl);
 
-    console.log("GLTF LOADED", gltf);
-
     return gltf;
   }
 
