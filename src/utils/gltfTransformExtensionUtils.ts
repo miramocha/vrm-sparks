@@ -38,58 +38,69 @@ export class GLTFTransformExtensionUtils {
     return materialMToon;
   }
 
-  public static registerVRM0Extensions(nodeIO: NodeIO): NodeIO {
-    return nodeIO.registerExtensions([
+  public static getVRM0NodeIO(): NodeIO {
+    const nodeIO = new NodeIO();
+    nodeIO.registerExtensions([
       VRM0_vrm,
       KHRMaterialsUnlit,
       KHRTextureTransform,
     ]);
+
+    return nodeIO;
   }
 
-  public static registerVRM1Extensions(nodeIO: NodeIO): NodeIO {
-    return nodeIO.registerExtensions([
+  public static getVRM1NodeIO(): NodeIO {
+    const nodeIO = new NodeIO();
+    nodeIO.registerExtensions([
       VRMC_vrm,
       VRMC_materials_mtoon,
       VRMC_springBone,
       KHRMaterialsUnlit,
       KHRTextureTransform,
     ]);
+
+    return nodeIO;
   }
 
   public static async writeVRMGLTFDocumentToFile(
     document: Document,
     fileName: string
   ): Promise<File> {
-    const nodeIO = new NodeIO();
     if (GLTFTransformExtensionUtils.isVRM0Document(document)) {
-      GLTFTransformExtensionUtils.registerVRM0Extensions(nodeIO);
+      return new File(
+        [
+          await GLTFTransformExtensionUtils.getVRM0NodeIO().writeBinary(
+            document
+          ),
+        ],
+        `${fileName}`
+      );
     } else {
-      GLTFTransformExtensionUtils.registerVRM1Extensions(nodeIO);
+      return new File(
+        [
+          await GLTFTransformExtensionUtils.getVRM1NodeIO().writeBinary(
+            document
+          ),
+        ],
+        `${fileName}`
+      );
     }
-
-    const fileBuffer = await nodeIO.writeBinary(document);
-    const file = new File([fileBuffer], `${fileName}.vrm`);
-
-    return file;
   }
 
   public static async readVRMGLTFDocumentFromFile(
     file: File
   ): Promise<Document> {
-    const vrm0NodeIO = GLTFTransformExtensionUtils.registerVRM0Extensions(
-      new NodeIO()
-    );
     const arrayBuffer = new Uint8Array(await file.arrayBuffer());
-    let document = await vrm0NodeIO.readBinary(arrayBuffer);
-
-    if (GLTFTransformExtensionUtils.isVRM0Document(document)) {
-      const vrm1NodeIO = GLTFTransformExtensionUtils.registerVRM1Extensions(
-        new NodeIO()
-      );
-
-      document = await vrm1NodeIO.readBinary(arrayBuffer);
+    let document = await GLTFTransformExtensionUtils.getVRM0NodeIO().readBinary(
+      arrayBuffer
+    );
+    const documentIsVRM0 = GLTFTransformExtensionUtils.isVRM0Document(document);
+    if (!documentIsVRM0) {
+      document =
+        await await GLTFTransformExtensionUtils.getVRM1NodeIO().readBinary(
+          arrayBuffer
+        );
     }
-
     return document;
   }
 }

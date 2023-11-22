@@ -203,7 +203,7 @@ export default class VRM0_vrm extends Extension {
       vrmDef.specVersion = "0.0";
 
       if (vrm.getExporterVersion()) {
-        vrmDef.exporterVersion = vrm.getExporterVersion();
+        vrmDef.exporterVersion = "VRM-Sparks 0.0";
       }
 
       if (vrm.getMeta()) {

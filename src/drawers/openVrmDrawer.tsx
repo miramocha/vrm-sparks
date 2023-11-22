@@ -3,6 +3,7 @@ import { Upload, Space, Card, Drawer } from "antd";
 import * as Icon from "@ant-design/icons";
 import { AppContext } from "../providers/appContextProvider.tsx";
 import { LoaderUtils } from "../utils/LoaderUtils.ts";
+import { GLTFTransformExtensionUtils } from "../utils/GLTFTransformExtensionUtils.ts";
 
 export default function OpenVrmDrawer({
   open = false,
@@ -24,7 +25,8 @@ export default function OpenVrmDrawer({
     const newVRMGLTF = await LoaderUtils.loadThreeVRM(file);
     appContext.vrmGLTF = newVRMGLTF;
 
-    const document = await LoaderUtils.readVRMGLTFDocumentFromFile(file);
+    const document =
+      await GLTFTransformExtensionUtils.readVRMGLTFDocumentFromFile(file);
     appContext.gltfDocument = document;
 
     return false;

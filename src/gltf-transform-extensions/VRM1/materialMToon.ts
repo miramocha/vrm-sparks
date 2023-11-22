@@ -2,19 +2,17 @@ import {
   ExtensionProperty,
   IProperty,
   PropertyType,
+  Texture,
+  TextureInfo,
 } from "@gltf-transform/core";
-import {
-  VRMCMaterialsMToon,
-  // MaterialsMToonTextureInfo,
-  // MaterialsMToonShadingShiftTextureInfo,
-  // MaterialsMToonOutlineWidthMode,
-} from "@pixiv/types-vrmc-materials-mtoon-1.0";
+import { VRMCMaterialsMToon } from "@pixiv/types-vrmc-materials-mtoon-1.0";
 import { VRMC_MATERIALS_MTOON } from "./constants.ts";
 
 const NAME = VRMC_MATERIALS_MTOON;
 
 interface IMaterialMToon extends IProperty {
   serializedVRMCMaterialsMToon: string;
+
   // specVersion: "1.0" | "1.0-beta";
   // transparentWithZWrite?: boolean;
   // renderQueueOffsetNumber?: number;
@@ -22,28 +20,34 @@ interface IMaterialMToon extends IProperty {
   //  * Lighting
   //  */
   // shadeColorFactor?: number[];
-  // shadeMultiplyTexture?: MaterialsMToonTextureInfo;
+  shadeMultiplyTexture: Texture;
+  shadeMultiplyTextureInfo: TextureInfo;
   // shadingShiftFactor?: number;
-  // shadingShiftTexture?: MaterialsMToonShadingShiftTextureInfo;
+  shadingShiftTexture: Texture;
+  shadingShiftTextureInfo: TextureInfo;
   // shadingToonyFactor?: number;
   // giEqualizationFactor?: number;
   // matcapFactor?: number[];
   // // MatCap
-  // matcapTexture?: MaterialsMToonTextureInfo;
+  matcapTexture: Texture;
+  matcapTextureInfo: TextureInfo;
   // // Rim
   // parametricRimColorFactor?: number[];
-  // rimMultiplyTexture?: MaterialsMToonTextureInfo;
+  rimMultiplyTexture: Texture;
+  rimMultiplyTextureInfo: TextureInfo;
   // rimLightingMixFactor?: number;
   // parametricRimFresnelPowerFactor?: number;
   // parametricRimLiftFactor?: number;
   // // Outline
   // outlineWidthMode?: MaterialsMToonOutlineWidthMode;
   // outlineWidthFactor?: number;
-  // outlineWidthMultiplyTexture?: MaterialsMToonTextureInfo;
+  outlineWidthMultiplyTexture: Texture;
+  outlineWidthMultiplyTextureInfo: Texture;
   // outlineColorFactor?: number[];
   // outlineLightingMixFactor?: number;
   // // Animation
-  // uvAnimationMaskTexture?: MaterialsMToonTextureInfo;
+  uvAnimationMaskTexture: Texture;
+  uvAnimationMaskTextureInfo: TextureInfo;
   // uvAnimationScrollXSpeedFactor?: number;
   // uvAnimationScrollYSpeedFactor?: number;
   // uvAnimationRotationSpeedFactor?: number;
@@ -66,12 +70,10 @@ export default class MaterialMToon extends ExtensionProperty<IMaterialMToon> {
     this.parentTypes = [PropertyType.MATERIAL];
   }
 
-  public setSerializedVRMCMaterialsMToon(
-    serializedVRMCMaterialsMToon: string
-  ): this {
+  public setVRMCMaterialsMToon(vrmcMaterialsMToon: VRMCMaterialsMToon): this {
     return this.set(
       "serializedVRMCMaterialsMToon",
-      serializedVRMCMaterialsMToon
+      JSON.stringify(vrmcMaterialsMToon)
     );
   }
 

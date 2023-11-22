@@ -1,6 +1,5 @@
 import { useContext } from "react";
 import { Drawer, Button } from "antd";
-import { NodeIO } from "@gltf-transform/core";
 import { AppContext } from "../providers/appContextProvider.tsx";
 import { GLTFTransformExtensionUtils } from "../utils/GLTFTransformExtensionUtils.ts";
 
