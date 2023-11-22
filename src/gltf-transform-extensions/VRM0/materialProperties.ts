@@ -14,18 +14,6 @@ const { R, G, B, A } = TextureChannel;
 const NAME = VRM0;
 
 interface IMaterialProperties extends IProperty {
-  // floatProperties: { string: number };
-  // keywordMap: { string: string | boolean | number };
-  // name: string;
-  // renderQueue: number;
-  // shader: string;
-  // tagMap: { string: string | boolean | number };
-  // textureProperties: {
-  //   string: number;
-  // };
-  // vectorProperties: {
-  //   string: vec4;
-  // };
   mainTexture: Texture;
   mainTextureInfo: TextureInfo;
   shadeTexture: Texture;
@@ -56,21 +44,6 @@ export default class MaterialProperties extends ExtensionProperty<IMaterialPrope
 
   protected getDefaults(): Nullable<IMaterialProperties> {
     return Object.assign(super.getDefaults() as IProperty, {
-      // floatProperties: { _ZWrite: 1 },
-      // keywordMap: {},
-      // name: "VRM0 MTOON MATERIAL",
-      // renderQueue: 5000,
-      // shader: "VRM/MToon",
-      // tagMap: {},
-      // textureProperties: {},
-      // vectorProperties: {},
-
-      // _MainTex: 0;
-      // _ShadeTexture: 0;
-      // _BumpMap: 1;
-      // _EmissionMap: 0;
-      // _SphereAdd: 2;
-      // _RimTexture: 2;
       mainTexture: null,
       mainTextureInfo: new TextureInfo(this.graph, "mainTextureInfo"),
       shadeTexture: null,

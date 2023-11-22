@@ -1,7 +1,6 @@
 import { useContext, createContext, ReactElement, useState } from "react";
 import { GLTF } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { VRM as ThreeVRM, VRMUtils } from "@pixiv/three-vrm";
-// import VRM from "../gltf-transform-extensions/VRM0/VRM.ts";
 import { Document as GLTFDocument, NodeIO } from "@gltf-transform/core";
 import { AnimationMixer } from "three";
 import { LoaderUtils } from "../utils/LoaderUtils.ts";
@@ -53,7 +52,6 @@ export class AppContextController {
 
       const fileBuffer = await nodeIO.writeBinary(gltfDocument);
       const file = new File([fileBuffer], "exportedVrm.vrm");
-      console.log("RE-READING DOCUMENT FROM FILE", file);
       this.gltfDocument = await LoaderUtils.readVRMGLTFDocument(file);
 
       const link = document.createElement("a");
@@ -63,7 +61,6 @@ export class AppContextController {
       link.download = file.name;
       link.click();
       document.body.removeChild(link);
-      console.log("RE-LOADING DOCUMENT FROM FILE", file);
       this.vrmGLTF = await LoaderUtils.loadThreeVRM(file);
 
       return file;
@@ -100,15 +97,12 @@ export class AppContextController {
   }
   set vrmGLTF(vrmGLTF: GLTF) {
     if (this.vrmGLTF) {
-      console.log("DISPOSING GLTF", vrmGLTF.userData.vrm);
       VRMUtils.deepDispose(this.vrmGLTF.scene);
     }
 
-    console.log("SETTING GLTF", vrmGLTF);
-
-    if (vrmGLTF && vrmGLTF?.userData.vrm) {
-      // VRMUtils.removeUnnecessaryVertices(vrmGLTF.scene);
-      // VRMUtils.removeUnnecessaryJoints(vrmGLTF.scene);
+    if (vrmGLTF?.userData.vrm) {
+      VRMUtils.removeUnnecessaryVertices(vrmGLTF.scene!);
+      VRMUtils.removeUnnecessaryJoints(vrmGLTF.scene!);
 
       const vrm: ThreeVRM = vrmGLTF.userData.vrm;
 
@@ -116,7 +110,7 @@ export class AppContextController {
     }
 
     if (this.setVRMGLTF) {
-      this.setVRMGLTF(vrmGLTF);
+      this.setVRMGLTF(vrmGLTF!);
     }
   }
 

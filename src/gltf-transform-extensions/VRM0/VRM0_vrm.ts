@@ -22,15 +22,6 @@ export default class VRM0_vrm extends Extension {
   public read(context: ReaderContext): this {
     const jsonDoc = context.jsonDoc;
 
-    console.log("READ TEXTURES", context.jsonDoc.json.textures);
-    console.log("READ SAMPLERS", context.jsonDoc.json.samplers);
-    console.log("READ MATERIALS", context.jsonDoc.json.materials);
-
-    console.log(
-      "texture linking to only root",
-      context.textures.filter((texture) => texture.listParents().length === 1)
-    );
-
     if (jsonDoc.json.extensions && jsonDoc.json.extensions[NAME]) {
       const vrmDef = jsonDoc.json.extensions[NAME] as VRM0Type.VRM;
       const textureDefs = jsonDoc.json.textures || [];
@@ -72,7 +63,7 @@ export default class VRM0_vrm extends Extension {
       if (vrmDef.secondaryAnimation) {
         vrm.setSecondaryAnimation(vrmDef.secondaryAnimation);
       }
-      console.log("SETTING UP MATERIAL PROPS");
+
       if (vrmDef.materialProperties) {
         vrm.setMaterialProperties(vrmDef.materialProperties);
 
@@ -196,8 +187,6 @@ export default class VRM0_vrm extends Extension {
       }
     }
 
-    console.log("======================");
-
     return this;
   }
 
@@ -205,10 +194,6 @@ export default class VRM0_vrm extends Extension {
     const jsonDoc = context.jsonDoc;
 
     const vrm = this.document.getRoot().getExtension<VRM>(NAME);
-
-    console.log("WRITE TEXTURES", context.jsonDoc.json.textures);
-    console.log("WRITE SAMPLERS", context.jsonDoc.json.samplers);
-    console.log("WRITE MATERIAL DEFS", context.jsonDoc.json.materials);
 
     if (vrm) {
       const vrmDef = {} as VRM0Type.VRM;

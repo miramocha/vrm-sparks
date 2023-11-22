@@ -77,9 +77,7 @@ export default function TextureBrowserDrawer({
         showRemoveIcon: false,
         showDownloadIcon: true,
       }}
-      onPreview={() => {
-        console.log("previewing");
-      }}
+      onPreview={() => {}}
     />
   ) : (
     <Empty description="No VRM Loaded" />
