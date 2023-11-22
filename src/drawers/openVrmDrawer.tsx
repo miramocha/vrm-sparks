@@ -24,7 +24,7 @@ export default function OpenVrmDrawer({
     const newVRMGLTF = await LoaderUtils.loadThreeVRM(file);
     appContext.vrmGLTF = newVRMGLTF;
 
-    const document = await LoaderUtils.readVRMGLTFDocument(file);
+    const document = await LoaderUtils.readVRMGLTFDocumentFromFile(file);
     appContext.gltfDocument = document;
 
     return false;

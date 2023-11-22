@@ -2,6 +2,7 @@ import { useContext } from "react";
 import { Drawer, Button } from "antd";
 import { NodeIO } from "@gltf-transform/core";
 import { AppContext } from "../providers/appContextProvider.tsx";
+import { GLTFTransformExtensionUtils } from "../utils/GLTFTransformExtensionUtils.ts";
 
 export default function ExportVrmDrawer({
   open = false,
@@ -20,9 +21,10 @@ export default function ExportVrmDrawer({
 
   const handleExportButtonClick = async () => {
     if (appContext.gltfDocument) {
-      const nodeIo = new NodeIO();
-      const fileBuffer = await nodeIo.writeBinary(appContext.gltfDocument);
-      const file = new File([fileBuffer], `exportedVrm_${Date.now()}.vrm`);
+      const file = await GLTFTransformExtensionUtils.writeVRMGLTFDocumentToFile(
+        appContext.gltfDocument,
+        `exportedVrm_${Date.now()}.vrm`
+      );
 
       const link = document.createElement("a");
       link.style.display = "none";

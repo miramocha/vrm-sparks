@@ -1,15 +1,10 @@
 import { useContext, createContext, ReactElement, useState } from "react";
 import { GLTF } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { VRM as ThreeVRM, VRMUtils } from "@pixiv/three-vrm";
-import { Document as GLTFDocument, NodeIO } from "@gltf-transform/core";
+import { Document as GLTFDocument } from "@gltf-transform/core";
 import { AnimationMixer } from "three";
 import { LoaderUtils } from "../utils/LoaderUtils.ts";
 import { GLTFTransformExtensionUtils } from "../utils/GLTFTransformExtensionUtils.ts";
-import VRM0_vrm from "../gltf-transform-extensions/VRM0/VRM0_vrm.ts";
-import {
-  KHRMaterialsUnlit,
-  KHRTextureTransform,
-} from "@gltf-transform/extensions";
 import VRM from "../gltf-transform-extensions/VRM0/VRM.ts";
 
 type GetContextState<T> = () => T | null;
@@ -40,27 +35,10 @@ export class AppContextController {
 
       vrmExtension.setMaterialProperties(materialProperties);
 
-      const nodeIO = new NodeIO();
-
-      if (GLTFTransformExtensionUtils.isVRM0Document(gltfDocument)) {
-        nodeIO.registerExtensions([
-          KHRMaterialsUnlit,
-          KHRTextureTransform,
-          VRM0_vrm,
-        ]);
-      }
-
-      const fileBuffer = await nodeIO.writeBinary(gltfDocument);
-      const file = new File([fileBuffer], "exportedVrm.vrm");
-      this.gltfDocument = await LoaderUtils.readVRMGLTFDocument(file);
-
-      const link = document.createElement("a");
-      link.style.display = "none";
-      document.body.appendChild(link);
-      link.href = URL.createObjectURL(file);
-      link.download = file.name;
-      link.click();
-      document.body.removeChild(link);
+      const file = await GLTFTransformExtensionUtils.writeVRMGLTFDocumentToFile(
+        gltfDocument,
+        "rebuiltVRM.vrm"
+      );
       this.vrmGLTF = await LoaderUtils.loadThreeVRM(file);
 
       return file;
@@ -101,8 +79,8 @@ export class AppContextController {
     }
 
     if (vrmGLTF?.userData.vrm) {
-      VRMUtils.removeUnnecessaryVertices(vrmGLTF.scene!);
-      VRMUtils.removeUnnecessaryJoints(vrmGLTF.scene!);
+      // VRMUtils.removeUnnecessaryVertices(vrmGLTF.scene!);
+      // VRMUtils.removeUnnecessaryJoints(vrmGLTF.scene!);
 
       const vrm: ThreeVRM = vrmGLTF.userData.vrm;
 
