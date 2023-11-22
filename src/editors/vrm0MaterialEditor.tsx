@@ -1,12 +1,19 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { ReactNode, useContext, useEffect, useState } from "react";
-import { Avatar, Button, Collapse, List, Select } from "antd";
+import {
+  Avatar,
+  // Avatar,
+  Button,
+  Collapse,
+  ColorPicker,
+  List,
+  Select,
+  Space,
+} from "antd";
 import { AppContext } from "../providers/appContextProvider.tsx";
 import { GLTFTransformExtensionUtils } from "../utils/GLTFTransformExtensionUtils.ts";
-import * as VRM0Type from "@pixiv/types-vrm-0.0";
-
-// import * as VRM0Type from "@pixiv/types-vrm-0.0";
-
-// import { Material as VRM0Material } from "@pixiv/types-vrm-0.0";
+import { Color } from "antd/es/color-picker/color.js";
+import MaterialProperties from "../gltf-transform-extensions/VRM0/materialProperties.ts";
 
 type SelectOptions = { label?: string; value: number };
 
@@ -16,36 +23,26 @@ export default function VRM0MaterialEditor({
   setSaveButton?: React.Dispatch<ReactNode>;
 }) {
   const appContext = useContext(AppContext);
-  // const [materialProperties, setMaterialProperties] = useState<
-  //   VRM0Type.Material[]
-  // >([]);
+
+  const [materialPropertiesList, setMaterialPropertiesList] = useState<
+    (MaterialProperties | null)[]
+  >([]);
+  const [currentMaterialProperties, setCurrentMaterialProperties] =
+    useState<MaterialProperties | null>(null);
+  const [currentMaterialPropertiesIndex, setCurrentMaterialPropertiesIndex] =
+    useState<number | null>(null);
+
   const [materialOptions, setMaterialOptions] = useState<SelectOptions[]>([]);
-  const [currentMaterialIndex, setCurrentMaterialIndex] = useState<
-    number | null
-  >(null);
-  const [materialProperties, setMaterialProperties] =
-    useState<VRM0Type.Material | null>(null);
-  const [textureList, setTextureList] = useState<ReactNode | null>(null);
+
+  type TextureItem = {
+    slot: string;
+    name?: string;
+    url?: string;
+    mimeType?: string;
+  };
+  const [textureItems, setTextureItems] = useState<TextureItem[]>([]);
 
   useEffect(() => {
-    if (appContext.gltfDocument) {
-      const materialProperties =
-        GLTFTransformExtensionUtils.getVRM0Extension(
-          appContext.gltfDocument
-        )?.getMaterialProperties() || [];
-
-      setMaterialOptions(
-        materialProperties.map(
-          (materialProperties: VRM0Type.Material, index: number) => ({
-            label: materialProperties.name,
-            value: index,
-          })
-        )
-      );
-
-      setCurrentMaterialIndex(materialProperties?.length > 1 ? 0 : null);
-    }
-
     if (setSaveButton) {
       const handleSaveButtonClick = () => {
         appContext.reloadGLTFDocument();
@@ -57,92 +54,109 @@ export default function VRM0MaterialEditor({
         </Button>
       );
     }
-  }, [appContext.gltfDocument, appContext, setSaveButton]);
+  }, [setSaveButton, appContext]);
 
   useEffect(() => {
-    const gltfDocument = appContext.gltfDocument;
-    if (gltfDocument && currentMaterialIndex !== null) {
-      const materialProperties =
-        GLTFTransformExtensionUtils.getVRM0Extension(
-          gltfDocument
-        )?.getMaterialProperties() || [];
+    const newMaterialPropertiesList =
+      GLTFTransformExtensionUtils.listVRM0MaterialProperties(
+        appContext.gltfDocument!
+      );
+    setMaterialPropertiesList(newMaterialPropertiesList);
+  }, [appContext]);
 
-      const currentMaterialProperties =
-        materialProperties[currentMaterialIndex] || null;
-      setMaterialProperties(currentMaterialProperties);
+  useEffect(() => {
+    // setCurrentMaterialProperties(materialPropertiesList[0!]);
+    setCurrentMaterialPropertiesIndex(
+      materialPropertiesList?.length > 0 ? 0 : null
+    );
+    setMaterialOptions(
+      materialPropertiesList?.map((materialProperties, index) => ({
+        value: index,
+        label: materialProperties?.getName() || "(No Name)",
+      })) || []
+    );
+  }, [materialPropertiesList]);
 
-      const textureItems: Array<{
-        slot: string;
-        name: string;
-        url: string | null;
-        textureIndex: number;
-      }> = [];
+  useEffect(() => {
+    setCurrentMaterialProperties(
+      materialPropertiesList[currentMaterialPropertiesIndex!]
+    );
+  }, [currentMaterialPropertiesIndex, materialPropertiesList]);
 
-      let textureList = null;
-      if (currentMaterialProperties) {
-        Object.keys(currentMaterialProperties.textureProperties || {}).forEach(
-          (key) => {
-            if (
-              currentMaterialProperties?.textureProperties &&
-              currentMaterialProperties.textureProperties[key] &&
-              gltfDocument.getRoot().listTextures()
-            ) {
-              const textureIndex =
-                currentMaterialProperties.textureProperties[key];
+  useEffect(() => {
+    if (currentMaterialProperties) {
+      const newTextureItems: TextureItem[] = [];
 
-              const texture = gltfDocument.getRoot().listTextures()[
-                textureIndex
-              ];
+      if (currentMaterialProperties?.getMainTexture()) {
+        const fileBuffer = currentMaterialProperties
+          .getMainTexture()
+          ?.getImage();
 
-              const imageBuffer = texture.getImage();
-              let url = null;
-
-              if (imageBuffer) {
-                url = URL.createObjectURL(new Blob([imageBuffer]));
-              }
-
-              textureItems.push({
-                slot: key,
-                name: texture.getName(),
-                url,
-                textureIndex,
-              });
-            }
-          }
-        );
-
-        textureList = (
-          <List
-            itemLayout="horizontal"
-            dataSource={textureItems}
-            renderItem={(textureItem) => (
-              <List.Item key={textureItem.slot}>
-                <List.Item.Meta
-                  avatar={
-                    <Avatar shape="square" size="large" src={textureItem.url} />
-                  }
-                  title={<span>{textureItem.slot}</span>}
-                  description={`${textureItem.textureIndex} ${textureItem.name}`}
-                />
-              </List.Item>
-            )}
-          />
-        );
+        newTextureItems.push({
+          slot: "Main",
+          name: currentMaterialProperties.getMainTexture()?.getName(),
+          url: URL.createObjectURL(new Blob([fileBuffer!])),
+          mimeType: currentMaterialProperties.getMainTexture()?.getMimeType(),
+        });
+        newTextureItems.push({
+          slot: "Shade",
+          name: currentMaterialProperties.getShadeTexture()?.getName(),
+          url: URL.createObjectURL(new Blob([fileBuffer!])),
+          mimeType: currentMaterialProperties.getShadeTexture()?.getMimeType(),
+        });
       }
-      setTextureList(textureList);
+
+      setTextureItems(newTextureItems);
     }
-  }, [appContext.gltfDocument, currentMaterialIndex]);
+  }, [currentMaterialProperties]);
 
   const accordionItems = [
     {
       key: "texture",
       label: "Textures",
-      children: textureList,
+      children: (
+        <List
+          itemLayout="horizontal"
+          dataSource={textureItems}
+          renderItem={(textureItem) => (
+            <List.Item key={textureItem.slot}>
+              <List.Item.Meta
+                avatar={
+                  <Avatar shape="square" size="large" src={textureItem.url} />
+                }
+                title={<span>{textureItem.slot}</span>}
+                description={`${textureItem.name} (${textureItem.mimeType})`}
+              />
+            </List.Item>
+          )}
+        />
+      ),
     },
     {
       key: "base",
       label: "Base",
-      children: <div>TBD</div>,
+      children: (
+        <Space direction="vertical">
+          <ColorPicker
+            defaultFormat="rgb"
+            showText={(color: Color) => (
+              <span>Main Color {color.toRgbString()}</span>
+            )}
+          />
+          <ColorPicker
+            defaultFormat="rgb"
+            showText={(color: Color) => (
+              <span>Shade Color {color.toRgbString()}</span>
+            )}
+          />
+          <ColorPicker
+            defaultFormat="rgb"
+            showText={(color: Color) => (
+              <span>Shade Color {color.toRgbString()}</span>
+            )}
+          />
+        </Space>
+      ),
     },
     {
       key: "shade",
@@ -164,26 +178,21 @@ export default function VRM0MaterialEditor({
       label: "Animation",
       children: <div>TBD</div>,
     },
-    {
-      key: "json",
-      label: "JSON",
-      children: <code>{JSON.stringify(materialProperties, null, 2)}</code>,
-    },
   ];
 
   return (
     <>
-      VRM0
+      {/* VRM0 - {currentMaterialProperties?.getName()} */}
       <Select
         options={materialOptions}
-        value={currentMaterialIndex}
-        onChange={(value) => {
-          setCurrentMaterialIndex(value);
+        value={currentMaterialPropertiesIndex}
+        onChange={(index) => {
+          setCurrentMaterialPropertiesIndex(index);
         }}
       />
       <Collapse
         accordion
-        defaultActiveKey={["textures"]}
+        defaultActiveKey={"textures"}
         items={accordionItems}
       />
     </>

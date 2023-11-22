@@ -4,14 +4,18 @@ import * as VRM0_CONSTANTS from "../gltf-transform-extensions/VRM0/constants.ts"
 import VRM from "../gltf-transform-extensions/VRM0/VRM.ts";
 // VRM
 import * as VRM_CONSTANTS from "../gltf-transform-extensions/VRM1/constants.ts";
-import MaterialMToon from "../gltf-transform-extensions/VRM1/materialMToon.ts";
-import VRM0_vrm from "../gltf-transform-extensions/VRM0/VRM0_vrm.ts";
+
 import {
   KHRMaterialsUnlit,
   KHRTextureTransform,
 } from "@gltf-transform/extensions";
+
+import VRM0_vrm from "../gltf-transform-extensions/VRM0/VRM0_vrm.ts";
+import MaterialProperties from "../gltf-transform-extensions/VRM0/materialProperties.ts";
+
 import VRMC_vrm from "../gltf-transform-extensions/VRM1/VRMC_vrm.ts";
 import VRMC_materials_mtoon from "../gltf-transform-extensions/VRM1/VRMC_materials_mtoon.ts";
+import MaterialMToon from "../gltf-transform-extensions/VRM1/materialMToon.ts";
 import VRMC_springBone from "../gltf-transform-extensions/VRM1/VRMC_springBone.ts";
 
 export class GLTFTransformExtensionUtils {
@@ -23,12 +27,37 @@ export class GLTFTransformExtensionUtils {
   }
 
   public static getVRM0Extension(document: Document): VRM | null {
-    const vrm = document.getRoot().getExtension<VRM>(VRM0_CONSTANTS.VRM0);
-
-    return vrm;
+    return document.getRoot().getExtension<VRM>(VRM0_CONSTANTS.VRM0);
   }
 
-  public static getVRMMaterialExtension(
+  public static getVRM0MaterialPropertiesByMaterialIndex(
+    document: Document,
+    index: number
+  ): MaterialProperties | null {
+    if (
+      document.getRoot().listMaterials &&
+      document.getRoot().listMaterials()[index]
+    ) {
+      return document
+        .getRoot()
+        .listMaterials()
+        [index].getExtension<MaterialProperties>(VRM0_CONSTANTS.VRM0);
+    }
+    return null;
+  }
+
+  public static listVRM0MaterialProperties(
+    document: Document
+  ): (MaterialProperties | null)[] {
+    return document
+      .getRoot()
+      .listMaterials()
+      .map((material) =>
+        material.getExtension<MaterialProperties>(VRM0_CONSTANTS.VRM0)
+      );
+  }
+
+  public static getVRM1MaterialExtension(
     material: Material
   ): MaterialMToon | null {
     const materialMToon = material.getExtension<MaterialMToon>(

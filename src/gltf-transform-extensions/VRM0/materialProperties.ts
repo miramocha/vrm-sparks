@@ -6,6 +6,7 @@ import {
   Texture,
   TextureInfo,
   TextureChannel,
+  vec4,
 } from "@gltf-transform/core";
 import { VRM0 } from "./constants.ts";
 
@@ -13,19 +14,44 @@ const { R, G, B, A } = TextureChannel;
 
 const NAME = VRM0;
 
+// floatProperties?: {
+//     [key: string]: any;
+// };
+// keywordMap?: {
+//     [key: string]: any;
+// };
+// name?: string;
+// renderQueue?: number;
+// shader?: string;
+// tagMap?: {
+//     [key: string]: any;
+// };
+// textureProperties?: {
+//     [key: string]: any;
+// };
+// vectorProperties?: {
+//     [key: string]: any;
+// };
+
 interface IMaterialProperties extends IProperty {
+  name: string;
+  mainColor: vec4;
   mainTexture: Texture;
   mainTextureInfo: TextureInfo;
+  shadeColor: vec4;
   shadeTexture: Texture;
   shadeTextureInfo: TextureInfo;
   bumpMapTexture: Texture;
   bumpMapTextureInfo: TextureInfo;
+  emissionColor: vec4;
   emissionMapTexture: Texture;
   emissionMapTextureInfo: TextureInfo;
   sphereAddTexture: Texture;
   sphereAddTextureInfo: TextureInfo;
+  rimColor: vec4;
   rimTexture: Texture;
   rimTextureInfo: TextureInfo;
+  outlineColor: vec4;
   outlineWidthTexture: Texture;
   outlineWidthTextureInfo: TextureInfo;
 }
@@ -44,12 +70,15 @@ export default class MaterialProperties extends ExtensionProperty<IMaterialPrope
 
   protected getDefaults(): Nullable<IMaterialProperties> {
     return Object.assign(super.getDefaults() as IProperty, {
+      mainColor: [1, 1, 1, 1] as vec4,
       mainTexture: null,
       mainTextureInfo: new TextureInfo(this.graph, "mainTextureInfo"),
+      shadeColor: [1, 1, 1, 1] as vec4,
       shadeTexture: null,
       shadeTextureInfo: new TextureInfo(this.graph, "shadeTextureInfo"),
       bumpMapTexture: null,
       bumpMapTextureInfo: new TextureInfo(this.graph, "bumpMapTextureInfo"),
+      emissionColor: [0, 0, 0, 1] as vec4,
       emissionMapTexture: null,
       emissionMapTextureInfo: new TextureInfo(
         this.graph,
@@ -57,8 +86,10 @@ export default class MaterialProperties extends ExtensionProperty<IMaterialPrope
       ),
       sphereAddTexture: null,
       sphereAddTextureInfo: new TextureInfo(this.graph, "sphereAddTextureInfo"),
+      rimColor: [1, 1, 1, 1] as vec4,
       rimTexture: null,
       rimTextureInfo: new TextureInfo(this.graph, "rimTextureInfo"),
+      outlineColor: [0, 0, 0, 1] as vec4,
       outlineWidthTexture: null,
       outlineWidthTextureInfo: new TextureInfo(
         this.graph,
@@ -67,6 +98,19 @@ export default class MaterialProperties extends ExtensionProperty<IMaterialPrope
     });
   }
 
+  public setName(name: string): this {
+    return this.set("name", name);
+  }
+  public getName(): string {
+    return this.get("name");
+  }
+
+  public setMainColor(rgba: vec4): this {
+    return this.set("mainColor", rgba);
+  }
+  public getMainColor(): vec4 {
+    return this.get("mainColor");
+  }
   public getMainTextureInfo(): TextureInfo | null {
     return this.getRef("mainTexture") ? this.getRef("mainTextureInfo") : null;
   }
@@ -80,6 +124,12 @@ export default class MaterialProperties extends ExtensionProperty<IMaterialPrope
     });
   }
 
+  public setShadeColor(rgba: vec4): this {
+    return this.set("shadeColor", rgba);
+  }
+  public getShadeColor(): vec4 {
+    return this.get("shadeColor");
+  }
   public getShadeTextureInfo(): TextureInfo | null {
     return this.getRef("shadeTexture") ? this.getRef("shadeTextureInfo") : null;
   }
@@ -108,6 +158,12 @@ export default class MaterialProperties extends ExtensionProperty<IMaterialPrope
     });
   }
 
+  public setEmissionColor(rgba: vec4): this {
+    return this.set("emissionColor", rgba);
+  }
+  public getEmissionColor(): vec4 {
+    return this.get("emissionColor");
+  }
   public getEmissionMapTextureInfo(): TextureInfo | null {
     return this.getRef("emissionMapTexture")
       ? this.getRef("emissionMapTextureInfo")
@@ -138,6 +194,12 @@ export default class MaterialProperties extends ExtensionProperty<IMaterialPrope
     });
   }
 
+  public setRimColor(rgba: vec4): this {
+    return this.set("rimColor", rgba);
+  }
+  public getRimColor(): vec4 {
+    return this.get("rimColor");
+  }
   public getRimTextureInfo(): TextureInfo | null {
     return this.getRef("rimTexture") ? this.getRef("rimTextureInfo") : null;
   }
@@ -151,6 +213,12 @@ export default class MaterialProperties extends ExtensionProperty<IMaterialPrope
     });
   }
 
+  public setOutlineColor(rgba: vec4): this {
+    return this.set("outlineColor", rgba);
+  }
+  public getOutlineColor(): vec4 {
+    return this.get("outlineColor");
+  }
   public getOutlineWidthTextureInfo(): TextureInfo | null {
     return this.getRef("outlineWidthTexture")
       ? this.getRef("outlineWidthTextureInfo")
