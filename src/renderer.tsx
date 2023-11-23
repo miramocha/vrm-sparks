@@ -1,17 +1,15 @@
-import React, { useRef, useContext, useState } from "react";
-import { AnimationMixer } from "three";
+import { useRef, useContext } from "react";
 import { Canvas, useLoader } from "@react-three/fiber";
-import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { CameraControls } from "@react-three/drei";
 import { VRMLoaderPlugin } from "@pixiv/three-vrm";
-import { AppContext } from "./providers/appContextProvider.tsx";
+import { EditorContext } from "./providers/editorContextProvider.tsx";
 import VrmModel from "./vrmModel.tsx";
 
 export default function ThreeJSRenderer() {
-  const appContext = useContext(AppContext);
+  const editorContext = useContext(EditorContext);
 
   const cameraControlRef = useRef<CameraControls | null>(null);
-  //   appContext.getCameraControls = () => cameraControlRef?.current;
 
   const defaultVRMGLTF = useLoader(
     GLTFLoader,
@@ -22,15 +20,6 @@ export default function ThreeJSRenderer() {
       });
     }
   );
-  const [vrmGLTF, setVRMGLTF] = useState(defaultVRMGLTF);
-  appContext.getVRMGLTF = () => vrmGLTF;
-  appContext.setVRMGLTF = setVRMGLTF as React.Dispatch<GLTF>;
-
-  const [mainAnimationMixer, setMainAnimationMixer] = useState(
-    new AnimationMixer(defaultVRMGLTF.userData.vrm.scene)
-  );
-  appContext.getMainAnimationMixer = () => mainAnimationMixer;
-  appContext.setMainAnimationMixer = setMainAnimationMixer;
 
   return (
     <Canvas style={{ backgroundColor: "black" }}>
@@ -39,11 +28,11 @@ export default function ThreeJSRenderer() {
       <pointLight distance={1} decay={6} position={[0, 0.5, -1.5]} />
       <gridHelper />
       <axesHelper />
-      {vrmGLTF?.userData ? (
-        <>
-          <VrmModel vrm={vrmGLTF.userData.vrm} mixer={mainAnimationMixer} />
-        </>
-      ) : null}
+      {editorContext.threeGLTF ? (
+        <VrmModel vrm={editorContext.threeGLTF.userData.vrm} />
+      ) : (
+        <VrmModel vrm={defaultVRMGLTF.userData.vrm} />
+      )}
     </Canvas>
   );
 }

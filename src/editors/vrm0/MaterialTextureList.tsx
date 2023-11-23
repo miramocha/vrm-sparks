@@ -1,4 +1,4 @@
-import { Avatar, List } from "antd";
+import { Avatar, Empty, List } from "antd";
 
 import MaterialProperties from "../../gltf-transform-extensions/VRM0/materialProperties.ts";
 
@@ -76,7 +76,7 @@ export default function MaterialTextureList({
           )}
         />
       ) : (
-        <div>MATS</div>
+        <Empty description="No Material Selected" />
       )}
     </>
   );

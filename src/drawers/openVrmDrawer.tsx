@@ -1,9 +1,7 @@
 import { useContext } from "react";
 import { Upload, Space, Card, Drawer } from "antd";
 import * as Icon from "@ant-design/icons";
-import { AppContext } from "../providers/appContextProvider.tsx";
-import { LoaderUtils } from "../utils/LoaderUtils.ts";
-import { GLTFTransformExtensionUtils } from "../utils/GLTFTransformExtensionUtils.ts";
+import { EditorContext } from "../providers/editorContextProvider.tsx";
 
 export default function OpenVrmDrawer({
   open = false,
@@ -12,7 +10,7 @@ export default function OpenVrmDrawer({
   open: boolean;
   setOpen: React.Dispatch<boolean> | undefined;
 }) {
-  const appContext = useContext(AppContext);
+  const editorContext = useContext(EditorContext);
 
   const handleClose = () => {
     if (setOpen) {
@@ -22,12 +20,8 @@ export default function OpenVrmDrawer({
 
   const handleBeforeUpload = async (file: File) => {
     console.clear();
-    const newVRMGLTF = await LoaderUtils.loadThreeVRM(file);
-    appContext.vrmGLTF = newVRMGLTF;
-
-    const document =
-      await GLTFTransformExtensionUtils.readVRMGLTFDocumentFromFile(file);
-    appContext.gltfDocument = document;
+    editorContext.loadThreeVRMFromFile(file);
+    editorContext.readVRMGLTFDocumentFromFile(file);
 
     return false;
   };

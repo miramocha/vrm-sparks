@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
-import { VRMLoaderPlugin } from "@pixiv/three-vrm";
+import { VRMLoaderPlugin, VRMUtils } from "@pixiv/three-vrm";
 import VRM0_vrm from "../gltf-transform-extensions/VRM0/VRM0_vrm.ts";
 import {
   KHRMaterialsUnlit,
@@ -24,8 +24,10 @@ export class LoaderUtils {
         helperRoot,
       });
     });
+
     const objectUrl = URL.createObjectURL(file);
     const gltf = await loader.loadAsync(objectUrl);
+    VRMUtils.rotateVRM0(gltf.userData.vrm);
 
     return gltf;
   }

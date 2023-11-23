@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { Drawer, Button } from "antd";
-import { AppContext } from "../providers/appContextProvider.tsx";
+import { EditorContext } from "../providers/editorContextProvider.tsx";
 import { GLTFTransformExtensionUtils } from "../utils/GLTFTransformExtensionUtils.ts";
 
 export default function ExportVrmDrawer({
@@ -10,7 +10,7 @@ export default function ExportVrmDrawer({
   open: boolean;
   setOpen: React.Dispatch<boolean> | undefined;
 }) {
-  const appContext = useContext(AppContext);
+  const editorContext = useContext(EditorContext);
 
   const handleClose = () => {
     if (setOpen) {
@@ -19,9 +19,9 @@ export default function ExportVrmDrawer({
   };
 
   const handleExportButtonClick = async () => {
-    if (appContext.gltfDocument) {
+    if (editorContext.gltfDocument) {
       const file = await GLTFTransformExtensionUtils.writeVRMGLTFDocumentToFile(
-        appContext.gltfDocument,
+        editorContext.gltfDocument,
         `exportedVrm_${Date.now()}.vrm`
       );
 
@@ -43,7 +43,7 @@ export default function ExportVrmDrawer({
       open={open}
       mask={false}
       footer={
-        appContext.gltfDocument ? (
+        editorContext.gltfDocument ? (
           <Button type="primary" onClick={handleExportButtonClick} block>
             Export
           </Button>

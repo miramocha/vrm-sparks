@@ -1,9 +1,9 @@
-import { ReactNode, useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import { Drawer, Flex, Empty } from "antd";
-import { AppContext } from "../providers/appContextProvider.tsx";
-import { GLTFTransformExtensionUtils } from "../utils/GLTFTransformExtensionUtils.ts";
 import VRM0MaterialEditor from "../editors/vrm0MaterialEditor.tsx";
 import VRMMaterialEditor from "../editors/vrmMaterialEditor.tsx";
+import { EditorContext } from "../providers/editorContextProvider.tsx";
+import { GLTFTransformExtensionUtils } from "../utils/GLTFTransformExtensionUtils.ts";
 
 export default function MaterialEditorDrawer({
   open = false,
@@ -12,18 +12,7 @@ export default function MaterialEditorDrawer({
   open: boolean;
   setOpen: React.Dispatch<boolean> | undefined;
 }) {
-  const appContext = useContext(AppContext);
-  const [isEditingVRM0, setIsEditingVRM0] = useState<boolean>(true);
-  const [saveButton, setSaveButton] = useState<ReactNode | null>(null);
-
-  useEffect(() => {
-    if (appContext.gltfDocument) {
-      const updatedIsEditingVRM0 = GLTFTransformExtensionUtils.isVRM0Document(
-        appContext.gltfDocument
-      );
-      setIsEditingVRM0(updatedIsEditingVRM0);
-    }
-  }, [appContext.gltfDocument]);
+  const editorContext = useContext(EditorContext);
 
   const handleClose = () => {
     if (setOpen) {
@@ -38,15 +27,16 @@ export default function MaterialEditorDrawer({
       closable={true}
       open={open}
       mask={false}
-      footer={saveButton}
     >
       <Flex vertical gap="small">
-        {appContext.gltfDocument ? (
+        {editorContext.gltfDocument ? (
           <>
-            {isEditingVRM0 ? (
-              <VRM0MaterialEditor setSaveButton={setSaveButton} />
+            {GLTFTransformExtensionUtils.isVRM0Document(
+              editorContext.gltfDocument
+            ) ? (
+              <VRM0MaterialEditor />
             ) : (
-              <VRMMaterialEditor setSaveButton={setSaveButton} />
+              <VRMMaterialEditor />
             )}
           </>
         ) : (

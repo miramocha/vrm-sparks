@@ -4,7 +4,7 @@ import { AnimationMixer } from "three";
 
 type VrmModelProps = {
   vrm: VRM;
-  mixer: AnimationMixer;
+  mixer?: AnimationMixer;
 };
 export default function VrmModel({ vrm, mixer }: VrmModelProps) {
   let hasError = false;
@@ -26,7 +26,9 @@ export default function VrmModel({ vrm, mixer }: VrmModelProps) {
           }
         }
 
-        mixer.update(delta);
+        if (mixer) {
+          mixer.update(delta);
+        }
       }
     } catch (error) {
       hasError = true;
