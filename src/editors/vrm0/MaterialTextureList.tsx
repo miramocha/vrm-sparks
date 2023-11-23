@@ -21,9 +21,9 @@ export default function MaterialTextureList({
       ?.getImage();
     textureItems.push({
       slot: "Main",
-      name: materialProperties.getMainTexture()?.getName(),
+      name: materialProperties.getMainTexture()?.getName() || "Not set",
       url: URL.createObjectURL(new Blob([mainTextureFileBuffer!])),
-      mimeType: materialProperties.getMainTexture()?.getMimeType(),
+      mimeType: materialProperties.getMainTexture()?.getMimeType() || "Not Set",
     });
 
     const shadeTextureFileBuffer = materialProperties
@@ -31,9 +31,10 @@ export default function MaterialTextureList({
       ?.getImage();
     textureItems.push({
       slot: "Shade",
-      name: materialProperties.getShadeTexture()?.getName(),
+      name: materialProperties.getShadeTexture()?.getName() || "Not set",
       url: URL.createObjectURL(new Blob([shadeTextureFileBuffer!])),
-      mimeType: materialProperties.getShadeTexture()?.getMimeType(),
+      mimeType:
+        materialProperties.getShadeTexture()?.getMimeType() || "Not Set",
     });
 
     const normalTextureFileBuffer = materialProperties
@@ -41,9 +42,10 @@ export default function MaterialTextureList({
       ?.getImage();
     textureItems.push({
       slot: "Normal",
-      name: materialProperties.getBumpMapTexture()?.getName(),
+      name: materialProperties.getBumpMapTexture()?.getName() || "Not set",
       url: URL.createObjectURL(new Blob([normalTextureFileBuffer!])),
-      mimeType: materialProperties.getBumpMapTexture()?.getMimeType(),
+      mimeType:
+        materialProperties.getBumpMapTexture()?.getMimeType() || "Not Set",
     });
 
     const emissionTextureFileBuffer = materialProperties
@@ -51,9 +53,29 @@ export default function MaterialTextureList({
       ?.getImage();
     textureItems.push({
       slot: "Emission",
-      name: materialProperties.getEmissionMapTexture()?.getName(),
+      name: materialProperties.getEmissionMapTexture()?.getName() || "Not set",
       url: URL.createObjectURL(new Blob([emissionTextureFileBuffer!])),
-      mimeType: materialProperties.getEmissionMapTexture()?.getMimeType(),
+      mimeType:
+        materialProperties.getEmissionMapTexture()?.getMimeType() || "Not Set",
+    });
+
+    const rimTextureFileBuffer = materialProperties.getRimTexture()?.getImage();
+    textureItems.push({
+      slot: "Rim",
+      name: materialProperties.getRimTexture()?.getName() || "Not set",
+      url: URL.createObjectURL(new Blob([rimTextureFileBuffer!])),
+      mimeType: materialProperties.getRimTexture()?.getMimeType() || "Not Set",
+    });
+
+    const outlineWidthTextureFileBuffer = materialProperties
+      .getOutlineWidthTexture()
+      ?.getImage();
+    textureItems.push({
+      slot: "Outline",
+      name: materialProperties.getOutlineWidthTexture()?.getName() || "Not set",
+      url: URL.createObjectURL(new Blob([outlineWidthTextureFileBuffer!])),
+      mimeType:
+        materialProperties.getOutlineWidthTexture()?.getMimeType() || "Not Set",
     });
   }
 

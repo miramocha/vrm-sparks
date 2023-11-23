@@ -4,6 +4,7 @@ import { GLTFTransformExtensionUtils } from "../utils/GLTFTransformExtensionUtil
 import MaterialProperties from "../gltf-transform-extensions/VRM0/materialProperties.ts";
 import MaterialTextureList from "./vrm0/MaterialTextureList.tsx";
 import { EditorContext } from "../providers/editorContextProvider.tsx";
+import MaterialColorList from "./vrm0/MaterialColorList.tsx";
 
 type SelectOptions = { label?: string; value: number };
 
@@ -49,6 +50,7 @@ export default function VRM0MaterialEditor() {
             }}
           />
           <MaterialTextureList materialProperties={currentMaterialProperties} />
+          <MaterialColorList materialProperties={currentMaterialProperties} />
         </>
       ) : (
         <Empty description="No VRM Loaded" />
