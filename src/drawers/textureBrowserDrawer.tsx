@@ -1,5 +1,5 @@
 import { useCallback, useContext, useEffect, useState } from "react";
-import { Drawer, Upload, UploadFile, Card, Empty, List, Avatar } from "antd";
+import { Drawer, Upload, Card, Empty, List, Avatar } from "antd";
 import * as Icon from "@ant-design/icons";
 import { Texture } from "@gltf-transform/core";
 import { RcFile } from "antd/es/upload";

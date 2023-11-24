@@ -5,6 +5,7 @@ import {
   useMemo,
   useState,
 } from "react";
+import { VRM as ThreeVRM } from "@pixiv/three-vrm";
 import { GLTF as ThreeGLTF } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { Document as GLTFDocument } from "@gltf-transform/core";
 import { LoaderUtils } from "../utils/LoaderUtils.ts";
@@ -13,6 +14,7 @@ import { GLTFTransformExtensionUtils } from "../utils/GLTFTransformExtensionUtil
 type EditorContextController = {
   gltfDocument: GLTFDocument | null;
   threeGLTF: ThreeGLTF | null;
+  getThreeVRM: () => ThreeVRM;
   readVRMGLTFDocumentFromFile: (file: File) => Promise<void>;
   loadThreeVRMFromFile: (file: File) => Promise<void>;
   rebuildVRMGLTF: () => Promise<void>;
@@ -39,13 +41,14 @@ export default function EditorContextProvider({
   }, []);
 
   const rebuildVRMGLTF = useCallback(async () => {
-    LoaderUtils.loadThreeVRM(
+    console.log("rebuilding...");
+    loadThreeVRMFromFile(
       await GLTFTransformExtensionUtils.writeVRMGLTFDocumentToFile(
         gltfDocument!,
         "exportedVRM.vrm"
       )
     );
-  }, [gltfDocument]);
+  }, [gltfDocument, loadThreeVRMFromFile]);
 
   const contextValue = useMemo(
     () =>

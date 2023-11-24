@@ -40,8 +40,8 @@ export default class VRMC_materials_mtoon extends Extension {
           const materialIndex = context.materialIndexMap.get(material)!;
           const materialDef = jsonDoc.json.materials![materialIndex];
           materialDef.extensions = materialDef.extensions || {};
-          materialDef.extensions[NAME] =
-            materialMToonExtension.getVRMCMaterialsMToon();
+          // materialDef.extensions[NAME] =
+          //   materialMToonExtension.getVRMCMaterialsMToon();
         }
       });
 
