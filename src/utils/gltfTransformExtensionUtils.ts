@@ -33,16 +33,13 @@ export class GLTFTransformExtensionUtils {
     document: Document,
     index: number
   ): MaterialMToon | null {
-    if (
-      document.getRoot().listMaterials &&
-      document.getRoot().listMaterials()[index]
-    ) {
-      return document
-        .getRoot()
-        .listMaterials()
-        [index].getExtension<MaterialMToon>(VRM0_CONSTANTS.VRM0);
-    }
-    return null;
+    return (
+      document
+        ?.getRoot()
+        ?.listMaterials()
+        ?.at(index!)
+        ?.getExtension<MaterialMToon>(VRM0_CONSTANTS.VRM0) || null
+    );
   }
 
   public static listVRM0MaterialMToons(

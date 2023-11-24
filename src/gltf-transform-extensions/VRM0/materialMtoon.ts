@@ -18,7 +18,7 @@ const NAME = VRM0; // CHANGE THIS FOR VRM1
  * @see https://github.com/vrm-c/vrm-specification/blob/master/specification/VRMC_materials_mtoon-1.0/README.md
  */
 export interface IMaterialMToon extends IProperty {
-  specVersion: "1.0" | "1.0-beta";
+  specVersion: string;
 
   transparentWithZWrite: boolean;
   renderQueueOffsetNumber: number;
@@ -51,7 +51,7 @@ export interface IMaterialMToon extends IProperty {
   /**
    * Outline
    */
-  outlineWidthMode: "none" | "worldCoordinates" | "screenCoordinates";
+  outlineWidthMode: string;
   outlineWidthFactor: number;
   outlineWidthMultiplyTexture: Texture;
   outlineWidthMultiplyTextureInfo: TextureInfo;
@@ -90,7 +90,7 @@ export default class MaterialMToon extends ExtensionProperty<IMaterialMToon> {
       /**
        * Lighting
        */
-      shadeColorFactor: [0, 0, 0],
+      shadeColorFactor: [0, 0, 0] as vec3,
       shadeMultiplyTexture: null,
       shadeMultiplyTextureInfo: new TextureInfo(
         this.graph,
@@ -108,10 +108,10 @@ export default class MaterialMToon extends ExtensionProperty<IMaterialMToon> {
       /**
        * Rim
        */
-      matcapFactor: [1, 1, 1],
+      matcapFactor: [1, 1, 1] as vec3,
       matcapTexture: null,
       matcapTextureInfo: new TextureInfo(this.graph, "matcapTextureInfo"),
-      parametricRimColorFactor: [0, 0, 0],
+      parametricRimColorFactor: [0, 0, 0] as vec3,
       rimMultiplyTexture: null,
       rimMultiplyTextureInfo: new TextureInfo(
         this.graph,
@@ -131,7 +131,7 @@ export default class MaterialMToon extends ExtensionProperty<IMaterialMToon> {
         this.graph,
         "outlineWidthMultiplyTextureInfo"
       ),
-      outlineColorFactor: [0, 0, 0],
+      outlineColorFactor: [0, 0, 0] as vec3,
       outlineLightingMixFactor: 1.0,
 
       /**
@@ -148,10 +148,10 @@ export default class MaterialMToon extends ExtensionProperty<IMaterialMToon> {
     });
   }
 
-  public getSpecVersion(): "1.0" | "1.0-beta" {
+  public getSpecVersion(): string {
     return this.get("specVersion");
   }
-  public setSpecVersion(specVersion: "1.0" | "1.0-beta"): this {
+  public setSpecVersion(specVersion: string): this {
     return this.set("specVersion", specVersion);
   }
 
@@ -302,15 +302,10 @@ export default class MaterialMToon extends ExtensionProperty<IMaterialMToon> {
   /**********************************************************************************************
    * Outline
    */
-  public getOutlineWidthMode():
-    | "none"
-    | "worldCoordinates"
-    | "screenCoordinates" {
+  public getOutlineWidthMode(): string {
     return this.get("outlineWidthMode");
   }
-  public setOutlineWidthMode(
-    outlineWidthMode: "none" | "worldCoordinates" | "screenCoordinates"
-  ) {
+  public setOutlineWidthMode(outlineWidthMode: string) {
     return this.set("outlineWidthMode", outlineWidthMode);
   }
 

@@ -17,7 +17,7 @@ export default function MaterialTextureList({
   };
   const textureItems: TextureItem[] = [];
 
-  if (materialMToon && material) {
+  if (material) {
     const baseTextureFileBuffer = material.getBaseColorTexture()?.getImage();
     textureItems.push({
       slot: "Base",
@@ -26,6 +26,24 @@ export default function MaterialTextureList({
       mimeType: material.getBaseColorTexture()?.getMimeType() || "Not Set",
     });
 
+    const emissiveTextureFileBuffer = material.getEmissiveTexture()?.getImage();
+    textureItems.push({
+      slot: "Emissive",
+      name: material.getEmissiveTexture()?.getName() || "Not set",
+      url: URL.createObjectURL(new Blob([emissiveTextureFileBuffer!])),
+      mimeType: material.getEmissiveTexture()?.getMimeType() || "Not Set",
+    });
+
+    const normalTextureFileBuffer = material.getNormalTexture()?.getImage();
+    textureItems.push({
+      slot: "Normal",
+      name: material.getNormalTexture()?.getName() || "Not set",
+      url: URL.createObjectURL(new Blob([normalTextureFileBuffer!])),
+      mimeType: material.getNormalTexture()?.getMimeType() || "Not Set",
+    });
+  }
+
+  if (materialMToon) {
     const shadeTextureFileBuffer = materialMToon
       .getShadeMultiplyTexture()
       ?.getImage();

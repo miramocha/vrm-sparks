@@ -11,7 +11,7 @@ export default function MaterialColorList({
   material,
 }: {
   materialMToon: MaterialMToon | null;
-  material: Material;
+  material: Material | null;
 }) {
   const editorContext = useContext(EditorContext);
 
@@ -33,7 +33,7 @@ export default function MaterialColorList({
 
   return (
     <>
-      {materialMToon ? (
+      {material ? (
         <>
           <ColorPicker
             format="rgb"
@@ -45,7 +45,23 @@ export default function MaterialColorList({
             showText={(color) => <span>Main {color.toRgbString()}</span>}
             value={linearVec4ToWebRGBAString(material.getBaseColorFactor())}
           />
-
+          <ColorPicker
+            format="rgb"
+            onChangeComplete={(color) => {
+              const linearVec4 = webRGBAtoLinearVec4(color.toRgb());
+              material.setEmissiveFactor(linearVec4.slice(0, 3) as vec3);
+              editorContext.rebuildVRMGLTF();
+            }}
+            showText={(color) => <span>Emissive {color.toRgbString()}</span>}
+            value={linearVec4ToWebRGBAString([
+              ...material.getEmissiveFactor(),
+              1,
+            ])}
+          />
+        </>
+      ) : null}
+      {materialMToon ? (
+        <>
           <ColorPicker
             format="rgb"
             onChangeComplete={(color) => {

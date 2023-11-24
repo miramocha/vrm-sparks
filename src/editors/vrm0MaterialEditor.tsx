@@ -34,18 +34,23 @@ export default function VRM0MaterialEditor() {
   }, [editorContext.gltfDocument]);
 
   useEffect(() => {
-    setCurrentMaterialMToon(
-      GLTFTransformExtensionUtils.getVRM0MaterialMToonByMaterialIndex(
-        editorContext.gltfDocument!,
-        currentMaterialMToonIndex!
-      ) || null
-    );
-    setCurrentMaterial(
-      editorContext.gltfDocument
-        ?.getRoot()
-        ?.listMaterials()
-        ?.at(currentMaterialMToonIndex!) || null
-    );
+    if (!currentMaterialMToonIndex) {
+      setCurrentMaterialMToon(null);
+      setCurrentMaterial(null);
+    } else {
+      setCurrentMaterialMToon(
+        GLTFTransformExtensionUtils.getVRM0MaterialMToonByMaterialIndex(
+          editorContext.gltfDocument!,
+          currentMaterialMToonIndex!
+        ) || null
+      );
+      setCurrentMaterial(
+        editorContext.gltfDocument
+          ?.getRoot()
+          ?.listMaterials()
+          ?.at(currentMaterialMToonIndex!) || null
+      );
+    }
   }, [editorContext.gltfDocument, currentMaterialMToonIndex]);
 
   return (

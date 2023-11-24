@@ -1,6 +1,6 @@
 import { Extension, ReaderContext, WriterContext } from "@gltf-transform/core";
 import { VRMC_MATERIALS_MTOON } from "./constants.ts";
-import MaterialMToon from "./materialMToon.ts";
+import VRMCMaterialMToon from "./vrmcMaterialMtoon.ts";
 
 const NAME = VRMC_MATERIALS_MTOON;
 
@@ -8,8 +8,8 @@ export default class VRMC_materials_mtoon extends Extension {
   public readonly extensionName = NAME;
   public static readonly EXTENSION_NAME = NAME;
 
-  public createMaterialsMToon(): MaterialMToon {
-    return new MaterialMToon(this.document.getGraph());
+  public createMaterialsMToon(): VRMCMaterialMToon {
+    return new VRMCMaterialMToon(this.document.getGraph());
   }
 
   public read(context: ReaderContext): this {
@@ -34,7 +34,7 @@ export default class VRMC_materials_mtoon extends Extension {
       .listMaterials()
       .forEach((material) => {
         const materialMToonExtension =
-          material.getExtension<MaterialMToon>(NAME);
+          material.getExtension<VRMCMaterialMToon>(NAME);
 
         if (materialMToonExtension) {
           const materialIndex = context.materialIndexMap.get(material)!;

@@ -17,8 +17,8 @@ const NAME = VRMC_MATERIALS_MTOON;
 /**
  * @see https://github.com/vrm-c/vrm-specification/blob/master/specification/VRMC_materials_mtoon-1.0/README.md
  */
-export interface IMaterialMToon extends IProperty {
-  specVersion: "1.0" | "1.0-beta";
+export interface IVRMCMaterialMToon extends IProperty {
+  specVersion: string;
 
   transparentWithZWrite: boolean;
   renderQueueOffsetNumber: number;
@@ -51,7 +51,7 @@ export interface IMaterialMToon extends IProperty {
   /**
    * Outline
    */
-  outlineWidthMode: "none" | "worldCoordinates" | "screenCoordinates";
+  outlineWidthMode: string;
   outlineWidthFactor: number;
   outlineWidthMultiplyTexture: Texture;
   outlineWidthMultiplyTextureInfo: TextureInfo;
@@ -68,7 +68,7 @@ export interface IMaterialMToon extends IProperty {
   uvAnimationRotationSpeedFactor: number;
 }
 
-export default class MaterialMToon extends ExtensionProperty<IMaterialMToon> {
+export default class getVRMCMaterialsMToonMaterialMToon extends ExtensionProperty<IVRMCMaterialMToon> {
   public static EXTENSION_NAME = NAME;
   public declare extensionName: typeof NAME;
   public declare propertyType: "VRMC_MaterialsMToon";
@@ -80,7 +80,7 @@ export default class MaterialMToon extends ExtensionProperty<IMaterialMToon> {
     this.parentTypes = [PropertyType.MATERIAL];
   }
 
-  protected getDefaults(): Nullable<IMaterialMToon> {
+  protected getDefaults(): Nullable<IVRMCMaterialMToon> {
     return Object.assign(super.getDefaults() as IProperty, {
       specVersion: "1.0",
 
@@ -90,7 +90,7 @@ export default class MaterialMToon extends ExtensionProperty<IMaterialMToon> {
       /**
        * Lighting
        */
-      shadeColorFactor: [0, 0, 0],
+      shadeColorFactor: [0, 0, 0] as vec3,
       shadeMultiplyTexture: null,
       shadeMultiplyTextureInfo: new TextureInfo(
         this.graph,
@@ -108,10 +108,10 @@ export default class MaterialMToon extends ExtensionProperty<IMaterialMToon> {
       /**
        * Rim
        */
-      matcapFactor: [1, 1, 1],
+      matcapFactor: [1, 1, 1] as vec3,
       matcapTexture: null,
       matcapTextureInfo: new TextureInfo(this.graph, "matcapTextureInfo"),
-      parametricRimColorFactor: [0, 0, 0],
+      parametricRimColorFactor: [0, 0, 0] as vec3,
       rimMultiplyTexture: null,
       rimMultiplyTextureInfo: new TextureInfo(
         this.graph,
@@ -131,7 +131,7 @@ export default class MaterialMToon extends ExtensionProperty<IMaterialMToon> {
         this.graph,
         "outlineWidthMultiplyTextureInfo"
       ),
-      outlineColorFactor: [0, 0, 0],
+      outlineColorFactor: [0, 0, 0] as vec3,
       outlineLightingMixFactor: 1.0,
 
       /**
@@ -148,10 +148,10 @@ export default class MaterialMToon extends ExtensionProperty<IMaterialMToon> {
     });
   }
 
-  public getSpecVersion(): "1.0" | "1.0-beta" {
+  public getSpecVersion(): string {
     return this.get("specVersion");
   }
-  public setSpecVersion(specVersion: "1.0" | "1.0-beta"): this {
+  public setSpecVersion(specVersion: string): this {
     return this.set("specVersion", specVersion);
   }
 
@@ -182,7 +182,7 @@ export default class MaterialMToon extends ExtensionProperty<IMaterialMToon> {
   public getShadeMultiplyTexture(): Texture | null {
     return this.getRef("shadeMultiplyTexture");
   }
-  public setShadeMultiplyTextureInfo(texture: Texture | null): this {
+  public setShadeMultiplyTexture(texture: Texture | null): this {
     return this.setRef("shadeMultiplyTexture", texture, {
       channels: R | G | B,
     });
@@ -203,7 +203,7 @@ export default class MaterialMToon extends ExtensionProperty<IMaterialMToon> {
   public getShadingShiftTexture(): Texture | null {
     return this.getRef("shadingShiftTexture");
   }
-  public setShadingShiftTextureInfo(texture: Texture | null): this {
+  public setShadingShiftTexture(texture: Texture | null): this {
     return this.setRef("shadingShiftTexture", texture, {
       channels: R | G | B,
     });
@@ -241,7 +241,7 @@ export default class MaterialMToon extends ExtensionProperty<IMaterialMToon> {
   public getMatcapTexture(): Texture | null {
     return this.getRef("matcapTexture");
   }
-  public setMatcapTextureInfo(texture: Texture | null): this {
+  public setMatcapTexture(texture: Texture | null): this {
     return this.setRef("matcapTexture", texture, {
       channels: R | G | B,
     });
@@ -262,7 +262,7 @@ export default class MaterialMToon extends ExtensionProperty<IMaterialMToon> {
   public getRimMultiplyTexture(): Texture | null {
     return this.getRef("rimMultiplyTexture");
   }
-  public setRimMultiplyTextureInfo(texture: Texture | null): this {
+  public setRimMultiplyTexture(texture: Texture | null): this {
     return this.setRef("rimMultiplyTexture", texture, {
       channels: R | G | B,
     });
@@ -302,15 +302,10 @@ export default class MaterialMToon extends ExtensionProperty<IMaterialMToon> {
   /**********************************************************************************************
    * Outline
    */
-  public getOutlineWidthMode():
-    | "none"
-    | "worldCoordinates"
-    | "screenCoordinates" {
+  public getOutlineWidthMode(): string {
     return this.get("outlineWidthMode");
   }
-  public setOutlineWidthMode(
-    outlineWidthMode: "none" | "worldCoordinates" | "screenCoordinates"
-  ) {
+  public setOutlineWidthMode(outlineWidthMode: string) {
     return this.set("outlineWidthMode", outlineWidthMode);
   }
 
@@ -324,7 +319,7 @@ export default class MaterialMToon extends ExtensionProperty<IMaterialMToon> {
   public getOutlineWidthMultiplyTexture(): Texture | null {
     return this.getRef("outlineWidthMultiplyTexture");
   }
-  public setOutlineWidthMultiplyTextureInfo(texture: Texture | null): this {
+  public setOutlineWidthMultiplyTexture(texture: Texture | null): this {
     return this.setRef("outlineWidthMultiplyTexture", texture, {
       channels: R | G | B,
     });
@@ -355,7 +350,7 @@ export default class MaterialMToon extends ExtensionProperty<IMaterialMToon> {
   public getUVAnimationMaskTexture(): Texture | null {
     return this.getRef("uvAnimationMaskTexture");
   }
-  public setUVAnimationMaskTextureInfo(texture: Texture | null): this {
+  public setUVAnimationMaskTexture(texture: Texture | null): this {
     return this.setRef("uvAnimationMaskTexture", texture, {
       channels: R | G | B,
     });
