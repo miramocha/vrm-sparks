@@ -352,8 +352,6 @@ export default class MaterialMToon extends ExtensionProperty<IMaterialMToon> {
   /**********************************************************************************************
    * UV Animation
    */
-  // uvAnimationMaskTexture: Texture;
-  // uvAnimationMaskTextureInfo: TextureInfo;
   public getUVAnimationMaskTexture(): Texture | null {
     return this.getRef("uvAnimationMaskTexture");
   }
@@ -368,7 +366,39 @@ export default class MaterialMToon extends ExtensionProperty<IMaterialMToon> {
       : null;
   }
 
-  // uvAnimationScrollXSpeedFactor: number;
-  // uvAnimationScrollYSpeedFactor: number;
-  // uvAnimationRotationSpeedFactor: number;
+  public getUVAnimationScrollXSpeedFactor(): number {
+    return this.get("uvAnimationScrollXSpeedFactor");
+  }
+  public setUVAnimationScrollXSpeedFactor(
+    uvAnimationScrollXSpeedFactor: number
+  ): this {
+    return this.set(
+      "uvAnimationScrollXSpeedFactor",
+      uvAnimationScrollXSpeedFactor
+    );
+  }
+
+  public getUVAnimationScrollYSpeedFactor(): number {
+    return this.get("uvAnimationScrollYSpeedFactor");
+  }
+  public setUVAnimationScrollYSpeedFactor(
+    uvAnimationScrollYSpeedFactor: number
+  ): this {
+    return this.set(
+      "uvAnimationScrollYSpeedFactor",
+      uvAnimationScrollYSpeedFactor
+    );
+  }
+
+  public getUVAnimationRotationSpeedFactor(): number {
+    return this.get("uvAnimationRotationSpeedFactor");
+  }
+  public setUVAnimationSRotationpeedFactor(
+    uvAnimationRotationSpeedFactor: number
+  ): this {
+    return this.set(
+      "uvAnimationRotationSpeedFactor",
+      uvAnimationRotationSpeedFactor
+    );
+  }
 }
