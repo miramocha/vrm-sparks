@@ -11,11 +11,10 @@ import {
 } from "@gltf-transform/extensions";
 
 import VRM0_vrm from "../gltf-transform-extensions/VRM0/VRM0_vrm.ts";
-import MaterialProperties from "../gltf-transform-extensions/VRM0/materialProperties.ts";
+import MaterialMToon from "../gltf-transform-extensions/VRM0/materialMtoon.ts";
 
 import VRMC_vrm from "../gltf-transform-extensions/VRM1/VRMC_vrm.ts";
 import VRMC_materials_mtoon from "../gltf-transform-extensions/VRM1/VRMC_materials_mtoon.ts";
-import MaterialMToon from "../gltf-transform-extensions/VRM1/materialMToon.ts";
 import VRMC_springBone from "../gltf-transform-extensions/VRM1/VRMC_springBone.ts";
 
 export class GLTFTransformExtensionUtils {
@@ -30,10 +29,10 @@ export class GLTFTransformExtensionUtils {
     return document.getRoot().getExtension<VRM>(VRM0_CONSTANTS.VRM0);
   }
 
-  public static getVRM0MaterialPropertiesByMaterialIndex(
+  public static getVRM0MaterialMToonByMaterialIndex(
     document: Document,
     index: number
-  ): MaterialProperties | null {
+  ): MaterialMToon | null {
     if (
       document.getRoot().listMaterials &&
       document.getRoot().listMaterials()[index]
@@ -41,19 +40,19 @@ export class GLTFTransformExtensionUtils {
       return document
         .getRoot()
         .listMaterials()
-        [index].getExtension<MaterialProperties>(VRM0_CONSTANTS.VRM0);
+        [index].getExtension<MaterialMToon>(VRM0_CONSTANTS.VRM0);
     }
     return null;
   }
 
-  public static listVRM0MaterialProperties(
+  public static listVRM0MaterialMToons(
     document: Document
-  ): (MaterialProperties | null)[] {
+  ): (MaterialMToon | null)[] {
     return document
       .getRoot()
       .listMaterials()
       .map((material) =>
-        material.getExtension<MaterialProperties>(VRM0_CONSTANTS.VRM0)
+        material.getExtension<MaterialMToon>(VRM0_CONSTANTS.VRM0)
       );
   }
 

@@ -182,7 +182,7 @@ export default class MaterialMToon extends ExtensionProperty<IMaterialMToon> {
   public getShadeMultiplyTexture(): Texture | null {
     return this.getRef("shadeMultiplyTexture");
   }
-  public setShadeMultiplyTextureInfo(texture: Texture | null): this {
+  public setShadeMultiplyTexture(texture: Texture | null): this {
     return this.setRef("shadeMultiplyTexture", texture, {
       channels: R | G | B,
     });
@@ -203,7 +203,7 @@ export default class MaterialMToon extends ExtensionProperty<IMaterialMToon> {
   public getShadingShiftTexture(): Texture | null {
     return this.getRef("shadingShiftTexture");
   }
-  public setShadingShiftTextureInfo(texture: Texture | null): this {
+  public setShadingShiftTexture(texture: Texture | null): this {
     return this.setRef("shadingShiftTexture", texture, {
       channels: R | G | B,
     });
@@ -241,7 +241,7 @@ export default class MaterialMToon extends ExtensionProperty<IMaterialMToon> {
   public getMatcapTexture(): Texture | null {
     return this.getRef("matcapTexture");
   }
-  public setMatcapTextureInfo(texture: Texture | null): this {
+  public setMatcapTexture(texture: Texture | null): this {
     return this.setRef("matcapTexture", texture, {
       channels: R | G | B,
     });
@@ -262,7 +262,7 @@ export default class MaterialMToon extends ExtensionProperty<IMaterialMToon> {
   public getRimMultiplyTexture(): Texture | null {
     return this.getRef("rimMultiplyTexture");
   }
-  public setRimMultiplyTextureInfo(texture: Texture | null): this {
+  public setRimMultiplyTexture(texture: Texture | null): this {
     return this.setRef("rimMultiplyTexture", texture, {
       channels: R | G | B,
     });
@@ -324,7 +324,7 @@ export default class MaterialMToon extends ExtensionProperty<IMaterialMToon> {
   public getOutlineWidthMultiplyTexture(): Texture | null {
     return this.getRef("outlineWidthMultiplyTexture");
   }
-  public setOutlineWidthMultiplyTextureInfo(texture: Texture | null): this {
+  public setOutlineWidthMultiplyTexture(texture: Texture | null): this {
     return this.setRef("outlineWidthMultiplyTexture", texture, {
       channels: R | G | B,
     });
@@ -355,7 +355,7 @@ export default class MaterialMToon extends ExtensionProperty<IMaterialMToon> {
   public getUVAnimationMaskTexture(): Texture | null {
     return this.getRef("uvAnimationMaskTexture");
   }
-  public setUVAnimationMaskTextureInfo(texture: Texture | null): this {
+  public setUVAnimationMaskTexture(texture: Texture | null): this {
     return this.setRef("uvAnimationMaskTexture", texture, {
       channels: R | G | B,
     });

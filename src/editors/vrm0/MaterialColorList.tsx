@@ -1,15 +1,17 @@
 import { useContext } from "react";
 import { RGBA } from "@ctrl/tinycolor";
-import MaterialProperties from "../../gltf-transform-extensions/VRM0/materialProperties.ts";
-import { ColorUtils } from "@gltf-transform/core";
+import MaterialMToon from "../../gltf-transform-extensions/VRM0/materialMtoon.ts";
+import { ColorUtils, vec3, Material } from "@gltf-transform/core";
 import { vec4 } from "@gltf-transform/core";
 import { ColorPicker, Empty } from "antd";
 import { EditorContext } from "../../providers/editorContextProvider.tsx";
 
 export default function MaterialColorList({
-  materialProperties,
+  materialMToon,
+  material,
 }: {
-  materialProperties: MaterialProperties | null;
+  materialMToon: MaterialMToon | null;
+  material: Material;
 }) {
   const editorContext = useContext(EditorContext);
 
@@ -31,31 +33,32 @@ export default function MaterialColorList({
 
   return (
     <>
-      {materialProperties ? (
+      {materialMToon ? (
         <>
           <ColorPicker
             format="rgb"
             onChangeComplete={(color) => {
               const linearVec4 = webRGBAtoLinearVec4(color.toRgb());
-              materialProperties.setMainColor(linearVec4);
+              material.setBaseColorFactor(linearVec4);
               editorContext.rebuildVRMGLTF();
             }}
             showText={(color) => <span>Main {color.toRgbString()}</span>}
-            value={linearVec4ToWebRGBAString(materialProperties.getMainColor())}
+            value={linearVec4ToWebRGBAString(material.getBaseColorFactor())}
           />
 
           <ColorPicker
             format="rgb"
             onChangeComplete={(color) => {
-              materialProperties.setOutlineColor(
-                webRGBAtoLinearVec4(color.toRgb())
+              materialMToon.setOutlineColorFactor(
+                webRGBAtoLinearVec4(color.toRgb()).slice(0, 3) as vec3
               );
               editorContext.rebuildVRMGLTF();
             }}
             showText={(color) => <span>Outline {color.toRgbString()}</span>}
-            value={linearVec4ToWebRGBAString(
-              materialProperties.getOutlineColor()
-            )}
+            value={linearVec4ToWebRGBAString([
+              ...materialMToon.getOutlineColorFactor(),
+              1,
+            ] as vec4)}
           />
         </>
       ) : (

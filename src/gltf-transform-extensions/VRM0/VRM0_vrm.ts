@@ -1,13 +1,13 @@
 import {
   Extension,
   ReaderContext,
+  TextureInfo,
   WriterContext,
-  vec4,
 } from "@gltf-transform/core";
 import * as VRM0Type from "@pixiv/types-vrm-0.0";
 import VRM from "./VRM.ts";
 import { VRM0 } from "./constants.ts";
-import MaterialProperties from "./materialProperties.ts";
+import MaterialMToon from "./materialMtoon.ts";
 
 const NAME = VRM0;
 
@@ -15,8 +15,8 @@ export default class VRM0_vrm extends Extension {
   public readonly extensionName = NAME;
   public static readonly EXTENSION_NAME = NAME;
 
-  public createMaterialProperties(): MaterialProperties {
-    return new MaterialProperties(this.document.getGraph());
+  public createMaterialMToon(): MaterialMToon {
+    return new MaterialMToon(this.document.getGraph());
   }
 
   public read(context: ReaderContext): this {
@@ -72,37 +72,25 @@ export default class VRM0_vrm extends Extension {
             materialPropertiesDef: VRM0Type.Material,
             materialPropertiesDefIndex
           ) => {
-            const materialProperties = this.createMaterialProperties();
+            const materialMToon = this.createMaterialMToon();
             const material = context.materials[materialPropertiesDefIndex];
-            material.setExtension(NAME, materialProperties);
-
-            materialProperties.setName(materialPropertiesDef.name!);
+            material.setExtension(NAME, materialMToon);
 
             const texturePropertiesDef =
               materialPropertiesDef.textureProperties || {};
 
-            // Textures
+            // PBR Textures Sync
             if (texturePropertiesDef._MainTex !== undefined) {
               const texture =
                 context.textures[
                   textureDefs[texturePropertiesDef._MainTex].source!
                 ];
-              materialProperties.setMainTexture(texture);
-              context.setTextureInfo(materialProperties.getMainTextureInfo()!, {
-                index: texturePropertiesDef._MainTex,
-              });
-            }
 
-            if (texturePropertiesDef._ShadeTexture !== undefined) {
-              const texture =
-                context.textures[
-                  textureDefs[texturePropertiesDef._ShadeTexture].source!
-                ];
-              materialProperties.setShadeTexture(texture);
+              material.setBaseColorTexture(texture);
               context.setTextureInfo(
-                materialProperties.getShadeTextureInfo()!,
+                new TextureInfo(material.getGraph(), "baseColorTextureInfo"),
                 {
-                  index: texturePropertiesDef._ShadeTexture,
+                  index: texturePropertiesDef._MainTex,
                 }
               );
             }
@@ -112,9 +100,10 @@ export default class VRM0_vrm extends Extension {
                 context.textures[
                   textureDefs[texturePropertiesDef._BumpMap].source!
                 ];
-              materialProperties.setBumpMapTexture(texture);
+
+              material.setNormalTexture(texture);
               context.setTextureInfo(
-                materialProperties.getBumpMapTextureInfo()!,
+                new TextureInfo(material.getGraph(), "normalTextureInfo"),
                 {
                   index: texturePropertiesDef._BumpMap,
                 }
@@ -126,11 +115,28 @@ export default class VRM0_vrm extends Extension {
                 context.textures[
                   textureDefs[texturePropertiesDef._EmissionMap].source!
                 ];
-              materialProperties.setEmissionMapTexture(texture);
+
+              material.setEmissiveTexture(texture);
               context.setTextureInfo(
-                materialProperties.getEmissionMapTextureInfo()!,
+                new TextureInfo(material.getGraph(), "emissiveTextureInfo"),
                 {
                   index: texturePropertiesDef._EmissionMap,
+                }
+              );
+            }
+
+            // Textures
+            if (texturePropertiesDef._ShadeTexture !== undefined) {
+              const texture =
+                context.textures[
+                  textureDefs[texturePropertiesDef._ShadeTexture].source!
+                ];
+
+              materialMToon.setShadeMultiplyTexture(texture);
+              context.setTextureInfo(
+                materialMToon.getShadeMultiplyTextureInfo()!,
+                {
+                  index: texturePropertiesDef._ShadeTexture,
                 }
               );
             }
@@ -140,13 +146,11 @@ export default class VRM0_vrm extends Extension {
                 context.textures[
                   textureDefs[texturePropertiesDef._SphereAdd].source!
                 ];
-              materialProperties.setSphereAddTexture(texture);
-              context.setTextureInfo(
-                materialProperties.getSphereAddTextureInfo()!,
-                {
-                  index: texturePropertiesDef._SphereAdd,
-                }
-              );
+
+              materialMToon.setMatcapTexture(texture);
+              context.setTextureInfo(materialMToon.getMatcapTextureInfo()!, {
+                index: texturePropertiesDef._SphereAdd,
+              });
             }
 
             if (texturePropertiesDef._RimTexture !== undefined) {
@@ -154,10 +158,14 @@ export default class VRM0_vrm extends Extension {
                 context.textures[
                   textureDefs[texturePropertiesDef._RimTexture].source!
                 ];
-              materialProperties.setRimTexture(texture);
-              context.setTextureInfo(materialProperties.getRimTextureInfo()!, {
-                index: texturePropertiesDef._RimTexture,
-              });
+
+              materialMToon.setRimMultiplyTexture(texture);
+              context.setTextureInfo(
+                materialMToon.getRimMultiplyTextureInfo()!,
+                {
+                  index: texturePropertiesDef._RimTexture,
+                }
+              );
             }
 
             if (texturePropertiesDef._OutlineWidthTexture !== undefined) {
@@ -165,9 +173,10 @@ export default class VRM0_vrm extends Extension {
                 context.textures[
                   textureDefs[texturePropertiesDef._OutlineWidthTexture].source!
                 ];
-              materialProperties.setOutlineWidthTexture(texture);
+
+              materialMToon.setOutlineWidthMultiplyTexture(texture);
               context.setTextureInfo(
-                materialProperties.getOutlineWidthTextureInfo()!,
+                materialMToon.getOutlineWidthMultiplyTextureInfo()!,
                 {
                   index: texturePropertiesDef._OutlineWidthTexture,
                 }
@@ -179,36 +188,36 @@ export default class VRM0_vrm extends Extension {
 
             // Vectors
             if (vectorPropertiesDef._Color !== undefined) {
-              materialProperties.setMainColor(
-                vectorPropertiesDef._Color as vec4
-              );
-            }
-
-            if (vectorPropertiesDef._ShadeColor !== undefined) {
-              materialProperties.setShadeColor(
-                vectorPropertiesDef._ShadeColor as vec4
+              material.setBaseColorFactor(
+                vectorPropertiesDef._Color.slice(0, 3)
               );
             }
 
             if (vectorPropertiesDef._EmissionColor !== undefined) {
-              materialProperties.setEmissionColor(
-                vectorPropertiesDef._EmissionColor as vec4
+              material.setEmissiveFactor(
+                vectorPropertiesDef._EmissionColor.slice(0, 3)
+              );
+            }
+
+            if (vectorPropertiesDef._ShadeColor !== undefined) {
+              materialMToon.setShadeColorFactor(
+                vectorPropertiesDef._ShadeColor.slice(0, 3)
               );
             }
 
             if (vectorPropertiesDef._RimColor !== undefined) {
-              materialProperties.setRimColor(
-                vectorPropertiesDef._RimColor as vec4
+              materialMToon.setParametricRimColorFactor(
+                vectorPropertiesDef._RimColor.slice(0, 3)
               );
             }
 
             if (vectorPropertiesDef._OutlineColor !== undefined) {
-              materialProperties.setOutlineColor(
-                vectorPropertiesDef._OutlineColor as vec4
+              materialMToon.setOutlineColorFactor(
+                vectorPropertiesDef._OutlineColor.slice(0, 3)
               );
             }
 
-            material.setExtension(NAME, materialProperties);
+            material.setExtension(NAME, materialMToon);
           }
         );
       }
@@ -269,66 +278,65 @@ export default class VRM0_vrm extends Extension {
           .getRoot()
           .listMaterials()
           .forEach((material, materialIndex) => {
-            const materialProperties =
-              material.getExtension<MaterialProperties>(NAME);
+            const materialMToon = material.getExtension<MaterialMToon>(NAME);
             const materialPropertiesDef =
               vrmDef.materialProperties![materialIndex];
 
-            materialPropertiesDef.name = materialProperties?.getName();
+            materialPropertiesDef.name = material.getName();
 
-            if (materialProperties && materialPropertiesDef) {
-              // Textures
+            if (materialMToon && materialPropertiesDef) {
+              // PBR Textures
               materialPropertiesDef.textureProperties =
                 materialPropertiesDef.textureProperties || {};
 
-              if (materialProperties.getMainTexture()) {
-                const texture = materialProperties.getMainTexture()!;
-                const textureInfo = materialProperties.getMainTextureInfo()!;
+              if (material.getBaseColorTexture()) {
+                const texture = material.getBaseColorTexture()!;
+                const textureInfo = material.getBaseColorTextureInfo()!;
                 materialPropertiesDef.textureProperties._MainTex =
                   context.createTextureInfoDef(texture, textureInfo).index;
               }
 
-              if (materialProperties.getShadeTexture()) {
-                const texture = materialProperties.getShadeTexture()!;
-                const textureInfo = materialProperties.getShadeTextureInfo()!;
-                materialPropertiesDef.textureProperties._ShadeTexture =
-                  context.createTextureInfoDef(texture, textureInfo).index;
-              }
-
-              if (materialProperties.getBumpMapTexture()) {
-                const texture = materialProperties.getBumpMapTexture()!;
-                const textureInfo = materialProperties.getBumpMapTextureInfo()!;
+              if (material.getNormalTexture()) {
+                const texture = material.getNormalTexture()!;
+                const textureInfo = material.getNormalTextureInfo()!;
                 materialPropertiesDef.textureProperties._BumpMap =
                   context.createTextureInfoDef(texture, textureInfo).index;
               }
 
-              if (materialProperties.getEmissionMapTexture()) {
-                const texture = materialProperties.getEmissionMapTexture()!;
-                const textureInfo =
-                  materialProperties.getEmissionMapTextureInfo()!;
+              if (material.getEmissiveTexture()) {
+                const texture = material.getEmissiveTexture()!;
+                const textureInfo = material.getEmissiveTextureInfo()!;
                 materialPropertiesDef.textureProperties._EmissionMap =
                   context.createTextureInfoDef(texture, textureInfo).index;
               }
 
-              if (materialProperties.getSphereAddTexture()) {
-                const texture = materialProperties.getSphereAddTexture()!;
+              // Textures
+              if (materialMToon.getShadeMultiplyTexture()) {
+                const texture = materialMToon.getShadeMultiplyTexture()!;
                 const textureInfo =
-                  materialProperties.getSphereAddTextureInfo()!;
+                  materialMToon.getShadeMultiplyTextureInfo()!;
+                materialPropertiesDef.textureProperties._ShadeTexture =
+                  context.createTextureInfoDef(texture, textureInfo).index;
+              }
+
+              if (materialMToon.getMatcapTexture()) {
+                const texture = materialMToon.getMatcapTexture()!;
+                const textureInfo = materialMToon.getMatcapTextureInfo()!;
                 materialPropertiesDef.textureProperties._SphereAdd =
                   context.createTextureInfoDef(texture, textureInfo).index;
               }
 
-              if (materialProperties.getRimTexture()) {
-                const texture = materialProperties.getRimTexture()!;
-                const textureInfo = materialProperties.getRimTextureInfo()!;
+              if (materialMToon.getRimMultiplyTexture()) {
+                const texture = materialMToon.getRimMultiplyTexture()!;
+                const textureInfo = materialMToon.getRimMultiplyTextureInfo()!;
                 materialPropertiesDef.textureProperties._RimTexture =
                   context.createTextureInfoDef(texture, textureInfo).index;
               }
 
-              if (materialProperties.getOutlineWidthTexture()) {
-                const texture = materialProperties.getOutlineWidthTexture()!;
+              if (materialMToon.getOutlineWidthMultiplyTexture()) {
+                const texture = materialMToon.getOutlineWidthMultiplyTexture()!;
                 const textureInfo =
-                  materialProperties.getOutlineWidthTextureInfo()!;
+                  materialMToon.getOutlineWidthMultiplyTextureInfo()!;
                 materialPropertiesDef.textureProperties._OutlineWidthTexture =
                   context.createTextureInfoDef(texture, textureInfo).index;
               }
@@ -337,29 +345,35 @@ export default class VRM0_vrm extends Extension {
               materialPropertiesDef.vectorProperties =
                 materialPropertiesDef.vectorProperties || {};
 
-              if (materialProperties.getMainColor()) {
+              if (material.getBaseColorFactor()) {
                 materialPropertiesDef.vectorProperties._Color =
-                  materialProperties.getMainColor();
+                  material.getBaseColorFactor();
               }
 
-              if (materialProperties.getShadeColor()) {
-                materialPropertiesDef.vectorProperties._ShadeColor =
-                  materialProperties.getShadeColor();
-              }
-
-              if (materialProperties.getEmissionColor()) {
+              if (material.getEmissiveFactor()) {
                 materialPropertiesDef.vectorProperties._EmissionColor =
-                  materialProperties.getShadeColor();
+                  material.getEmissiveFactor();
               }
 
-              if (materialProperties.getRimColor()) {
-                materialPropertiesDef.vectorProperties._RimColor =
-                  materialProperties.getRimColor();
+              if (materialMToon.getShadeColorFactor()) {
+                materialPropertiesDef.vectorProperties._ShadeColor = [
+                  ...materialMToon.getShadeColorFactor(),
+                  1,
+                ];
               }
 
-              if (materialProperties.getOutlineColor()) {
-                materialPropertiesDef.vectorProperties._OutlineColor =
-                  materialProperties.getOutlineColor();
+              if (materialMToon.getParametricRimColorFactor()) {
+                materialPropertiesDef.vectorProperties._RimColor = [
+                  ...materialMToon.getParametricRimColorFactor(),
+                  1,
+                ];
+              }
+
+              if (materialMToon.getOutlineColorFactor()) {
+                materialPropertiesDef.vectorProperties._OutlineColor = [
+                  ...materialMToon.getOutlineColorFactor(),
+                  1,
+                ];
               }
             }
           });

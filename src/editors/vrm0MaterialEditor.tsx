@@ -1,70 +1,71 @@
 import { useContext, useEffect, useState } from "react";
 import { Empty, Select } from "antd";
-import { MToonMaterial } from "@pixiv/three-vrm";
+import MaterialMToon from "../gltf-transform-extensions/VRM0/materialMtoon.ts";
 import { GLTFTransformExtensionUtils } from "../utils/GLTFTransformExtensionUtils.ts";
-import MaterialProperties from "../gltf-transform-extensions/VRM0/materialProperties.ts";
 import MaterialTextureList from "./vrm0/MaterialTextureList.tsx";
 import { EditorContext } from "../providers/editorContextProvider.tsx";
 import MaterialColorList from "./vrm0/MaterialColorList.tsx";
-// import { VRM as ThreeVRM } from "@pixiv/three-vrm";
+import { Material } from "@gltf-transform/core";
 
 type SelectOptions = { label?: string; value: number };
 
 export default function VRM0MaterialEditor() {
   const editorContext = useContext(EditorContext);
 
-  const [currentMaterialPropertiesIndex, setCurrentMaterialPropertiesIndex] =
-    useState<number | null>(null);
-  const [currentMaterialProperties, setCurrentMaterialProperties] =
-    useState<MaterialProperties | null>(null);
-  const [currentMToonMaterial, setCurrentMToonMaterial] =
-    useState<MToonMaterial | null>(null);
+  const [currentMaterialMToonIndex, setCurrentMaterialMToonIndex] = useState<
+    number | null
+  >(null);
+  const [currentMaterialMToon, setCurrentMaterialMToon] =
+    useState<MaterialMToon | null>(null);
+  const [currentMaterial, setCurrentMaterial] = useState<Material | null>(null);
   const [materialOptions, setMaterialOptions] = useState<SelectOptions[]>([]);
 
   useEffect(() => {
     setMaterialOptions(
-      GLTFTransformExtensionUtils.listVRM0MaterialProperties(
-        editorContext.gltfDocument!
-      )?.map((materialProperties, index) => ({
-        value: index,
-        label: materialProperties?.getName() || "(No Name)",
-      })) || []
+      editorContext.gltfDocument
+        ?.getRoot()
+        .listMaterials()
+        ?.map((material, index) => ({
+          value: index,
+          label: material.getName() || "(No Name)",
+        })) || []
     );
-    setCurrentMaterialPropertiesIndex(null);
+    setCurrentMaterialMToonIndex(null);
   }, [editorContext.gltfDocument]);
 
   useEffect(() => {
-    setCurrentMaterialProperties(
-      GLTFTransformExtensionUtils.getVRM0MaterialPropertiesByMaterialIndex(
+    setCurrentMaterialMToon(
+      GLTFTransformExtensionUtils.getVRM0MaterialMToonByMaterialIndex(
         editorContext.gltfDocument!,
-        currentMaterialPropertiesIndex!
+        currentMaterialMToonIndex!
       ) || null
     );
-  }, [editorContext.gltfDocument, currentMaterialPropertiesIndex]);
-
-  useEffect(() => {
-    setCurrentMToonMaterial(
-      (editorContext.threeGLTF?.userData.vrm?.materials?.at(
-        currentMaterialPropertiesIndex!
-      ) as MToonMaterial) || null
+    setCurrentMaterial(
+      editorContext.gltfDocument
+        ?.getRoot()
+        ?.listMaterials()
+        ?.at(currentMaterialMToonIndex!) || null
     );
-  }, [editorContext.threeGLTF, currentMaterialPropertiesIndex]);
+  }, [editorContext.gltfDocument, currentMaterialMToonIndex]);
 
   return (
     <>
       {editorContext.gltfDocument ? (
         <>
           <Select
-            value={currentMaterialPropertiesIndex}
+            value={currentMaterialMToonIndex}
             options={materialOptions}
             onChange={(index) => {
-              setCurrentMaterialPropertiesIndex(index);
+              setCurrentMaterialMToonIndex(index);
             }}
           />
-          <MaterialTextureList materialProperties={currentMaterialProperties} />
+          <MaterialTextureList
+            materialMToon={currentMaterialMToon}
+            material={currentMaterial}
+          />
           <MaterialColorList
-            materialProperties={currentMaterialProperties}
-            mToonMaterial={currentMToonMaterial}
+            materialMToon={currentMaterialMToon}
+            material={currentMaterial}
           />
         </>
       ) : (

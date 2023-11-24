@@ -1,11 +1,13 @@
 import { Avatar, Empty, List } from "antd";
-
-import MaterialProperties from "../../gltf-transform-extensions/VRM0/materialProperties.ts";
+import MaterialMToon from "../../gltf-transform-extensions/VRM0/materialMtoon.ts";
+import { Material } from "@gltf-transform/core";
 
 export default function MaterialTextureList({
-  materialProperties,
+  materialMToon,
+  material,
 }: {
-  materialProperties: MaterialProperties | null;
+  materialMToon: MaterialMToon | null;
+  material: Material | null;
 }) {
   type TextureItem = {
     slot: string;
@@ -15,73 +17,54 @@ export default function MaterialTextureList({
   };
   const textureItems: TextureItem[] = [];
 
-  if (materialProperties?.getMainTexture()) {
-    const mainTextureFileBuffer = materialProperties
-      .getMainTexture()
-      ?.getImage();
+  if (materialMToon && material) {
+    const baseTextureFileBuffer = material.getBaseColorTexture()?.getImage();
     textureItems.push({
-      slot: "Main",
-      name: materialProperties.getMainTexture()?.getName() || "Not set",
-      url: URL.createObjectURL(new Blob([mainTextureFileBuffer!])),
-      mimeType: materialProperties.getMainTexture()?.getMimeType() || "Not Set",
+      slot: "Base",
+      name: material.getBaseColorTexture()?.getName() || "Not set",
+      url: URL.createObjectURL(new Blob([baseTextureFileBuffer!])),
+      mimeType: material.getBaseColorTexture()?.getMimeType() || "Not Set",
     });
 
-    const shadeTextureFileBuffer = materialProperties
-      .getShadeTexture()
+    const shadeTextureFileBuffer = materialMToon
+      .getShadeMultiplyTexture()
       ?.getImage();
     textureItems.push({
       slot: "Shade",
-      name: materialProperties.getShadeTexture()?.getName() || "Not set",
+      name: materialMToon.getShadeMultiplyTexture()?.getName() || "Not set",
       url: URL.createObjectURL(new Blob([shadeTextureFileBuffer!])),
       mimeType:
-        materialProperties.getShadeTexture()?.getMimeType() || "Not Set",
+        materialMToon.getShadeMultiplyTexture()?.getMimeType() || "Not Set",
     });
 
-    const normalTextureFileBuffer = materialProperties
-      .getBumpMapTexture()
+    const rimTextureFileBuffer = materialMToon
+      .getRimMultiplyTexture()
       ?.getImage();
-    textureItems.push({
-      slot: "Normal",
-      name: materialProperties.getBumpMapTexture()?.getName() || "Not set",
-      url: URL.createObjectURL(new Blob([normalTextureFileBuffer!])),
-      mimeType:
-        materialProperties.getBumpMapTexture()?.getMimeType() || "Not Set",
-    });
-
-    const emissionTextureFileBuffer = materialProperties
-      .getEmissionMapTexture()
-      ?.getImage();
-    textureItems.push({
-      slot: "Emission",
-      name: materialProperties.getEmissionMapTexture()?.getName() || "Not set",
-      url: URL.createObjectURL(new Blob([emissionTextureFileBuffer!])),
-      mimeType:
-        materialProperties.getEmissionMapTexture()?.getMimeType() || "Not Set",
-    });
-
-    const rimTextureFileBuffer = materialProperties.getRimTexture()?.getImage();
     textureItems.push({
       slot: "Rim",
-      name: materialProperties.getRimTexture()?.getName() || "Not set",
+      name: materialMToon.getRimMultiplyTexture()?.getName() || "Not set",
       url: URL.createObjectURL(new Blob([rimTextureFileBuffer!])),
-      mimeType: materialProperties.getRimTexture()?.getMimeType() || "Not Set",
+      mimeType:
+        materialMToon.getRimMultiplyTexture()?.getMimeType() || "Not Set",
     });
 
-    const outlineWidthTextureFileBuffer = materialProperties
-      .getOutlineWidthTexture()
+    const outlineWidthTextureFileBuffer = materialMToon
+      .getOutlineWidthMultiplyTexture()
       ?.getImage();
     textureItems.push({
       slot: "Outline",
-      name: materialProperties.getOutlineWidthTexture()?.getName() || "Not set",
+      name:
+        materialMToon.getOutlineWidthMultiplyTexture()?.getName() || "Not set",
       url: URL.createObjectURL(new Blob([outlineWidthTextureFileBuffer!])),
       mimeType:
-        materialProperties.getOutlineWidthTexture()?.getMimeType() || "Not Set",
+        materialMToon.getOutlineWidthMultiplyTexture()?.getMimeType() ||
+        "Not Set",
     });
   }
 
   return (
     <>
-      {materialProperties ? (
+      {materialMToon ? (
         <List
           itemLayout="vertical"
           dataSource={textureItems}
