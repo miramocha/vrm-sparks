@@ -354,6 +354,20 @@ export default class MaterialMToon extends ExtensionProperty<IMaterialMToon> {
    */
   // uvAnimationMaskTexture: Texture;
   // uvAnimationMaskTextureInfo: TextureInfo;
+  public getUVAnimationMaskTexture(): Texture | null {
+    return this.getRef("uvAnimationMaskTexture");
+  }
+  public setUVAnimationMaskTextureInfo(texture: Texture | null): this {
+    return this.setRef("uvAnimationMaskTexture", texture, {
+      channels: R | G | B,
+    });
+  }
+  public getUVAnimationMaskTextureInfo(): TextureInfo | null {
+    return this.getRef("uvAnimationMaskTexture")
+      ? this.getRef("uvAnimationMaskTextureInfo")
+      : null;
+  }
+
   // uvAnimationScrollXSpeedFactor: number;
   // uvAnimationScrollYSpeedFactor: number;
   // uvAnimationRotationSpeedFactor: number;
