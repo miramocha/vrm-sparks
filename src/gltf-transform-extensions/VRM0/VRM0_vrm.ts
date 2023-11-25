@@ -7,7 +7,7 @@ import {
 import * as VRM0Type from "@pixiv/types-vrm-0.0";
 import VRM from "./VRM.ts";
 import { VRM0 } from "./constants.ts";
-import MaterialMToon from "./materialMtoon.ts";
+import MaterialMToon from "../materialMtoon.ts";
 
 const NAME = VRM0;
 
@@ -188,9 +188,7 @@ export default class VRM0_vrm extends Extension {
 
             // Vectors
             if (vectorPropertiesDef._Color !== undefined) {
-              material.setBaseColorFactor(
-                vectorPropertiesDef._Color.slice(0, 3)
-              );
+              material.setBaseColorFactor(vectorPropertiesDef._Color);
             }
 
             if (vectorPropertiesDef._EmissionColor !== undefined) {

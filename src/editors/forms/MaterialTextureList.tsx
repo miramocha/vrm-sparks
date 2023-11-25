@@ -1,5 +1,5 @@
 import { Avatar, Empty, List } from "antd";
-import MaterialMToon from "../../gltf-transform-extensions/VRM0/materialMtoon.ts";
+import MaterialMToon from "../../gltf-transform-extensions/materialMtoon.ts";
 import { Material } from "@gltf-transform/core";
 
 export default function MaterialTextureList({

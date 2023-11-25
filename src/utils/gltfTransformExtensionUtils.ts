@@ -3,7 +3,7 @@ import { Document, Material, NodeIO } from "@gltf-transform/core";
 import * as VRM0_CONSTANTS from "../gltf-transform-extensions/VRM0/constants.ts";
 import VRM from "../gltf-transform-extensions/VRM0/VRM.ts";
 // VRM
-import * as VRM_CONSTANTS from "../gltf-transform-extensions/VRM1/constants.ts";
+import * as VRM1_CONSTANTS from "../gltf-transform-extensions/VRM1/constants.ts";
 
 import {
   KHRMaterialsUnlit,
@@ -11,7 +11,7 @@ import {
 } from "@gltf-transform/extensions";
 
 import VRM0_vrm from "../gltf-transform-extensions/VRM0/VRM0_vrm.ts";
-import MaterialMToon from "../gltf-transform-extensions/VRM0/materialMtoon.ts";
+import MaterialMToon from "../gltf-transform-extensions/materialMtoon.ts";
 
 import VRMC_vrm from "../gltf-transform-extensions/VRM1/VRMC_vrm.ts";
 import VRMC_materials_mtoon from "../gltf-transform-extensions/VRM1/VRMC_materials_mtoon.ts";
@@ -29,17 +29,28 @@ export class GLTFTransformExtensionUtils {
     return document.getRoot().getExtension<VRM>(VRM0_CONSTANTS.VRM0);
   }
 
-  public static getVRM0MaterialMToonByMaterialIndex(
+  public static getMaterialMToonByMaterialIndex(
     document: Document,
     index: number
   ): MaterialMToon | null {
-    return (
-      document
-        ?.getRoot()
-        ?.listMaterials()
-        ?.at(index!)
-        ?.getExtension<MaterialMToon>(VRM0_CONSTANTS.VRM0) || null
-    );
+    if (GLTFTransformExtensionUtils.isVRM0Document(document)) {
+      return (
+        document
+          ?.getRoot()
+          ?.listMaterials()
+          ?.at(index!)
+          ?.getExtension<MaterialMToon>(VRM0_CONSTANTS.VRM0) || null
+      );
+    } else {
+      return (
+        document
+          ?.getRoot()
+          ?.listMaterials()
+          ?.at(index!)
+          ?.getExtension<MaterialMToon>(VRM1_CONSTANTS.VRMC_MATERIALS_MTOON) ||
+        null
+      );
+    }
   }
 
   public static listVRM0MaterialMToons(
@@ -57,7 +68,7 @@ export class GLTFTransformExtensionUtils {
     material: Material
   ): MaterialMToon | null {
     const materialMToon = material.getExtension<MaterialMToon>(
-      VRM_CONSTANTS.VRMC_MATERIALS_MTOON
+      VRM1_CONSTANTS.VRMC_MATERIALS_MTOON
     );
 
     return materialMToon;

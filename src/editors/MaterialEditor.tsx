@@ -1,15 +1,15 @@
 import { useContext, useEffect, useState } from "react";
-import { Empty, Select } from "antd";
-import MaterialMToon from "../gltf-transform-extensions/VRM0/materialMtoon.ts";
+import { Empty, Select, Tabs } from "antd";
+import MaterialMToon from "../gltf-transform-extensions/materialMtoon.ts";
 import { GLTFTransformExtensionUtils } from "../utils/GLTFTransformExtensionUtils.ts";
-import MaterialTextureList from "./vrm0/MaterialTextureList.tsx";
+import MaterialTextureList from "./forms/MaterialTextureList.tsx";
 import { EditorContext } from "../providers/editorContextProvider.tsx";
-import MaterialColorList from "./vrm0/MaterialColorList.tsx";
+import MaterialColorList from "./forms/MaterialColorList.tsx";
 import { Material } from "@gltf-transform/core";
 
 type SelectOptions = { label?: string; value: number };
 
-export default function VRM0MaterialEditor() {
+export default function MaterialEditor() {
   const editorContext = useContext(EditorContext);
 
   const [currentMaterialMToonIndex, setCurrentMaterialMToonIndex] = useState<
@@ -34,12 +34,13 @@ export default function VRM0MaterialEditor() {
   }, [editorContext.gltfDocument]);
 
   useEffect(() => {
-    if (!currentMaterialMToonIndex) {
+    console.log("changing index to", currentMaterialMToonIndex);
+    if (currentMaterialMToonIndex === null) {
       setCurrentMaterialMToon(null);
       setCurrentMaterial(null);
     } else {
       setCurrentMaterialMToon(
-        GLTFTransformExtensionUtils.getVRM0MaterialMToonByMaterialIndex(
+        GLTFTransformExtensionUtils.getMaterialMToonByMaterialIndex(
           editorContext.gltfDocument!,
           currentMaterialMToonIndex!
         ) || null
@@ -64,13 +65,30 @@ export default function VRM0MaterialEditor() {
               setCurrentMaterialMToonIndex(index);
             }}
           />
-          <MaterialTextureList
-            materialMToon={currentMaterialMToon}
-            material={currentMaterial}
-          />
-          <MaterialColorList
-            materialMToon={currentMaterialMToon}
-            material={currentMaterial}
+          <Tabs
+            defaultActiveKey="colors"
+            items={[
+              {
+                label: "Colors",
+                key: "colors",
+                children: (
+                  <MaterialColorList
+                    materialMToon={currentMaterialMToon}
+                    material={currentMaterial}
+                  />
+                ),
+              },
+              {
+                label: "Textures",
+                key: "textures",
+                children: (
+                  <MaterialTextureList
+                    materialMToon={currentMaterialMToon}
+                    material={currentMaterial}
+                  />
+                ),
+              },
+            ]}
           />
         </>
       ) : (

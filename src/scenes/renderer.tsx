@@ -1,15 +1,13 @@
-import { useRef, useContext } from "react";
+import { useContext } from "react";
 import { Canvas, useLoader } from "@react-three/fiber";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
-import { CameraControls } from "@react-three/drei";
 import { VRMLoaderPlugin } from "@pixiv/three-vrm";
-import { EditorContext } from "./providers/editorContextProvider.tsx";
+import { EditorContext } from "../providers/editorContextProvider.tsx";
 import VrmModel from "./vrmModel.tsx";
+import BaseScene from "./baseScene.tsx";
 
-export default function ThreeJSRenderer() {
+export default function Renderer() {
   const editorContext = useContext(EditorContext);
-
-  const cameraControlRef = useRef<CameraControls | null>(null);
 
   const defaultVRMGLTF = useLoader(
     GLTFLoader,
@@ -22,12 +20,8 @@ export default function ThreeJSRenderer() {
   );
 
   return (
-    <Canvas style={{ backgroundColor: "black" }}>
-      <CameraControls ref={cameraControlRef} />
-      <hemisphereLight intensity={0.5} />
-      <pointLight distance={1} decay={6} position={[0, 0.5, -1.5]} />
-      <gridHelper />
-      <axesHelper />
+    <Canvas>
+      <BaseScene />
       {editorContext.threeGLTF ? (
         <VrmModel vrm={editorContext.threeGLTF.userData.vrm} />
       ) : (

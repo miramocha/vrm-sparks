@@ -7,12 +7,12 @@ import {
   TextureInfo,
   TextureChannel,
   vec3,
+  ColorUtils,
 } from "@gltf-transform/core";
-import { VRM0 } from "./constants.ts";
+import { VRM0 } from "./VRM0/constants.ts";
+import { VRMC_MATERIALS_MTOON } from "./VRM1/constants.ts";
 
 const { R, G, B } = TextureChannel;
-
-const NAME = VRM0; // CHANGE THIS FOR VRM1
 
 /**
  * @see https://github.com/vrm-c/vrm-specification/blob/master/specification/VRMC_materials_mtoon-1.0/README.md
@@ -68,14 +68,16 @@ export interface IMaterialMToon extends IProperty {
   uvAnimationRotationSpeedFactor: number;
 }
 
+const VRM0NAME = VRM0;
+const VRM1NAME = VRMC_MATERIALS_MTOON;
+
 export default class MaterialMToon extends ExtensionProperty<IMaterialMToon> {
-  public static EXTENSION_NAME = NAME;
-  public declare extensionName: typeof NAME;
+  public declare extensionName: typeof VRM0NAME | typeof VRM1NAME;
   public declare propertyType: "VRMC_MaterialsMToon";
   public declare parentTypes: [PropertyType.MATERIAL];
 
   protected init(): void {
-    this.extensionName = NAME;
+    this.extensionName = VRM0NAME;
     this.propertyType = "VRMC_MaterialsMToon";
     this.parentTypes = [PropertyType.MATERIAL];
   }
@@ -178,6 +180,13 @@ export default class MaterialMToon extends ExtensionProperty<IMaterialMToon> {
   public setShadeColorFactor(shadeColorFactor: vec3): this {
     return this.set("shadeColorFactor", shadeColorFactor);
   }
+  public getShadeColorHex(): number {
+    return ColorUtils.factorToHex(this.get("shadeColorFactor"));
+  }
+  public setShadeColorHex(hex: number): this {
+    const factor = this.get("shadeColorFactor").slice() as vec3;
+    return this.set("shadeColorFactor", ColorUtils.hexToFactor(hex, factor));
+  }
 
   public getShadeMultiplyTexture(): Texture | null {
     return this.getRef("shadeMultiplyTexture");
@@ -237,6 +246,13 @@ export default class MaterialMToon extends ExtensionProperty<IMaterialMToon> {
   public setMatcapFactor(matcapFactor: vec3): this {
     return this.set("matcapFactor", matcapFactor);
   }
+  public getMatcapHex(): number {
+    return ColorUtils.factorToHex(this.get("matcapFactor"));
+  }
+  public setMatcapHex(hex: number): this {
+    const factor = this.get("matcapFactor").slice() as vec3;
+    return this.set("matcapFactor", ColorUtils.hexToFactor(hex, factor));
+  }
 
   public getMatcapTexture(): Texture | null {
     return this.getRef("matcapTexture");
@@ -257,6 +273,16 @@ export default class MaterialMToon extends ExtensionProperty<IMaterialMToon> {
   }
   public setParametricRimColorFactor(parametricRimColorFactor: vec3): this {
     return this.set("parametricRimColorFactor", parametricRimColorFactor);
+  }
+  public getParametricRimColorHex(): number {
+    return ColorUtils.factorToHex(this.get("parametricRimColorFactor"));
+  }
+  public setParametricRimColorHex(hex: number): this {
+    const factor = this.get("parametricRimColorFactor").slice() as vec3;
+    return this.set(
+      "parametricRimColorFactor",
+      ColorUtils.hexToFactor(hex, factor)
+    );
   }
 
   public getRimMultiplyTexture(): Texture | null {
@@ -335,6 +361,13 @@ export default class MaterialMToon extends ExtensionProperty<IMaterialMToon> {
   }
   public setOutlineColorFactor(outlineColorFactor: vec3): this {
     return this.set("outlineColorFactor", outlineColorFactor);
+  }
+  public getOutlineColorHex(): number {
+    return ColorUtils.factorToHex(this.get("outlineColorFactor"));
+  }
+  public setOutlineColorHex(hex: number): this {
+    const factor = this.get("outlineColorFactor").slice() as vec3;
+    return this.set("outlineColorFactor", ColorUtils.hexToFactor(hex, factor));
   }
 
   public getOutlineLightningMixFactor(): number {
