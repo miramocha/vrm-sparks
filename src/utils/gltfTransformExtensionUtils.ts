@@ -1,7 +1,7 @@
 import { Document, Material, NodeIO } from "@gltf-transform/core";
 // VRM0
 import * as VRM0_CONSTANTS from "../gltf-transform-extensions/VRM0/constants.ts";
-import VRM from "../gltf-transform-extensions/VRM0/VRM.ts";
+import VRM from "../gltf-transform-extensions/VRM0/vrm.ts";
 // VRM
 import * as VRM1_CONSTANTS from "../gltf-transform-extensions/VRM1/constants.ts";
 
@@ -10,7 +10,7 @@ import {
   KHRTextureTransform,
 } from "@gltf-transform/extensions";
 
-import VRM0_vrm from "../gltf-transform-extensions/VRM0/VRM0_vrm.ts";
+import VRM0_vrm from "../gltf-transform-extensions/VRM0/vrm0-vrm.ts";
 import MaterialMToon from "../gltf-transform-extensions/materialMtoon.ts";
 
 import VRMC_vrm from "../gltf-transform-extensions/VRM1/VRMC_vrm.ts";

@@ -4,8 +4,8 @@ import {
   TextureInfo,
   WriterContext,
 } from "@gltf-transform/core";
-import * as VRM0Type from "@pixiv/types-vrm-0.0";
-import VRM from "./VRM.ts";
+import * as VRM0Def from "@pixiv/types-vrm-0.0";
+import VRM from "./vrm.ts";
 import { VRM0 } from "./constants.ts";
 import MaterialMToon from "../materialMtoon.ts";
 
@@ -23,7 +23,7 @@ export default class VRM0_vrm extends Extension {
     const jsonDoc = context.jsonDoc;
 
     if (jsonDoc.json.extensions && jsonDoc.json.extensions[NAME]) {
-      const vrmDef = jsonDoc.json.extensions[NAME] as VRM0Type.VRM;
+      const vrmDef = jsonDoc.json.extensions[NAME] as VRM0Def.VRM;
       const textureDefs = jsonDoc.json.textures || [];
 
       const vrm = new VRM(this.document.getGraph());
@@ -69,7 +69,7 @@ export default class VRM0_vrm extends Extension {
 
         vrmDef.materialProperties.forEach(
           (
-            materialPropertiesDef: VRM0Type.Material,
+            materialPropertiesDef: VRM0Def.Material,
             materialPropertiesDefIndex
           ) => {
             const materialMToon = this.createMaterialMToon();
@@ -230,7 +230,7 @@ export default class VRM0_vrm extends Extension {
     const vrm = this.document.getRoot().getExtension<VRM>(NAME);
 
     if (vrm) {
-      const vrmDef = {} as VRM0Type.VRM;
+      const vrmDef = {} as VRM0Def.VRM;
       const rootDef = jsonDoc.json;
       rootDef.extensions = rootDef.extensions || {};
 

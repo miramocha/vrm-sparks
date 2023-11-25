@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { VRMLoaderPlugin, VRMUtils } from "@pixiv/three-vrm";
-import VRM0_vrm from "../gltf-transform-extensions/VRM0/VRM0_vrm.ts";
+import VRM0_vrm from "../gltf-transform-extensions/VRM0/vrm0-vrm.ts";
 import {
   KHRMaterialsUnlit,
   KHRTextureTransform,
