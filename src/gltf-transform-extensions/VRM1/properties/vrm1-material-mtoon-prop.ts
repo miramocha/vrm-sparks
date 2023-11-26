@@ -1,18 +1,16 @@
 import { PropertyType } from "@gltf-transform/core";
-import MaterialMToon from "../materialMtoon.ts";
-import { VRMC_MATERIALS_MTOON } from "./constants.ts";
+import MaterialMToon from "../../material-mtoon-prop.ts";
+import { VRMC_MATERIALS_MTOON as NAME } from "../constants.ts";
 
-const NAME = VRMC_MATERIALS_MTOON;
-
-export default class VRMCMaterialMToon extends MaterialMToon {
+export default class VRM1MaterialMToon extends MaterialMToon {
   public static EXTENSION_NAME = NAME;
   public declare extensionName: typeof NAME;
-  public declare propertyType: "VRMC_MaterialsMToon";
+  public declare propertyType: "VRMC_materialsMToon";
   public declare parentTypes: [PropertyType.MATERIAL];
 
   protected init(): void {
     this.extensionName = NAME;
-    this.propertyType = "VRMC_MaterialsMToon";
+    this.propertyType = "VRMC_materialsMToon";
     this.parentTypes = [PropertyType.MATERIAL];
   }
 }

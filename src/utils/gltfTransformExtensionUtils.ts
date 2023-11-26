@@ -1,8 +1,8 @@
 import { Document, Material, NodeIO } from "@gltf-transform/core";
 // VRM0
 import * as VRM0_CONSTANTS from "../gltf-transform-extensions/VRM0/constants.ts";
-import VRM from "../gltf-transform-extensions/VRM0/vrm.ts";
-// VRM
+import VRM0Prop from "../gltf-transform-extensions/VRM0/properties/vrm0-vrm-prop.ts";
+// VRM0Prop
 import * as VRM1_CONSTANTS from "../gltf-transform-extensions/VRM1/constants.ts";
 
 import {
@@ -10,12 +10,16 @@ import {
   KHRTextureTransform,
 } from "@gltf-transform/extensions";
 
-import VRM0_vrm from "../gltf-transform-extensions/VRM0/vrm0-vrm.ts";
-import MaterialMToon from "../gltf-transform-extensions/materialMtoon.ts";
+// VRM0 Extensions
+import VRM0VRM from "../gltf-transform-extensions/VRM0/vrm0-vrm.ts";
 
-import VRMC_vrm from "../gltf-transform-extensions/VRM1/VRMC_vrm.ts";
-import VRMC_materials_mtoon from "../gltf-transform-extensions/VRM1/VRMC_materials_mtoon.ts";
-import VRMC_springBone from "../gltf-transform-extensions/VRM1/VRMC_springBone.ts";
+// VRM1 Extensions
+import VRM1VRM from "../gltf-transform-extensions/VRM1/vrm1-vrm.ts";
+import VRMC_materials_mtoon from "../gltf-transform-extensions/VRM1/vrm1-materials-mtoon.ts";
+import VRMC_springBone from "../gltf-transform-extensions/VRM1/vrm1-springbone.ts";
+
+// VRM Extension Props
+import MaterialMToon from "../gltf-transform-extensions/material-mtoon-prop.ts";
 
 export class GLTFTransformExtensionUtils {
   public static isVRM0Document(document: Document): boolean {
@@ -25,11 +29,11 @@ export class GLTFTransformExtensionUtils {
       .some((extension) => extension.extensionName === VRM0_CONSTANTS.VRM0);
   }
 
-  public static getVRM0Extension(document: Document): VRM | null {
-    return document.getRoot().getExtension<VRM>(VRM0_CONSTANTS.VRM0);
+  public static getVRM0Extension(document: Document): VRM0Prop | null {
+    return document.getRoot().getExtension<VRM0Prop>(VRM0_CONSTANTS.VRM0);
   }
 
-  public static getMaterialMToonByMaterialIndex(
+  public static getMaterialMToonPropByMaterialIndex(
     document: Document,
     index: number
   ): MaterialMToon | null {
@@ -77,7 +81,7 @@ export class GLTFTransformExtensionUtils {
   public static getVRM0NodeIO(): NodeIO {
     const nodeIO = new NodeIO();
     nodeIO.registerExtensions([
-      VRM0_vrm,
+      VRM0VRM,
       KHRMaterialsUnlit,
       KHRTextureTransform,
     ]);
@@ -88,7 +92,7 @@ export class GLTFTransformExtensionUtils {
   public static getVRM1NodeIO(): NodeIO {
     const nodeIO = new NodeIO();
     nodeIO.registerExtensions([
-      VRMC_vrm,
+      VRM1VRM,
       VRMC_materials_mtoon,
       VRMC_springBone,
       KHRMaterialsUnlit,

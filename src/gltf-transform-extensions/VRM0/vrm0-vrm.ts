@@ -5,18 +5,48 @@ import {
   WriterContext,
 } from "@gltf-transform/core";
 import * as VRM0Def from "@pixiv/types-vrm-0.0";
-import VRM from "./vrm.ts";
-import { VRM0 } from "./constants.ts";
-import MaterialMToon from "../materialMtoon.ts";
+import VRM0Prop from "./properties/vrm0-vrm-prop.ts";
+import { VRM0 as NAME } from "./constants.ts";
+import VRM0MaterialMToonProp from "./properties/vrm0-material-mtoon-prop.ts";
+import VRM0MetaProp from "./properties/vrm0-meta-prop.ts";
 
-const NAME = VRM0;
+type LicenseName =
+  | "Redistribution_Prohibited"
+  | "CC0"
+  | "CC_BY"
+  | "CC_BY_NC"
+  | "CC_BY_SA"
+  | "CC_BY_NC_SA"
+  | "CC_BY_ND"
+  | "CC_BY_NC_ND"
+  | "Other";
 
-export default class VRM0_vrm extends Extension {
-  public readonly extensionName = NAME;
-  public static readonly EXTENSION_NAME = NAME;
+export default class VRM0VRM extends Extension {
+  static readonly LICENSE_TO_URL_MAP = new Map<LicenseName, string>([
+    ["CC0", "https://creativecommons.org/public-domain/cc0/"],
+    ["CC_BY", "https://creativecommons.org/licenses/by/2.0/deed"],
+    ["CC_BY_NC", "https://creativecommons.org/licenses/by-nc/2.0/deed"],
+    ["CC_BY_SA", "https://creativecommons.org/licenses/by-sa/2.0/deed"],
+    ["CC_BY_NC_SA", "https://creativecommons.org/licenses/by-nc-sa/2.0/deed"],
+    ["CC_BY_ND", "https://creativecommons.org/licenses/by-nd/2.0/deed"],
+    ["CC_BY_NC_ND", "https://creativecommons.org/licenses/by-nc-nd/2.0/deed"],
+  ]);
+  static readonly URL_TO_LICENSE_MAP = new Map<string, LicenseName>([
+    ["https://creativecommons.org/public-domain/cc0/", "CC0"],
+    ["https://creativecommons.org/licenses/by/2.0/deed", "CC_BY"],
+    ["https://creativecommons.org/licenses/by-nc/2.0/deed", "CC_BY_NC"],
+    ["https://creativecommons.org/licenses/by-sa/2.0/deed", "CC_BY_SA"],
+    ["https://creativecommons.org/licenses/by-nc-sa/2.0/deed", "CC_BY_NC_SA"],
+    ["https://creativecommons.org/licenses/by-nd/2.0/deed", "CC_BY_ND"],
+    ["https://creativecommons.org/licenses/by-nc-nd/2.0/deed", "CC_BY_NC_ND"],
+  ]);
 
-  public createMaterialMToon(): MaterialMToon {
-    return new MaterialMToon(this.document.getGraph());
+  public createVRM0MetaProp(): VRM0MetaProp {
+    return new VRM0MetaProp(this.document.getGraph());
+  }
+
+  public createVRM0MaterialMToonProp(): VRM0MaterialMToonProp {
+    return new VRM0MaterialMToonProp(this.document.getGraph());
   }
 
   public read(context: ReaderContext): this {
@@ -26,53 +56,108 @@ export default class VRM0_vrm extends Extension {
       const vrmDef = jsonDoc.json.extensions[NAME] as VRM0Def.VRM;
       const textureDefs = jsonDoc.json.textures || [];
 
-      const vrm = new VRM(this.document.getGraph());
-      this.document.getRoot().setExtension(NAME, vrm);
+      const vrmProp = new VRM0Prop(this.document.getGraph());
+      this.document.getRoot().setExtension(NAME, vrmProp);
 
       if (vrmDef.exporterVersion) {
-        vrm.setExporterVersion(vrmDef.exporterVersion as string);
+        vrmProp.setExporterVersion(vrmDef.exporterVersion as string);
       }
 
       if (vrmDef.meta) {
-        vrm.setMeta(vrmDef.meta);
+        const vrmMetaProp = this.createVRM0MetaProp();
+        vrmProp.setMetaProp(vrmMetaProp);
+        const metaDef = vrmDef.meta;
 
-        const metaTextureIndex = vrmDef.meta.texture;
-
-        if (metaTextureIndex !== undefined) {
+        if (metaDef.title !== undefined) {
+          vrmMetaProp.setName(metaDef.title);
+        }
+        if (metaDef.version !== undefined) {
+          vrmMetaProp.setVersion(metaDef.version);
+        }
+        if (metaDef.author !== undefined) {
+          vrmMetaProp.setAuthors([metaDef.author]);
+        }
+        if (metaDef.contactInformation !== undefined) {
+          vrmMetaProp.setContactInformation(metaDef.contactInformation);
+        }
+        if (metaDef.reference !== undefined) {
+          vrmMetaProp.setReferences([metaDef.reference]);
+        }
+        if (metaDef.texture !== undefined) {
           const texture =
-            context.textures[textureDefs[metaTextureIndex].source!];
-          vrm.setThumbnailTexture(texture);
-          context.setTextureInfo(vrm.getThumbnailTextureInfo()!, {
-            index: metaTextureIndex,
+            context.textures[textureDefs[metaDef.texture].source!];
+          vrmMetaProp.setThumbnailImageTexture(texture);
+          context.setTextureInfo(vrmMetaProp.getThumbnailImageTextureInfo()!, {
+            index: metaDef.texture,
           });
+        }
+        if (metaDef.allowedUserName !== undefined) {
+          if (metaDef.allowedUserName === "ExplicitlyLicensedPerson") {
+            vrmMetaProp.setAvatarPermission("onlySeparatelyLicensedPerson");
+          } else if (metaDef.allowedUserName === "OnlyAuthor") {
+            vrmMetaProp.setAvatarPermission("onlyAuthor");
+          } else if (metaDef.allowedUserName === "Everyone") {
+            vrmMetaProp.setAvatarPermission("everyone");
+          }
+        }
+        if (metaDef.violentUssageName !== undefined) {
+          vrmMetaProp.setAllowExcessivelyViolentUsage(
+            metaDef.violentUssageName === "Allow"
+          );
+        }
+        if (metaDef.sexualUssageName !== undefined) {
+          vrmMetaProp.setAllowExcessivelySexualUsage(
+            metaDef.sexualUssageName === "Allow"
+          );
+        }
+        if (metaDef.commercialUssageName !== undefined) {
+          if (metaDef.commercialUssageName === "Allow") {
+            vrmMetaProp.setCommercialUsage("personalProfit");
+          }
+          if (metaDef.commercialUssageName === "Disallow") {
+            vrmMetaProp.setCommercialUsage("personalNonProfit");
+          }
+          // Not sure about corporation commercial usage in VRM0. Will disallow for now if it's converted to VRM1
+        }
+        if (metaDef.licenseName !== undefined) {
+          vrmMetaProp.setAllowRedistribution(
+            metaDef.licenseName !== "Redistribution_Prohibited"
+          );
+
+          vrmMetaProp.setLicenseUrl(
+            VRM0VRM.LICENSE_TO_URL_MAP.get(metaDef.licenseName)!
+          );
+        }
+        if (metaDef.otherLicenseUrl !== undefined) {
+          vrmMetaProp.setOtherLicenseUrl(metaDef.otherLicenseUrl);
         }
       }
 
       if (vrmDef.humanoid) {
-        vrm.setHumanoid(vrmDef.humanoid);
+        vrmProp.setHumanoid(vrmDef.humanoid);
       }
 
       if (vrmDef.firstPerson) {
-        vrm.setFirstPerson(vrmDef.firstPerson);
+        vrmProp.setFirstPerson(vrmDef.firstPerson);
       }
 
       if (vrmDef.blendShapeMaster) {
-        vrm.setBlendShapeMaster(vrmDef.blendShapeMaster);
+        vrmProp.setBlendShapeMaster(vrmDef.blendShapeMaster);
       }
 
       if (vrmDef.secondaryAnimation) {
-        vrm.setSecondaryAnimation(vrmDef.secondaryAnimation);
+        vrmProp.setSecondaryAnimation(vrmDef.secondaryAnimation);
       }
 
       if (vrmDef.materialProperties) {
-        vrm.setMaterialProperties(vrmDef.materialProperties);
+        vrmProp.setMaterialProperties(vrmDef.materialProperties);
 
         vrmDef.materialProperties.forEach(
           (
             materialPropertiesDef: VRM0Def.Material,
-            materialPropertiesDefIndex
+            materialPropertiesDefIndex: number
           ) => {
-            const materialMToon = this.createMaterialMToon();
+            const materialMToon = this.createVRM0MaterialMToonProp();
             const material = context.materials[materialPropertiesDefIndex];
             material.setExtension(NAME, materialMToon);
 
@@ -227,56 +312,121 @@ export default class VRM0_vrm extends Extension {
   public write(context: WriterContext): this {
     const jsonDoc = context.jsonDoc;
 
-    const vrm = this.document.getRoot().getExtension<VRM>(NAME);
+    const vrmProp = this.document.getRoot().getExtension<VRM0Prop>(NAME);
 
-    if (vrm) {
+    if (vrmProp) {
       const vrmDef = {} as VRM0Def.VRM;
       const rootDef = jsonDoc.json;
       rootDef.extensions = rootDef.extensions || {};
 
       vrmDef.specVersion = "0.0";
 
-      if (vrm.getExporterVersion()) {
+      if (vrmProp.getExporterVersion()) {
         vrmDef.exporterVersion = "VRM-Sparks 0.0";
       }
 
-      if (vrm.getMeta()) {
-        vrmDef.meta = vrm.getMeta() || {};
+      const vrmMetaProp = vrmProp.getMetaProp();
+      vrmDef.meta = vrmDef.meta || {};
 
-        if (vrm.getThumbnailTexture()) {
-          const texture = vrm.getThumbnailTexture();
-          const textureInfo = vrm.getThumbnailTextureInfo()!;
-          vrmDef.meta.texture = context.createTextureInfoDef(
-            texture!,
-            textureInfo
+      if (vrmMetaProp !== null) {
+        const metaDef = vrmDef.meta;
+
+        if (vrmMetaProp.getName() !== undefined) {
+          metaDef.title = vrmMetaProp.getName();
+        }
+        if (vrmMetaProp.getVersion() !== undefined) {
+          metaDef.version = vrmMetaProp.getVersion();
+        }
+        if (vrmMetaProp.getAuthors() !== undefined) {
+          metaDef.author = vrmMetaProp.getAuthors().join(",");
+        }
+        if (vrmMetaProp.getContactInformation() !== undefined) {
+          metaDef.contactInformation = vrmMetaProp.getContactInformation();
+        }
+        if (vrmMetaProp.getReferences() !== undefined) {
+          metaDef.reference = vrmMetaProp.getReferences().join(",");
+        }
+
+        if (vrmMetaProp.getThumbnailImageTexture()) {
+          metaDef.texture = context.createTextureInfoDef(
+            vrmMetaProp.getThumbnailImageTexture()!,
+            vrmMetaProp.getThumbnailImageTextureInfo()!
           ).index;
+        }
+
+        if (vrmMetaProp.getAvatarPermission() !== undefined) {
+          if (
+            vrmMetaProp.getAvatarPermission() === "onlySeparatelyLicensedPerson"
+          ) {
+            metaDef.allowedUserName = "ExplicitlyLicensedPerson";
+          } else if (vrmMetaProp.getAvatarPermission() === "onlyAuthor") {
+            metaDef.allowedUserName = "OnlyAuthor";
+          } else if (vrmMetaProp.getAvatarPermission() === "everyone") {
+            metaDef.allowedUserName = "Everyone";
+          }
+        }
+
+        if (vrmMetaProp.getAllowExcessivelyViolentUsage() !== undefined) {
+          metaDef.violentUssageName =
+            vrmMetaProp.getAllowExcessivelyViolentUsage() === true
+              ? "Allow"
+              : "Disallow";
+        }
+
+        if (vrmMetaProp.getAllowExcessivelySexualUsage() !== undefined) {
+          metaDef.sexualUssageName =
+            vrmMetaProp.getAllowExcessivelySexualUsage() === true
+              ? "Allow"
+              : "Disallow";
+        }
+
+        if (vrmMetaProp.getCommercialUsage() !== undefined) {
+          metaDef.commercialUssageName =
+            vrmMetaProp.getCommercialUsage() !== "personalNonProfit"
+              ? "Allow"
+              : "Disallow";
+        }
+
+        if (vrmMetaProp.getAllowRedistribution() !== undefined) {
+          if (vrmMetaProp.getAllowRedistribution() === false) {
+            metaDef.licenseName = "Redistribution_Prohibited";
+          } else {
+            metaDef.licenseName =
+              VRM0VRM.URL_TO_LICENSE_MAP.get(vrmMetaProp.getLicenseUrl()) ||
+              "Other";
+          }
+        }
+
+        if (vrmMetaProp.getOtherLicenseUrl() !== undefined) {
+          metaDef.otherLicenseUrl = vrmMetaProp.getOtherLicenseUrl();
         }
       }
 
-      if (vrm.getHumanoid()) {
-        vrmDef.humanoid = vrm.getHumanoid();
+      if (vrmProp.getHumanoid()) {
+        vrmDef.humanoid = vrmProp.getHumanoid();
       }
 
-      if (vrm.getFirstPerson()) {
-        vrmDef.firstPerson = vrm.getFirstPerson();
+      if (vrmProp.getFirstPerson()) {
+        vrmDef.firstPerson = vrmProp.getFirstPerson();
       }
 
-      if (vrm.getBlendShapeMaster()) {
-        vrmDef.blendShapeMaster = vrm.getBlendShapeMaster();
+      if (vrmProp.getBlendShapeMaster()) {
+        vrmDef.blendShapeMaster = vrmProp.getBlendShapeMaster();
       }
 
-      if (vrm.getSecondaryAnimation()) {
-        vrmDef.secondaryAnimation = vrm.getSecondaryAnimation();
+      if (vrmProp.getSecondaryAnimation()) {
+        vrmDef.secondaryAnimation = vrmProp.getSecondaryAnimation();
       }
 
-      if (vrm.getMaterialProperties()) {
-        vrmDef.materialProperties = vrm.getMaterialProperties() || [];
+      if (vrmProp.getMaterialProperties()) {
+        vrmDef.materialProperties = vrmProp.getMaterialProperties() || [];
 
         this.document
           .getRoot()
           .listMaterials()
           .forEach((material, materialIndex) => {
-            const materialMToon = material.getExtension<MaterialMToon>(NAME);
+            const materialMToon =
+              material.getExtension<VRM0MaterialMToonProp>(NAME);
             const materialPropertiesDef =
               vrmDef.materialProperties![materialIndex];
 

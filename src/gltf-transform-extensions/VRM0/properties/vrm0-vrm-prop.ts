@@ -3,21 +3,13 @@ import {
   IProperty,
   Nullable,
   PropertyType,
-  Texture,
-  TextureInfo,
-  TextureChannel,
 } from "@gltf-transform/core";
 import * as VRM0Type from "@pixiv/types-vrm-0.0";
-import { VRM0 } from "./constants.ts";
+import { VRM0 as NAME } from "../constants.ts";
+import VRM0MetaProp from "./vrm0-meta-prop.ts";
 
-const { R, G, B, A } = TextureChannel;
-
-const NAME = VRM0;
-
-interface IVRM extends IProperty {
-  thumbnailTexture: Texture;
-  thumbnailTextureInfo: TextureInfo;
-
+interface IVRM0Prop extends IProperty {
+  metaProp: VRM0MetaProp;
   //   specVersion?: "0.0";
   exporterVersion: string;
   serializedMeta: string;
@@ -28,7 +20,7 @@ interface IVRM extends IProperty {
   serializedMaterialProperties: string;
 }
 
-export default class VRM extends ExtensionProperty<IVRM> {
+export default class VRM0Prop extends ExtensionProperty<IVRM0Prop> {
   public static EXTENSION_NAME = NAME;
   public declare extensionName: typeof NAME;
   public declare propertyType: "VRM";
@@ -40,10 +32,9 @@ export default class VRM extends ExtensionProperty<IVRM> {
     this.parentTypes = [PropertyType.ROOT];
   }
 
-  protected getDefaults(): Nullable<IVRM> {
+  protected getDefaults(): Nullable<IVRM0Prop> {
     return Object.assign(super.getDefaults() as IProperty, {
-      thumbnailTexture: null,
-      thumbnailTextureInfo: new TextureInfo(this.graph, "thumbnailTextureInfo"),
+      metaProp: null,
       exporterVersion: "VRM Sparks 0.0",
       serializedMeta: "{}",
       serializedHumanoid: "{}",
@@ -51,21 +42,6 @@ export default class VRM extends ExtensionProperty<IVRM> {
       serializedBlendShapeMaster: "{}",
       serializedSecondaryAnimation: "{}",
       serializedMaterialProperties: "[]",
-    });
-  }
-
-  public getThumbnailTextureInfo(): TextureInfo | null {
-    return this.getRef("thumbnailTexture")
-      ? this.getRef("thumbnailTextureInfo")
-      : null;
-  }
-  public getThumbnailTexture(): Texture | null {
-    return this.getRef("thumbnailTexture");
-  }
-  public setThumbnailTexture(texture: Texture | null): this {
-    return this.setRef("thumbnailTexture", texture, {
-      channels: R | G | B | A,
-      isColor: true,
     });
   }
 
@@ -77,18 +53,11 @@ export default class VRM extends ExtensionProperty<IVRM> {
     return this.get("exporterVersion");
   }
 
-  public setMeta(meta: VRM0Type.Meta): this {
-    return this.set("serializedMeta", JSON.stringify(meta));
+  public setMetaProp(meta: VRM0MetaProp): this {
+    return this.setRef("metaProp", meta);
   }
-
-  public getMeta(): VRM0Type.Meta | undefined {
-    const serializedMeta = this.get("serializedMeta");
-
-    if (serializedMeta) {
-      return JSON.parse(serializedMeta) as VRM0Type.Meta;
-    }
-
-    return undefined;
+  public getMetaProp(): VRM0MetaProp | null {
+    return this.getRef("metaProp");
   }
 
   public setHumanoid(humanoid: VRM0Type.Humanoid): this {

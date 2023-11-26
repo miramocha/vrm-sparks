@@ -1,14 +1,14 @@
 import * as THREE from "three";
 import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { VRMLoaderPlugin, VRMUtils } from "@pixiv/three-vrm";
-import VRM0_vrm from "../gltf-transform-extensions/VRM0/vrm0-vrm.ts";
+import VRM0VRM from "../gltf-transform-extensions/VRM0/vrm0-vrm.ts";
 import {
   KHRMaterialsUnlit,
   KHRTextureTransform,
 } from "@gltf-transform/extensions";
-import VRMC_materials_mtoon from "../gltf-transform-extensions/VRM1/VRMC_materials_mtoon.ts";
-import VRMC_vrm from "../gltf-transform-extensions/VRM1/VRMC_vrm.ts";
-import VRMC_springBone from "../gltf-transform-extensions/VRM1/VRMC_springBone.ts";
+import VRM1MaterialMToon from "../gltf-transform-extensions/VRM1/vrm1-materials-mtoon.ts";
+import VRM1VRM from "../gltf-transform-extensions/VRM1/vrm1-vrm.ts";
+import VRM1SpringBone from "../gltf-transform-extensions/VRM1/vrm1-springbone.ts";
 import { NodeIO, Document } from "@gltf-transform/core";
 import { GLTFTransformExtensionUtils } from "./GLTFTransformExtensionUtils.ts";
 
@@ -34,7 +34,7 @@ export class LoaderUtils {
 
   public static async readVRMGLTFDocument(file: File): Promise<Document> {
     const vrm0NodeIO = new NodeIO().registerExtensions([
-      VRM0_vrm,
+      VRM0VRM,
       KHRMaterialsUnlit,
       KHRTextureTransform,
     ]);
@@ -44,9 +44,9 @@ export class LoaderUtils {
     if (!documentIsVRM0) {
       console.info("READING AS VRM1");
       const vrmNodeIO = new NodeIO().registerExtensions([
-        VRMC_vrm,
-        VRMC_materials_mtoon,
-        VRMC_springBone,
+        VRM1VRM,
+        VRM1MaterialMToon,
+        VRM1SpringBone,
         KHRMaterialsUnlit,
         KHRTextureTransform,
       ]);

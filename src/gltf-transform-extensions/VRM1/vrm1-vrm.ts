@@ -1,9 +1,10 @@
 import { Extension } from "@gltf-transform/core";
-import { VRMC_SPRINGBONE } from "./constants.ts";
+// import * as VRM1Def from "@pixiv/types-vrmc-vrm-1.0";
+import { VRMC_VRM } from "./constants.ts";
 
-const NAME = VRMC_SPRINGBONE;
+const NAME = VRMC_VRM;
 
-export default class VRMC_springBone extends Extension {
+export default class VRM1VRM extends Extension {
   public readonly extensionName = NAME;
   public static readonly EXTENSION_NAME = NAME;
 

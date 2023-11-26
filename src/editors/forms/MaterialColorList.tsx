@@ -1,6 +1,6 @@
 import { useContext, useEffect } from "react";
 import { Color as RcColor } from "@rc-component/color-picker";
-import MaterialMToon from "../../gltf-transform-extensions/materialMtoon.ts";
+import MaterialMToon from "../../gltf-transform-extensions/material-mtoon-prop.ts";
 import { ColorUtils, Material } from "@gltf-transform/core";
 import { vec3, vec4 } from "@gltf-transform/core";
 import { Button, ColorPicker, Empty, Form } from "antd";

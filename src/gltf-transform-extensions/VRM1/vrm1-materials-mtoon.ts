@@ -1,15 +1,15 @@
 import { Extension, ReaderContext, WriterContext } from "@gltf-transform/core";
 import { VRMC_MATERIALS_MTOON } from "./constants.ts";
-import VRMCMaterialMToon from "./vrmcMaterialMtoon.ts";
+import VRM1MaterialMToonProp from "./properties/vrm1-material-mtoon-prop.ts";
 
 const NAME = VRMC_MATERIALS_MTOON;
 
-export default class VRMC_materials_mtoon extends Extension {
+export default class VRM1MaterialsMToon extends Extension {
   public readonly extensionName = NAME;
   public static readonly EXTENSION_NAME = NAME;
 
-  public createMaterialsMToon(): VRMCMaterialMToon {
-    return new VRMCMaterialMToon(this.document.getGraph());
+  public createVRM1MaterialMToonProp(): VRM1MaterialMToonProp {
+    return new VRM1MaterialMToonProp(this.document.getGraph());
   }
 
   public read(context: ReaderContext): this {
@@ -18,7 +18,7 @@ export default class VRMC_materials_mtoon extends Extension {
       if (materialDef.extensions && materialDef.extensions[NAME]) {
         context.materials[materialIndex].setExtension(
           NAME,
-          this.createMaterialsMToon()
+          this.createVRM1MaterialMToonProp()
         );
       }
     });
@@ -34,7 +34,7 @@ export default class VRMC_materials_mtoon extends Extension {
       .listMaterials()
       .forEach((material) => {
         const materialMToonExtension =
-          material.getExtension<VRMCMaterialMToon>(NAME);
+          material.getExtension<VRM1MaterialMToonProp>(NAME);
 
         if (materialMToonExtension) {
           const materialIndex = context.materialIndexMap.get(material)!;

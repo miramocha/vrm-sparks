@@ -17,7 +17,7 @@ const { R, G, B } = TextureChannel;
 /**
  * @see https://github.com/vrm-c/vrm-specification/blob/master/specification/VRMC_materials_mtoon-1.0/README.md
  */
-export interface IMaterialMToon extends IProperty {
+export interface IMaterialMToonProp extends IProperty {
   specVersion: string;
 
   transparentWithZWrite: boolean;
@@ -71,18 +71,18 @@ export interface IMaterialMToon extends IProperty {
 const VRM0NAME = VRM0;
 const VRM1NAME = VRMC_MATERIALS_MTOON;
 
-export default class MaterialMToon extends ExtensionProperty<IMaterialMToon> {
+export default class MaterialMToonProp extends ExtensionProperty<IMaterialMToonProp> {
   public declare extensionName: typeof VRM0NAME | typeof VRM1NAME;
-  public declare propertyType: "VRMC_MaterialsMToon";
+  public declare propertyType: "VRMC_materialsMToon";
   public declare parentTypes: [PropertyType.MATERIAL];
 
   protected init(): void {
-    this.extensionName = VRM0NAME;
-    this.propertyType = "VRMC_MaterialsMToon";
+    this.extensionName = VRM1NAME;
+    this.propertyType = "VRMC_materialsMToon";
     this.parentTypes = [PropertyType.MATERIAL];
   }
 
-  protected getDefaults(): Nullable<IMaterialMToon> {
+  protected getDefaults(): Nullable<IMaterialMToonProp> {
     return Object.assign(super.getDefaults() as IProperty, {
       specVersion: "1.0",
 
