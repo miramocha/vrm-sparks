@@ -4,56 +4,33 @@ import {
   TextureInfo,
   WriterContext,
 } from "@gltf-transform/core";
-import * as VRM0Def from "@pixiv/types-vrm-0.0";
+import * as VRM0Type from "@pixiv/types-vrm-0.0";
+// import * as VRM1Type from "@pixiv/types-vrmc-vrm-1.0";
 import VRM0Prop from "./properties/vrm0-vrm-prop.ts";
 import { VRM0 as NAME } from "./constants.ts";
+import * as VRMConstants from "../constants.ts";
 import VRM0MaterialMToonProp from "./properties/vrm0-material-mtoon-prop.ts";
 import VRM0MetaProp from "./properties/vrm0-meta-prop.ts";
-
-type LicenseName =
-  | "Redistribution_Prohibited"
-  | "CC0"
-  | "CC_BY"
-  | "CC_BY_NC"
-  | "CC_BY_SA"
-  | "CC_BY_NC_SA"
-  | "CC_BY_ND"
-  | "CC_BY_NC_ND"
-  | "Other";
+// import VRM0HumanoidProp from "./properties/vrm0-humanoid-prop.ts";
+import VRM0HumanoidHumanBoneProp from "./properties/vrm0-humanoid-human-bone-prop.ts";
 
 export default class VRM0VRM extends Extension {
-  static readonly LICENSE_TO_URL_MAP = new Map<LicenseName, string>([
-    ["CC0", "https://creativecommons.org/public-domain/cc0/"],
-    ["CC_BY", "https://creativecommons.org/licenses/by/2.0/deed"],
-    ["CC_BY_NC", "https://creativecommons.org/licenses/by-nc/2.0/deed"],
-    ["CC_BY_SA", "https://creativecommons.org/licenses/by-sa/2.0/deed"],
-    ["CC_BY_NC_SA", "https://creativecommons.org/licenses/by-nc-sa/2.0/deed"],
-    ["CC_BY_ND", "https://creativecommons.org/licenses/by-nd/2.0/deed"],
-    ["CC_BY_NC_ND", "https://creativecommons.org/licenses/by-nc-nd/2.0/deed"],
-  ]);
-  static readonly URL_TO_LICENSE_MAP = new Map<string, LicenseName>([
-    ["https://creativecommons.org/public-domain/cc0/", "CC0"],
-    ["https://creativecommons.org/licenses/by/2.0/deed", "CC_BY"],
-    ["https://creativecommons.org/licenses/by-nc/2.0/deed", "CC_BY_NC"],
-    ["https://creativecommons.org/licenses/by-sa/2.0/deed", "CC_BY_SA"],
-    ["https://creativecommons.org/licenses/by-nc-sa/2.0/deed", "CC_BY_NC_SA"],
-    ["https://creativecommons.org/licenses/by-nd/2.0/deed", "CC_BY_ND"],
-    ["https://creativecommons.org/licenses/by-nc-nd/2.0/deed", "CC_BY_NC_ND"],
-  ]);
-
-  public createVRM0MetaProp(): VRM0MetaProp {
-    return new VRM0MetaProp(this.document.getGraph());
-  }
+  public readonly extensionName = NAME;
+  public static readonly EXTENSION_NAME = NAME;
 
   public createVRM0MaterialMToonProp(): VRM0MaterialMToonProp {
     return new VRM0MaterialMToonProp(this.document.getGraph());
+  }
+
+  public createVRM0HumanoidHumanBoneProp(): VRM0HumanoidHumanBoneProp {
+    return new VRM0HumanoidHumanBoneProp(this.document.getGraph());
   }
 
   public read(context: ReaderContext): this {
     const jsonDoc = context.jsonDoc;
 
     if (jsonDoc.json.extensions && jsonDoc.json.extensions[NAME]) {
-      const vrmDef = jsonDoc.json.extensions[NAME] as VRM0Def.VRM;
+      const vrmDef = jsonDoc.json.extensions[NAME] as VRM0Type.VRM;
       const textureDefs = jsonDoc.json.textures || [];
 
       const vrmProp = new VRM0Prop(this.document.getGraph());
@@ -64,7 +41,8 @@ export default class VRM0VRM extends Extension {
       }
 
       if (vrmDef.meta) {
-        const vrmMetaProp = this.createVRM0MetaProp();
+        console.log("READ META", vrmDef.meta);
+        const vrmMetaProp = new VRM0MetaProp(this.document.getGraph());
         vrmProp.setMetaProp(vrmMetaProp);
         const metaDef = vrmDef.meta;
 
@@ -125,7 +103,7 @@ export default class VRM0VRM extends Extension {
           );
 
           vrmMetaProp.setLicenseUrl(
-            VRM0VRM.LICENSE_TO_URL_MAP.get(metaDef.licenseName)!
+            VRMConstants.LICENSE_TO_URL_MAP.get(metaDef.licenseName)!
           );
         }
         if (metaDef.otherLicenseUrl !== undefined) {
@@ -134,7 +112,28 @@ export default class VRM0VRM extends Extension {
       }
 
       if (vrmDef.humanoid) {
-        vrmProp.setHumanoid(vrmDef.humanoid);
+        console.log("READ HUMANOID", vrmDef.humanoid);
+        vrmProp.setHumanoid(vrmDef.humanoid); // TEMP
+
+        // const vrmHumanoidProp = new VRM0HumanoidProp(this.document.getGraph());
+        // vrmProp.setHumanoidProp(vrmHumanoidProp);
+
+        // vrmDef.humanoid.humanBones?.forEach((humanbone) => {
+        //   const humanBoneProp = this.createVRM0HumanoidHumanBoneProp();
+        //   const node = context.nodes[humanbone.node!];
+        //   humanBoneProp.setNode(node!);
+
+        //   const normalizedBoneName = VRMConstants.VRM0_BONE_TO_VRM1_BONE.get(
+        //     humanbone.bone!
+        //   );
+
+        //   if (normalizedBoneName) {
+        //     vrmHumanoidProp.setHumanoidHumanBoneProp(
+        //       normalizedBoneName,
+        //       humanBoneProp
+        //     );
+        //   }
+        // });
       }
 
       if (vrmDef.firstPerson) {
@@ -154,7 +153,7 @@ export default class VRM0VRM extends Extension {
 
         vrmDef.materialProperties.forEach(
           (
-            materialPropertiesDef: VRM0Def.Material,
+            materialPropertiesDef: VRM0Type.Material,
             materialPropertiesDefIndex: number
           ) => {
             const materialMToon = this.createVRM0MaterialMToonProp();
@@ -315,7 +314,7 @@ export default class VRM0VRM extends Extension {
     const vrmProp = this.document.getRoot().getExtension<VRM0Prop>(NAME);
 
     if (vrmProp) {
-      const vrmDef = {} as VRM0Def.VRM;
+      const vrmDef = {} as VRM0Type.VRM;
       const rootDef = jsonDoc.json;
       rootDef.extensions = rootDef.extensions || {};
 
@@ -328,7 +327,7 @@ export default class VRM0VRM extends Extension {
       const vrmMetaProp = vrmProp.getMetaProp();
       vrmDef.meta = vrmDef.meta || {};
 
-      if (vrmMetaProp !== null) {
+      if (vrmMetaProp) {
         const metaDef = vrmDef.meta;
 
         if (vrmMetaProp.getName() !== undefined) {
@@ -392,19 +391,50 @@ export default class VRM0VRM extends Extension {
             metaDef.licenseName = "Redistribution_Prohibited";
           } else {
             metaDef.licenseName =
-              VRM0VRM.URL_TO_LICENSE_MAP.get(vrmMetaProp.getLicenseUrl()) ||
-              "Other";
+              VRMConstants.URL_TO_LICENSE_MAP.get(
+                vrmMetaProp.getLicenseUrl()
+              ) || "Other";
           }
         }
 
         if (vrmMetaProp.getOtherLicenseUrl() !== undefined) {
           metaDef.otherLicenseUrl = vrmMetaProp.getOtherLicenseUrl();
         }
+        console.log("WRITE META:", vrmDef.meta);
       }
 
-      if (vrmProp.getHumanoid()) {
-        vrmDef.humanoid = vrmProp.getHumanoid();
-      }
+      console.log("PRE WRITE:", vrmDef.humanoid);
+      // const vrmHumanoidProp = vrmProp.getHumanoidProp();
+      // vrmDef.humanoid = vrmDef.humanoid || {};
+
+      // if (vrmHumanoidProp) {
+      // const humanoidDef = vrmDef.humanoid;
+      // WARNING - potential data loss when converted from VRM1
+      // const humanBonesDef = [] as VRM0Type.HumanoidBone[];
+
+      // VRMConstants.VRM1_BONE_ORDER.forEach(
+      //   (vrm1Bone: VRM1Type.HumanoidHumanBoneName) => {
+      //     const humanoidBoneProp =
+      //       vrmHumanoidProp.getHumanoidHumanBoneProp(vrm1Bone);
+      //     const vrm0Bone = VRMConstants.VRM1_BONE_TO_VRM0_BONE.get(vrm1Bone);
+
+      //     const node = humanoidBoneProp?.getNode();
+      //     if (node) {
+      //       const nodeIndex = context.nodeIndexMap.get(node);
+      //       humanBonesDef.push({
+      //         bone: vrm0Bone,
+      //         node: nodeIndex,
+      //         useDefaultValues: true,
+      //       });
+      //     }
+      //   }
+      // );
+
+      // humanoidDef.humanBones = humanBonesDef;
+      vrmDef.humanoid = vrmProp.getHumanoid();
+      // }
+
+      console.log("WRITE HUMANOID:", vrmDef.humanoid);
 
       if (vrmProp.getFirstPerson()) {
         vrmDef.firstPerson = vrmProp.getFirstPerson();
@@ -499,8 +529,10 @@ export default class VRM0VRM extends Extension {
               }
 
               if (material.getEmissiveFactor()) {
-                materialPropertiesDef.vectorProperties._EmissionColor =
-                  material.getEmissiveFactor();
+                materialPropertiesDef.vectorProperties._EmissionColor = [
+                  ...material.getEmissiveFactor(),
+                  1,
+                ];
               }
 
               if (materialMToon.getShadeColorFactor()) {
@@ -528,6 +560,7 @@ export default class VRM0VRM extends Extension {
       }
 
       rootDef.extensions[NAME] = vrmDef;
+      console.log("setting VRMDEF", rootDef.extensions);
     }
 
     return this;

@@ -1,4 +1,4 @@
-import { IProperty, Nullable, Property } from "@gltf-transform/core";
+import { IProperty, Nullable, Property, Node } from "@gltf-transform/core";
 import { PropertyType as VRMPropertyType } from "./constants.ts";
 
 export interface IHumanoidHumanBoneProp extends IProperty {
@@ -16,5 +16,12 @@ export class HumanoidHumanBoneProp extends Property<IHumanoidHumanBoneProp> {
     return Object.assign(super.getDefaults() as IProperty, {
       node: null,
     });
+  }
+
+  public getNode(): Node | null {
+    return this.getRef("node");
+  }
+  public setNode(node: Node | null): this {
+    return this.setRef("node", node);
   }
 }

@@ -13,9 +13,8 @@ interface IVRM0Prop extends IProperty {
   metaProp: VRM0MetaProp;
   //   specVersion?: "0.0";
   exporterVersion: string;
-  serializedMeta: string;
-  serializedHumanoid: string;
   humanoidProp: VRM0HumanoidProp;
+  serializedHumanoid: string;
   serializedFirstPerson: string;
   serializedBlendShapeMaster: string;
   serializedSecondaryAnimation: string;
@@ -38,9 +37,8 @@ export default class VRM0Prop extends ExtensionProperty<IVRM0Prop> {
     return Object.assign(super.getDefaults() as IProperty, {
       metaProp: null,
       exporterVersion: "VRM Sparks 0.0",
-      serializedMeta: "{}",
-      serializedHumanoid: "{}",
       humanoidProp: null,
+      serializedHumanoid: "{}",
       serializedFirstPerson: "{}",
       serializedBlendShapeMaster: "{}",
       serializedSecondaryAnimation: "{}",
@@ -66,14 +64,11 @@ export default class VRM0Prop extends ExtensionProperty<IVRM0Prop> {
   public setHumanoid(humanoid: VRM0Type.Humanoid): this {
     return this.set("serializedHumanoid", JSON.stringify(humanoid));
   }
-
   public getHumanoid(): VRM0Type.Humanoid | undefined {
     const serializedHumanoid = this.get("serializedHumanoid");
-
     if (serializedHumanoid) {
       return JSON.parse(serializedHumanoid) as VRM0Type.Humanoid;
     }
-
     return undefined;
   }
 

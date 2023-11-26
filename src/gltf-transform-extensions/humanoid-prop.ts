@@ -138,13 +138,16 @@ export class HumanoidProp extends ExtensionProperty<IHumanoidProp> {
     });
   }
 
+  public getHumanoidHumanBoneProp(
+    humanoidHumanBoneName: VRM1Def.HumanoidHumanBoneName
+  ): HumanoidHumanBoneProp | null {
+    return this.getRef(humanoidHumanBoneName);
+  }
+
   public setHumanoidHumanBoneProp(
     humanoidHumanBoneName: VRM1Def.HumanoidHumanBoneName,
     humanoidHumanBoneProp: HumanoidHumanBoneProp
   ): this {
-    return this.setRef(
-      humanoidHumanBoneName as VRM1Def.HumanoidHumanBoneName,
-      humanoidHumanBoneProp
-    );
+    return this.setRef(humanoidHumanBoneName, humanoidHumanBoneProp);
   }
 }
