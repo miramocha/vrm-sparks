@@ -5,13 +5,13 @@ import {
   WriterContext,
 } from "@gltf-transform/core";
 import * as VRM0Type from "@pixiv/types-vrm-0.0";
-// import * as VRM1Type from "@pixiv/types-vrmc-vrm-1.0";
+import * as VRM1Type from "@pixiv/types-vrmc-vrm-1.0";
 import VRM0Prop from "./properties/vrm0-vrm-prop.ts";
 import { VRM0 as NAME } from "./constants.ts";
 import * as VRMConstants from "../constants.ts";
 import VRM0MaterialMToonProp from "./properties/vrm0-material-mtoon-prop.ts";
 import VRM0MetaProp from "./properties/vrm0-meta-prop.ts";
-// import VRM0HumanoidProp from "./properties/vrm0-humanoid-prop.ts";
+import VRM0HumanoidProp from "./properties/vrm0-humanoid-prop.ts";
 import VRM0HumanoidHumanBoneProp from "./properties/vrm0-humanoid-human-bone-prop.ts";
 
 export default class VRM0VRM extends Extension {
@@ -115,25 +115,25 @@ export default class VRM0VRM extends Extension {
         console.log("READ HUMANOID", vrmDef.humanoid);
         vrmProp.setHumanoid(vrmDef.humanoid); // TEMP
 
-        // const vrmHumanoidProp = new VRM0HumanoidProp(this.document.getGraph());
-        // vrmProp.setHumanoidProp(vrmHumanoidProp);
+        const vrmHumanoidProp = new VRM0HumanoidProp(this.document.getGraph());
+        vrmProp.setHumanoidProp(vrmHumanoidProp);
 
-        // vrmDef.humanoid.humanBones?.forEach((humanbone) => {
-        //   const humanBoneProp = this.createVRM0HumanoidHumanBoneProp();
-        //   const node = context.nodes[humanbone.node!];
-        //   humanBoneProp.setNode(node!);
+        vrmDef.humanoid.humanBones?.forEach((humanbone) => {
+          const humanBoneProp = this.createVRM0HumanoidHumanBoneProp();
+          const node = context.nodes[humanbone.node!];
+          humanBoneProp.setNode(node!);
 
-        //   const normalizedBoneName = VRMConstants.VRM0_BONE_TO_VRM1_BONE.get(
-        //     humanbone.bone!
-        //   );
+          const normalizedBoneName = VRMConstants.VRM0_BONE_TO_VRM1_BONE.get(
+            humanbone.bone!
+          );
 
-        //   if (normalizedBoneName) {
-        //     vrmHumanoidProp.setHumanoidHumanBoneProp(
-        //       normalizedBoneName,
-        //       humanBoneProp
-        //     );
-        //   }
-        // });
+          if (normalizedBoneName) {
+            vrmHumanoidProp.setHumanoidHumanBoneProp(
+              normalizedBoneName,
+              humanBoneProp
+            );
+          }
+        });
       }
 
       if (vrmDef.firstPerson) {
@@ -303,7 +303,10 @@ export default class VRM0VRM extends Extension {
           }
         );
       }
+      console.log("READ NODE", context.jsonDoc.json.nodes);
     }
+
+    console.log("READ LIST NODES", context.nodes.at(0)?.getTranslation());
 
     return this;
   }
@@ -321,7 +324,7 @@ export default class VRM0VRM extends Extension {
       vrmDef.specVersion = "0.0";
 
       if (vrmProp.getExporterVersion()) {
-        vrmDef.exporterVersion = "VRM-Sparks 0.0";
+        vrmDef.exporterVersion = "GLTF Transformer";
       }
 
       const vrmMetaProp = vrmProp.getMetaProp();
@@ -404,35 +407,33 @@ export default class VRM0VRM extends Extension {
       }
 
       console.log("PRE WRITE:", vrmDef.humanoid);
-      // const vrmHumanoidProp = vrmProp.getHumanoidProp();
-      // vrmDef.humanoid = vrmDef.humanoid || {};
+      const vrmHumanoidProp = vrmProp.getHumanoidProp();
+      vrmDef.humanoid = vrmDef.humanoid || {};
 
-      // if (vrmHumanoidProp) {
-      // const humanoidDef = vrmDef.humanoid;
-      // WARNING - potential data loss when converted from VRM1
-      // const humanBonesDef = [] as VRM0Type.HumanoidBone[];
+      if (vrmHumanoidProp) {
+        const humanoidDef = vrmDef.humanoid;
 
-      // VRMConstants.VRM1_BONE_ORDER.forEach(
-      //   (vrm1Bone: VRM1Type.HumanoidHumanBoneName) => {
-      //     const humanoidBoneProp =
-      //       vrmHumanoidProp.getHumanoidHumanBoneProp(vrm1Bone);
-      //     const vrm0Bone = VRMConstants.VRM1_BONE_TO_VRM0_BONE.get(vrm1Bone);
-
-      //     const node = humanoidBoneProp?.getNode();
-      //     if (node) {
-      //       const nodeIndex = context.nodeIndexMap.get(node);
-      //       humanBonesDef.push({
-      //         bone: vrm0Bone,
-      //         node: nodeIndex,
-      //         useDefaultValues: true,
-      //       });
-      //     }
-      //   }
-      // );
-
-      // humanoidDef.humanBones = humanBonesDef;
-      vrmDef.humanoid = vrmProp.getHumanoid();
-      // }
+        // WARNING - potential data loss when converted from VRM1
+        const humanBonesDef = [] as VRM0Type.HumanoidBone[];
+        VRMConstants.VRM1_BONE_ORDER.forEach(
+          (vrm1Bone: VRM1Type.HumanoidHumanBoneName) => {
+            const humanoidBoneProp =
+              vrmHumanoidProp.getHumanoidHumanBoneProp(vrm1Bone);
+            const vrm0Bone = VRMConstants.VRM1_BONE_TO_VRM0_BONE.get(vrm1Bone);
+            const node = humanoidBoneProp?.getNode();
+            if (node) {
+              const nodeIndex = context.nodeIndexMap.get(node);
+              humanBonesDef.push({
+                bone: vrm0Bone,
+                node: nodeIndex,
+                useDefaultValues: true,
+              });
+            }
+          }
+        );
+        humanoidDef.humanBones = humanBonesDef;
+        // vrmDef.humanoid = vrmProp.getHumanoid();
+      }
 
       console.log("WRITE HUMANOID:", vrmDef.humanoid);
 
@@ -559,8 +560,23 @@ export default class VRM0VRM extends Extension {
           });
       }
 
+      console.log("WRITE NODE", rootDef.nodes);
+
       rootDef.extensions[NAME] = vrmDef;
       console.log("setting VRMDEF", rootDef.extensions);
+
+      const nodesDef = rootDef.nodes;
+      if (nodesDef) {
+        context.nodeIndexMap.forEach((index, node) => {
+          const nodeDef = rootDef.nodes?.at(index);
+
+          if (nodeDef) {
+            nodeDef.translation = node.getTranslation();
+            nodeDef.rotation = node.getRotation();
+            nodeDef.scale = node.getScale();
+          }
+        });
+      }
     }
 
     return this;
