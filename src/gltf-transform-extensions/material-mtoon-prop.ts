@@ -9,8 +9,8 @@ import {
   vec3,
   ColorUtils,
 } from "@gltf-transform/core";
-import { VRM0 } from "./VRM0/constants.ts";
-import { VRMC_MATERIALS_MTOON } from "./VRM1/constants.ts";
+import { VRM0 as VRM0NAME } from "./VRM0/constants.ts";
+import { VRMC_MATERIALS_MTOON as VRM1NAME } from "./VRM1/constants.ts";
 
 const { R, G, B } = TextureChannel;
 
@@ -67,9 +67,6 @@ export interface IMaterialMToonProp extends IProperty {
   uvAnimationScrollYSpeedFactor: number;
   uvAnimationRotationSpeedFactor: number;
 }
-
-const VRM0NAME = VRM0;
-const VRM1NAME = VRMC_MATERIALS_MTOON;
 
 export default class MaterialMToonProp extends ExtensionProperty<IMaterialMToonProp> {
   public declare extensionName: typeof VRM0NAME | typeof VRM1NAME;
