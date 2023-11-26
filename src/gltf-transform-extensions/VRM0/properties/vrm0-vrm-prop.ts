@@ -7,6 +7,7 @@ import {
 import * as VRM0Type from "@pixiv/types-vrm-0.0";
 import { VRM0 as NAME } from "../constants.ts";
 import VRM0MetaProp from "./vrm0-meta-prop.ts";
+import VRM0HumanoidProp from "./vrm0-humanoid-prop.ts";
 
 interface IVRM0Prop extends IProperty {
   metaProp: VRM0MetaProp;
@@ -14,6 +15,7 @@ interface IVRM0Prop extends IProperty {
   exporterVersion: string;
   serializedMeta: string;
   serializedHumanoid: string;
+  humanoidProp: VRM0HumanoidProp;
   serializedFirstPerson: string;
   serializedBlendShapeMaster: string;
   serializedSecondaryAnimation: string;
@@ -38,6 +40,7 @@ export default class VRM0Prop extends ExtensionProperty<IVRM0Prop> {
       exporterVersion: "VRM Sparks 0.0",
       serializedMeta: "{}",
       serializedHumanoid: "{}",
+      humanoidProp: null,
       serializedFirstPerson: "{}",
       serializedBlendShapeMaster: "{}",
       serializedSecondaryAnimation: "{}",
@@ -72,6 +75,13 @@ export default class VRM0Prop extends ExtensionProperty<IVRM0Prop> {
     }
 
     return undefined;
+  }
+
+  public setHumanoidProp(humanoidProp: VRM0HumanoidProp): this {
+    return this.setRef("humanoidProp", humanoidProp);
+  }
+  public getHumanoidProp(): VRM0HumanoidProp | null {
+    return this.getRef("humanoidProp");
   }
 
   public setFirstPerson(firstPerson: VRM0Type.FirstPerson): this {
