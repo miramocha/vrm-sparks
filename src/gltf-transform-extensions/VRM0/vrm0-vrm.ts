@@ -416,10 +416,8 @@ export default class VRM0VRM extends Extension {
         if (vrmMetaProp.getOtherLicenseUrl() !== undefined) {
           metaDef.otherLicenseUrl = vrmMetaProp.getOtherLicenseUrl();
         }
-        console.log("WRITE META:", vrmDef.meta);
       }
 
-      console.log("PRE WRITE:", vrmDef.humanoid);
       const vrmHumanoidProp = vrmProp.getHumanoidProp();
       vrmDef.humanoid = vrmDef.humanoid || {};
 
@@ -427,6 +425,9 @@ export default class VRM0VRM extends Extension {
         const humanoidDef = vrmDef.humanoid;
 
         // WARNING - potential data loss when converted from VRM1
+        console.warn(
+          "POTENTIAL DATA LOSS MIGHT OCCUR WHEN CONVERTED FROM VRM1"
+        );
         const humanBonesDef = [] as VRM0Type.HumanoidBone[];
         VRMConstants.VRM1_BONE_ORDER.forEach(
           (vrm1Bone: VRM1Type.HumanoidHumanBoneName) => {

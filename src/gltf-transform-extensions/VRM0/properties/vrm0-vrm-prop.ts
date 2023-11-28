@@ -9,6 +9,7 @@ import { VRM0 as NAME } from "../constants.ts";
 import { MetaProp } from "../../meta-prop.ts";
 import { HumanoidProp } from "../../humanoid-prop.ts";
 import { FirstPersonProp } from "../../first-person-prop.ts";
+import { PropertyType as VRMPropertyType } from "../../constants.ts";
 
 interface IVRM0Prop extends IProperty {
   metaProp: MetaProp;
@@ -25,12 +26,12 @@ interface IVRM0Prop extends IProperty {
 export default class VRM0Prop extends ExtensionProperty<IVRM0Prop> {
   public static EXTENSION_NAME = NAME;
   public declare extensionName: typeof NAME;
-  public declare propertyType: "VRM";
+  public declare propertyType: VRMPropertyType.VRM_PROP;
   public declare parentTypes: [PropertyType.ROOT];
 
   protected init(): void {
     this.extensionName = NAME;
-    this.propertyType = "VRM";
+    this.propertyType = VRMPropertyType.VRM_PROP;
     this.parentTypes = [PropertyType.ROOT];
   }
 
