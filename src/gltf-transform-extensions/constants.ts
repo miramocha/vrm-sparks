@@ -2,9 +2,23 @@ import * as VRM0Type from "@pixiv/types-vrm-0.0";
 import * as VRM1Type from "@pixiv/types-vrmc-vrm-1.0";
 
 export enum PropertyType {
-  HUMANOID = "VRMC_vrm.humanoid",
-  HUMANOID_HUMAN_BONE = "VRMC_vrm.humanoid.humanBone",
+  VRM_EXTENSION = "VRMC_vrm",
+  VRM_PROP = "VRMC_vrm.vrm",
+  HUMANOID_PROP = "VRMC_vrm.humanoid",
+  META_PROP = "VRMC_vrm.meta",
+  HUMANOID_HUMAN_BONE_PROP = "VRMC_vrm.humanoid.humanBone",
+  FIRST_PERSON_PROP = "VRMC_vrm.firstPerson",
+  FIRST_PERSON_MESH_ANNOTATION_PROP = "VRMC_vrm.firstPerson.meshAnnotation",
+  LOOK_AT_PROP = "VRMC_vrm.lookAt",
+  MATERIALS_MTOON_EXTENSION = "VRMC_materialsMToon",
+  MATERIAL_MTOON_PROP = "VRMC_materialsMToon.materialMToon",
 }
+
+export type FirstPersonFlag =
+  | "auto"
+  | "both"
+  | "thirdPersonOnly"
+  | "firstPersonOnly";
 
 export type LicenseName =
   | "Redistribution_Prohibited"

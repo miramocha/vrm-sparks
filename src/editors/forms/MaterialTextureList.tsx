@@ -1,12 +1,12 @@
 import { Avatar, Empty, List } from "antd";
-import MaterialMToon from "../../gltf-transform-extensions/material-mtoon-prop.ts";
+import { MaterialMToonProp } from "../../gltf-transform-extensions/material-mtoon-prop.ts";
 import { Material } from "@gltf-transform/core";
 
 export default function MaterialTextureList({
   materialMToon,
   material,
 }: {
-  materialMToon: MaterialMToon | null;
+  materialMToon: MaterialMToonProp | null;
   material: Material | null;
 }) {
   type TextureItem = {

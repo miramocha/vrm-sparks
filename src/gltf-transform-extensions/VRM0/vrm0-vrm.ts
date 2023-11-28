@@ -10,21 +10,15 @@ import VRM0Prop from "./properties/vrm0-vrm-prop.ts";
 import { VRM0 as NAME } from "./constants.ts";
 import * as VRMConstants from "../constants.ts";
 import VRM0MaterialMToonProp from "./properties/vrm0-material-mtoon-prop.ts";
-import VRM0MetaProp from "./properties/vrm0-meta-prop.ts";
-import VRM0HumanoidProp from "./properties/vrm0-humanoid-prop.ts";
-import VRM0HumanoidHumanBoneProp from "./properties/vrm0-humanoid-human-bone-prop.ts";
+import { FirstPersonProp } from "../first-person-prop.ts";
+import { HumanoidProp } from "../humanoid-prop.ts";
+import { MetaProp } from "../meta-prop.ts";
+import { HumanoidHumanBoneProp } from "../humanoid-human-bone-prop.ts";
+import { FirstPersonMeshAnnotationProp } from "../first-person-mesh-annotation-prop.ts";
 
 export default class VRM0VRM extends Extension {
   public readonly extensionName = NAME;
   public static readonly EXTENSION_NAME = NAME;
-
-  public createVRM0MaterialMToonProp(): VRM0MaterialMToonProp {
-    return new VRM0MaterialMToonProp(this.document.getGraph());
-  }
-
-  public createVRM0HumanoidHumanBoneProp(): VRM0HumanoidHumanBoneProp {
-    return new VRM0HumanoidHumanBoneProp(this.document.getGraph());
-  }
 
   public read(context: ReaderContext): this {
     const jsonDoc = context.jsonDoc;
@@ -41,8 +35,7 @@ export default class VRM0VRM extends Extension {
       }
 
       if (vrmDef.meta) {
-        console.log("READ META", vrmDef.meta);
-        const vrmMetaProp = new VRM0MetaProp(this.document.getGraph());
+        const vrmMetaProp = new MetaProp(this.document.getGraph());
         vrmProp.setMetaProp(vrmMetaProp);
         const metaDef = vrmDef.meta;
 
@@ -112,11 +105,13 @@ export default class VRM0VRM extends Extension {
       }
 
       if (vrmDef.humanoid) {
-        const vrmHumanoidProp = new VRM0HumanoidProp(this.document.getGraph());
+        const vrmHumanoidProp = new HumanoidProp(this.document.getGraph());
         vrmProp.setHumanoidProp(vrmHumanoidProp);
 
         vrmDef.humanoid.humanBones?.forEach((humanbone) => {
-          const humanBoneProp = this.createVRM0HumanoidHumanBoneProp();
+          const humanBoneProp = new HumanoidHumanBoneProp(
+            this.document.getGraph()
+          );
           const node = context.nodes[humanbone.node!];
           humanBoneProp.setNode(node!);
 
@@ -133,14 +128,36 @@ export default class VRM0VRM extends Extension {
         });
       }
 
+      // LookAt & First Person
       if (vrmDef.firstPerson) {
+        const firstPersonDef = vrmDef.firstPerson;
         vrmProp.setFirstPerson(vrmDef.firstPerson);
+
+        // Setting up VRMC First Person
+        const vrmFirstPersonProp = new FirstPersonProp(
+          this.document.getGraph()
+        );
+        vrmProp.setFirstPersonProp(vrmFirstPersonProp);
+        firstPersonDef.meshAnnotations?.forEach((meshAnnotationDef) => {
+          const node = context.nodes[meshAnnotationDef.mesh!];
+          const meshAnnotationProp = new FirstPersonMeshAnnotationProp(
+            this.document.getGraph()
+          );
+          meshAnnotationProp.setFirstPersonFlag(
+            meshAnnotationDef.firstPersonFlag as VRMConstants.FirstPersonFlag
+          );
+          meshAnnotationProp.setNode(node);
+
+          // Setting up VRMC LookAt
+        });
       }
 
+      // Expressions
       if (vrmDef.blendShapeMaster) {
         vrmProp.setBlendShapeMaster(vrmDef.blendShapeMaster);
       }
 
+      // Spring bones
       if (vrmDef.secondaryAnimation) {
         vrmProp.setSecondaryAnimation(vrmDef.secondaryAnimation);
       }
@@ -153,14 +170,16 @@ export default class VRM0VRM extends Extension {
             materialPropertiesDef: VRM0Type.Material,
             materialPropertiesDefIndex: number
           ) => {
-            const materialMToon = this.createVRM0MaterialMToonProp();
+            const materialMToon = new VRM0MaterialMToonProp(
+              this.document.getGraph()
+            );
             const material = context.materials[materialPropertiesDefIndex];
             material.setExtension(NAME, materialMToon);
 
             const texturePropertiesDef =
               materialPropertiesDef.textureProperties || {};
 
-            // PBR Textures Sync
+            // PBR Sync - set emissive/base/normal color and texture on PBR using VRM as source of truth
             if (texturePropertiesDef._MainTex !== undefined) {
               const texture =
                 context.textures[
@@ -300,10 +319,7 @@ export default class VRM0VRM extends Extension {
           }
         );
       }
-      console.log("READ NODE", context.jsonDoc.json.nodes);
     }
-
-    console.log("READ LIST NODES", context.nodes.at(0)?.getTranslation());
 
     return this;
   }

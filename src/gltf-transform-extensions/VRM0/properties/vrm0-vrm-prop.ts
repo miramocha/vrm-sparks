@@ -6,14 +6,16 @@ import {
 } from "@gltf-transform/core";
 import * as VRM0Type from "@pixiv/types-vrm-0.0";
 import { VRM0 as NAME } from "../constants.ts";
-import VRM0MetaProp from "./vrm0-meta-prop.ts";
-import VRM0HumanoidProp from "./vrm0-humanoid-prop.ts";
+import { MetaProp } from "../../meta-prop.ts";
+import { HumanoidProp } from "../../humanoid-prop.ts";
+import { FirstPersonProp } from "../../first-person-prop.ts";
 
 interface IVRM0Prop extends IProperty {
-  metaProp: VRM0MetaProp;
+  metaProp: MetaProp;
   //   specVersion?: "0.0";
   exporterVersion: string;
-  humanoidProp: VRM0HumanoidProp;
+  humanoidProp: HumanoidProp;
+  firstPersonProp: FirstPersonProp;
   serializedFirstPerson: string;
   serializedBlendShapeMaster: string;
   serializedSecondaryAnimation: string;
@@ -37,6 +39,7 @@ export default class VRM0Prop extends ExtensionProperty<IVRM0Prop> {
       metaProp: null,
       exporterVersion: "VRM Sparks 0.0",
       humanoidProp: null,
+      firstPersonProp: null,
       serializedFirstPerson: "{}",
       serializedBlendShapeMaster: "{}",
       serializedSecondaryAnimation: "{}",
@@ -52,24 +55,31 @@ export default class VRM0Prop extends ExtensionProperty<IVRM0Prop> {
     return this.get("exporterVersion");
   }
 
-  public setMetaProp(meta: VRM0MetaProp): this {
+  public setMetaProp(meta: MetaProp): this {
     return this.setRef("metaProp", meta);
   }
-  public getMetaProp(): VRM0MetaProp | null {
+  public getMetaProp(): MetaProp | null {
     return this.getRef("metaProp");
   }
 
-  public setHumanoidProp(humanoidProp: VRM0HumanoidProp): this {
+  public setHumanoidProp(humanoidProp: HumanoidProp): this {
     return this.setRef("humanoidProp", humanoidProp);
   }
-  public getHumanoidProp(): VRM0HumanoidProp | null {
+  public getHumanoidProp(): HumanoidProp | null {
     return this.getRef("humanoidProp");
   }
 
+  public setFirstPersonProp(firstPersonProp: FirstPersonProp): this {
+    return this.setRef("firstPersonProp", firstPersonProp);
+  }
+  public getFirstPersonProp(): FirstPersonProp | null {
+    return this.getRef("firstPersonProp");
+  }
+
+  // Remove this
   public setFirstPerson(firstPerson: VRM0Type.FirstPerson): this {
     return this.set("serializedFirstPerson", JSON.stringify(firstPerson));
   }
-
   public getFirstPerson(): VRM0Type.FirstPerson | undefined {
     const serializedFirstPerson = this.get("serializedFirstPerson");
 

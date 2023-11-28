@@ -19,7 +19,7 @@ import VRMC_materials_mtoon from "../gltf-transform-extensions/VRM1/vrm1-materia
 import VRMC_springBone from "../gltf-transform-extensions/VRM1/vrm1-springbone.ts";
 
 // VRM Extension Props
-import MaterialMToon from "../gltf-transform-extensions/material-mtoon-prop.ts";
+import { MaterialMToonProp } from "../gltf-transform-extensions/material-mtoon-prop.ts";
 
 export class GLTFTransformExtensionUtils {
   public static isVRM0Document(document: Document): boolean {
@@ -36,14 +36,14 @@ export class GLTFTransformExtensionUtils {
   public static getMaterialMToonPropByMaterialIndex(
     document: Document,
     index: number
-  ): MaterialMToon | null {
+  ): MaterialMToonProp | null {
     if (GLTFTransformExtensionUtils.isVRM0Document(document)) {
       return (
         document
           ?.getRoot()
           ?.listMaterials()
           ?.at(index!)
-          ?.getExtension<MaterialMToon>(VRM0_CONSTANTS.VRM0) || null
+          ?.getExtension<MaterialMToonProp>(VRM0_CONSTANTS.VRM0) || null
       );
     } else {
       return (
@@ -51,27 +51,28 @@ export class GLTFTransformExtensionUtils {
           ?.getRoot()
           ?.listMaterials()
           ?.at(index!)
-          ?.getExtension<MaterialMToon>(VRM1_CONSTANTS.VRMC_MATERIALS_MTOON) ||
-        null
+          ?.getExtension<MaterialMToonProp>(
+            VRM1_CONSTANTS.VRMC_MATERIALS_MTOON
+          ) || null
       );
     }
   }
 
   public static listVRM0MaterialMToons(
     document: Document
-  ): (MaterialMToon | null)[] {
+  ): (MaterialMToonProp | null)[] {
     return document
       .getRoot()
       .listMaterials()
       .map((material) =>
-        material.getExtension<MaterialMToon>(VRM0_CONSTANTS.VRM0)
+        material.getExtension<MaterialMToonProp>(VRM0_CONSTANTS.VRM0)
       );
   }
 
   public static getVRM1MaterialExtension(
     material: Material
-  ): MaterialMToon | null {
-    const materialMToon = material.getExtension<MaterialMToon>(
+  ): MaterialMToonProp | null {
+    const materialMToon = material.getExtension<MaterialMToonProp>(
       VRM1_CONSTANTS.VRMC_MATERIALS_MTOON
     );
 

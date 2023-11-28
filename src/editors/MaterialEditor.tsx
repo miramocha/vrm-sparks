@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { Empty, Select, Tabs } from "antd";
-import MaterialMToon from "../gltf-transform-extensions/material-mtoon-prop.ts";
+import { MaterialMToonProp } from "../gltf-transform-extensions/material-mtoon-prop.ts";
 import { GLTFTransformExtensionUtils } from "../utils/gltfTransformExtensionUtils.ts";
 import MaterialTextureList from "./forms/MaterialTextureList.tsx";
 import { EditorContext } from "../providers/editorContextProvider.tsx";
@@ -16,7 +16,7 @@ export default function MaterialEditor() {
     number | null
   >(null);
   const [currentMaterialMToon, setCurrentMaterialMToon] =
-    useState<MaterialMToon | null>(null);
+    useState<MaterialMToonProp | null>(null);
   const [currentMaterial, setCurrentMaterial] = useState<Material | null>(null);
   const [materialOptions, setMaterialOptions] = useState<SelectOptions[]>([]);
 

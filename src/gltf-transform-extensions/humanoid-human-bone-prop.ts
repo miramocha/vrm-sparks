@@ -6,10 +6,10 @@ export interface IHumanoidHumanBoneProp extends IProperty {
 }
 
 export class HumanoidHumanBoneProp extends Property<IHumanoidHumanBoneProp> {
-  public declare propertyType: VRMPropertyType.HUMANOID_HUMAN_BONE;
+  public declare propertyType: VRMPropertyType.HUMANOID_HUMAN_BONE_PROP;
 
   protected init(): void {
-    this.propertyType = VRMPropertyType.HUMANOID_HUMAN_BONE;
+    this.propertyType = VRMPropertyType.HUMANOID_HUMAN_BONE_PROP;
   }
 
   protected getDefaults(): Nullable<IHumanoidHumanBoneProp> {

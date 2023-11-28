@@ -1,6 +1,6 @@
 import { useContext, useEffect } from "react";
 import { Color as RcColor } from "@rc-component/color-picker";
-import MaterialMToon from "../../gltf-transform-extensions/material-mtoon-prop.ts";
+import { MaterialMToonProp } from "../../gltf-transform-extensions/material-mtoon-prop.ts";
 import { ColorUtils, Material } from "@gltf-transform/core";
 import { vec3, vec4 } from "@gltf-transform/core";
 import { Button, ColorPicker, Empty, Form } from "antd";
@@ -10,7 +10,7 @@ export default function MaterialColorList({
   materialMToon,
   material,
 }: {
-  materialMToon: MaterialMToon | null;
+  materialMToon: MaterialMToonProp | null;
   material: Material | null;
 }) {
   const editorContext = useContext(EditorContext);

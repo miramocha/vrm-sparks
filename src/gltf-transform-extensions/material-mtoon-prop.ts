@@ -11,6 +11,7 @@ import {
 } from "@gltf-transform/core";
 import { VRM0 as VRM0NAME } from "./VRM0/constants.ts";
 import { VRMC_MATERIALS_MTOON as VRM1NAME } from "./VRM1/constants.ts";
+import { PropertyType as VRMPropertyType } from "./constants.ts";
 
 const { R, G, B } = TextureChannel;
 
@@ -68,14 +69,14 @@ export interface IMaterialMToonProp extends IProperty {
   uvAnimationRotationSpeedFactor: number;
 }
 
-export default class MaterialMToonProp extends ExtensionProperty<IMaterialMToonProp> {
+export class MaterialMToonProp extends ExtensionProperty<IMaterialMToonProp> {
   public declare extensionName: typeof VRM0NAME | typeof VRM1NAME;
-  public declare propertyType: "VRMC_materialsMToon";
+  public declare propertyType: VRMPropertyType.MATERIAL_MTOON_PROP;
   public declare parentTypes: [PropertyType.MATERIAL];
 
   protected init(): void {
     this.extensionName = VRM1NAME;
-    this.propertyType = "VRMC_materialsMToon";
+    this.propertyType = VRMPropertyType.MATERIAL_MTOON_PROP;
     this.parentTypes = [PropertyType.MATERIAL];
   }
 

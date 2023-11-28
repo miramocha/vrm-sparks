@@ -1,14 +1,12 @@
 import {
-  ExtensionProperty,
   IProperty,
   Nullable,
-  PropertyType,
+  Property,
   Texture,
   TextureChannel,
   TextureInfo,
 } from "@gltf-transform/core";
-import { VRM0 } from "./VRM0/constants.ts";
-import { VRMC_VRM } from "./VRM1/constants.ts";
+import { PropertyType as VRMPropertyType } from "./constants.ts";
 
 const { R, G, B } = TextureChannel;
 
@@ -55,18 +53,11 @@ interface IMetaProp extends IProperty {
   otherLicenseUrl: string;
 }
 
-const VRM0NAME = VRM0;
-const VRM1NAME = VRMC_VRM;
-
-export class MetaProp extends ExtensionProperty<IMetaProp> {
-  public declare extensionName: typeof VRM0NAME | typeof VRM1NAME;
-  public declare propertyType: "VRMC_vrm";
-  public declare parentTypes: [PropertyType.ROOT];
+export class MetaProp extends Property<IMetaProp> {
+  public declare propertyType: VRMPropertyType.META_PROP;
 
   protected init(): void {
-    this.extensionName = VRM1NAME;
-    this.propertyType = "VRMC_vrm";
-    this.parentTypes = [PropertyType.ROOT];
+    this.propertyType = VRMPropertyType.META_PROP;
   }
 
   protected getDefaults(): Nullable<IMetaProp> {
