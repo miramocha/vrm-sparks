@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { Drawer, Button } from "antd";
 import { EditorContext } from "../providers/editorContextProvider.tsx";
-import { GLTFTransformExtensionUtils } from "../utils/GLTFTransformExtensionUtils.ts";
+import { GLTFTransformExtensionUtils } from "../utils/gltfTransformExtensionUtils.ts";
 
 export default function ExportVrmDrawer({
   open = false,

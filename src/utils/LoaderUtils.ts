@@ -10,13 +10,11 @@ import VRM1MaterialMToon from "../gltf-transform-extensions/VRM1/vrm1-materials-
 import VRM1VRM from "../gltf-transform-extensions/VRM1/vrm1-vrm.ts";
 import VRM1SpringBone from "../gltf-transform-extensions/VRM1/vrm1-springbone.ts";
 import { NodeIO, Document } from "@gltf-transform/core";
-import { GLTFTransformExtensionUtils } from "./GLTFTransformExtensionUtils.ts";
-
+import { GLTFTransformExtensionUtils } from "./gltfTransformExtensionUtils.ts";
 export class LoaderUtils {
   public static async loadThreeVRM(file: File): Promise<GLTF> {
     const helperRoot = new THREE.Group();
     helperRoot.renderOrder = 10000;
-
     const loader = new GLTFLoader();
     loader.register((parser) => {
       return new VRMLoaderPlugin(parser, {
@@ -24,14 +22,11 @@ export class LoaderUtils {
         helperRoot,
       });
     });
-
     const objectUrl = URL.createObjectURL(file);
     const gltf = await loader.loadAsync(objectUrl);
     VRMUtils.rotateVRM0(gltf.userData.vrm);
-
     return gltf;
   }
-
   public static async readVRMGLTFDocument(file: File): Promise<Document> {
     const vrm0NodeIO = new NodeIO().registerExtensions([
       VRM0VRM,

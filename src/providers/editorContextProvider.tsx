@@ -8,8 +8,8 @@ import {
 import { VRM as ThreeVRM } from "@pixiv/three-vrm";
 import { GLTF as ThreeGLTF } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { Document as GLTFDocument } from "@gltf-transform/core";
-import { LoaderUtils } from "../utils/LoaderUtils.ts";
-import { GLTFTransformExtensionUtils } from "../utils/GLTFTransformExtensionUtils.ts";
+import { LoaderUtils } from "../utils/loaderUtils.ts";
+import { GLTFTransformExtensionUtils } from "../utils/gltfTransformExtensionUtils.ts";
 
 type EditorContextController = {
   gltfDocument: GLTFDocument | null;

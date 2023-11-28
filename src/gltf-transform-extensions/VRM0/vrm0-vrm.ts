@@ -112,9 +112,6 @@ export default class VRM0VRM extends Extension {
       }
 
       if (vrmDef.humanoid) {
-        console.log("READ HUMANOID", vrmDef.humanoid);
-        vrmProp.setHumanoid(vrmDef.humanoid); // TEMP
-
         const vrmHumanoidProp = new VRM0HumanoidProp(this.document.getGraph());
         vrmProp.setHumanoidProp(vrmHumanoidProp);
 
@@ -432,7 +429,6 @@ export default class VRM0VRM extends Extension {
           }
         );
         humanoidDef.humanBones = humanBonesDef;
-        // vrmDef.humanoid = vrmProp.getHumanoid();
       }
 
       console.log("WRITE HUMANOID:", vrmDef.humanoid);

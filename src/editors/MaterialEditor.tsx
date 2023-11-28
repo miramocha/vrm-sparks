@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { Empty, Select, Tabs } from "antd";
 import MaterialMToon from "../gltf-transform-extensions/material-mtoon-prop.ts";
-import { GLTFTransformExtensionUtils } from "../utils/GLTFTransformExtensionUtils.ts";
+import { GLTFTransformExtensionUtils } from "../utils/gltfTransformExtensionUtils.ts";
 import MaterialTextureList from "./forms/MaterialTextureList.tsx";
 import { EditorContext } from "../providers/editorContextProvider.tsx";
 import MaterialColorList from "./forms/MaterialColorList.tsx";
