@@ -1,4 +1,4 @@
-import { Document, Material, NodeIO } from "@gltf-transform/core";
+import { Document, Material, NodeIO, VertexLayout } from "@gltf-transform/core";
 // VRM0
 import * as VRM0_CONSTANTS from "../gltf-transform-extensions/VRM0/constants.ts";
 import VRM0Prop from "../gltf-transform-extensions/VRM0/properties/vrm0-vrm-prop.ts";
@@ -79,7 +79,7 @@ export class GLTFTransformExtensionUtils {
   }
 
   public static getVRM0NodeIO(): NodeIO {
-    const nodeIO = new NodeIO();
+    const nodeIO = new NodeIO().setVertexLayout(VertexLayout.SEPARATE);
     nodeIO.registerExtensions([
       VRM0VRM,
       KHRMaterialsUnlit,
@@ -90,7 +90,7 @@ export class GLTFTransformExtensionUtils {
   }
 
   public static getVRM1NodeIO(): NodeIO {
-    const nodeIO = new NodeIO();
+    const nodeIO = new NodeIO().setVertexLayout(VertexLayout.SEPARATE);
     nodeIO.registerExtensions([
       VRM1VRM,
       VRMC_materials_mtoon,
