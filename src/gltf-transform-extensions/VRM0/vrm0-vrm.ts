@@ -145,7 +145,53 @@ export default class VRM0VRM extends Extension {
           meshAnnotationProp.setNode(node);
 
           // Setting up VRMC LookAt
-          new LookAtProp(this.document.getGraph());
+          const lookAtProp = new LookAtProp(this.document.getGraph());
+          vrmProp.setLookAtProp(lookAtProp);
+          vrmProp.setFirstPersonBoneNode(
+            context.nodes[firstPersonDef.firstPersonBone!]
+          ); // Just in case when converting back to VRM0
+          lookAtProp.setRangeMapHorizontalInner({
+            inputMaxValue:
+              firstPersonDef.lookAtHorizontalInner?.xRange ||
+              lookAtProp.getRangeMapHorizontalInner().inputMaxValue,
+            outputScale:
+              firstPersonDef.lookAtHorizontalInner?.yRange ||
+              lookAtProp.getRangeMapHorizontalInner().outputScale,
+          });
+          lookAtProp.setRangeMapHorizontalOuter({
+            inputMaxValue:
+              firstPersonDef.lookAtHorizontalOuter?.xRange ||
+              lookAtProp.getRangeMapHorizontalOuter().inputMaxValue,
+            outputScale:
+              firstPersonDef.lookAtHorizontalOuter?.yRange ||
+              lookAtProp.getRangeMapHorizontalOuter().outputScale,
+          });
+          lookAtProp.setRangeMapVerticalDown({
+            inputMaxValue:
+              firstPersonDef.lookAtVerticalDown?.xRange ||
+              lookAtProp.getRangeMapVerticalDown().inputMaxValue,
+            outputScale:
+              firstPersonDef.lookAtVerticalDown?.yRange ||
+              lookAtProp.getRangeMapVerticalDown().outputScale,
+          });
+          lookAtProp.setRangeMapVerticalUp({
+            inputMaxValue:
+              firstPersonDef.lookAtVerticalUp?.xRange ||
+              lookAtProp.getRangeMapVerticalUp().inputMaxValue,
+            outputScale:
+              firstPersonDef.lookAtVerticalUp?.yRange ||
+              lookAtProp.getRangeMapVerticalUp().outputScale,
+          });
+
+          if (firstPersonDef.firstPersonBoneOffset) {
+            const offsetFromHeadBone = lookAtProp.getOffsetFromHeadBone();
+            offsetFromHeadBone[0] =
+              firstPersonDef.firstPersonBoneOffset.x || offsetFromHeadBone[0];
+            offsetFromHeadBone[1] =
+              firstPersonDef.firstPersonBoneOffset.y || offsetFromHeadBone[1];
+            offsetFromHeadBone[2] =
+              firstPersonDef.firstPersonBoneOffset.z || offsetFromHeadBone[2];
+          }
         });
       }
 

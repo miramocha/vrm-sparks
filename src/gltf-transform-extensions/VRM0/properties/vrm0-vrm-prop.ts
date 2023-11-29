@@ -3,6 +3,7 @@ import {
   IProperty,
   Nullable,
   PropertyType,
+  Node,
 } from "@gltf-transform/core";
 import * as VRM0Type from "@pixiv/types-vrm-0.0";
 import { VRM0 as NAME } from "../constants.ts";
@@ -19,6 +20,7 @@ interface IVRM0Prop extends IProperty {
   humanoidProp: HumanoidProp;
   firstPersonProp: FirstPersonProp;
   lookAtProp: LookAtProp;
+  firstPersonBoneNode: Node;
   serializedFirstPerson: string;
   serializedBlendShapeMaster: string;
   serializedSecondaryAnimation: string;
@@ -44,6 +46,7 @@ export default class VRM0Prop extends ExtensionProperty<IVRM0Prop> {
       humanoidProp: null,
       firstPersonProp: null,
       lookAtProp: null,
+      firstPersonBoneNode: null,
       serializedFirstPerson: "{}",
       serializedBlendShapeMaster: "{}",
       serializedSecondaryAnimation: "{}",
@@ -78,6 +81,13 @@ export default class VRM0Prop extends ExtensionProperty<IVRM0Prop> {
   }
   public getFirstPersonProp(): FirstPersonProp | null {
     return this.getRef("firstPersonProp");
+  }
+
+  public setFirstPersonBoneNode(firstPersonBoneNode: Node): this {
+    return this.setRef("firstPersonBoneNode", firstPersonBoneNode);
+  }
+  public getFirstPersonBoneNode() {
+    return this.getRef("firstPersonBoneNode");
   }
 
   public setLookAtProp(lookAtProp: LookAtProp): this {
