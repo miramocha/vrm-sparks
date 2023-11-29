@@ -1,9 +1,9 @@
 import { IProperty, Nullable, Property } from "@gltf-transform/core";
-import { PropertyType as VRMPropertyType } from "./constants.ts";
-import { FirstPersonMeshAnnotationProp } from "./first-person-mesh-annotation-prop.ts";
+import { PropertyType as VRMPropertyType } from "../../constants.ts";
+import { MeshAnnotationProp } from "./mesh-annotation-prop.ts";
 
 export interface IFirstPersonProp extends IProperty {
-  meshAnnotationProps: FirstPersonMeshAnnotationProp[];
+  meshAnnotationProps: MeshAnnotationProp[];
 }
 
 export class FirstPersonProp extends Property<IFirstPersonProp> {
@@ -19,7 +19,7 @@ export class FirstPersonProp extends Property<IFirstPersonProp> {
     });
   }
 
-  public listMeshAnnotationProps(): FirstPersonMeshAnnotationProp[] {
+  public listMeshAnnotationProps(): MeshAnnotationProp[] {
     return this.listRefs("meshAnnotationProps");
   }
 }

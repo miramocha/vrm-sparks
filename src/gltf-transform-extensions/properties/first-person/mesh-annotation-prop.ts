@@ -2,21 +2,21 @@ import { IProperty, Property, Node, Nullable } from "@gltf-transform/core";
 import {
   PropertyType as VRMPropertyType,
   FirstPersonFlag,
-} from "./constants.ts";
+} from "../../constants.ts";
 
-export interface IFirstPersonMeshAnnotationProp extends IProperty {
+export interface IMeshAnnotationProp extends IProperty {
   node: Node;
   type: FirstPersonFlag;
 }
 
-export class FirstPersonMeshAnnotationProp extends Property<IFirstPersonMeshAnnotationProp> {
+export class MeshAnnotationProp extends Property<IMeshAnnotationProp> {
   public declare propertyType: VRMPropertyType.FIRST_PERSON_MESH_ANNOTATION_PROP;
 
   protected init(): void {
     this.propertyType = VRMPropertyType.FIRST_PERSON_MESH_ANNOTATION_PROP;
   }
 
-  protected getDefaults(): Nullable<IFirstPersonMeshAnnotationProp> {
+  protected getDefaults(): Nullable<IMeshAnnotationProp> {
     return Object.assign(super.getDefaults() as IProperty, {
       node: null,
       type: "auto" as FirstPersonFlag,

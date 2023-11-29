@@ -1,5 +1,5 @@
 import { Extension } from "@gltf-transform/core";
-// import * as VRM1Def from "@pixiv/types-vrmc-vrm-1.0";
+// import * as VRM1Type from "@pixiv/types-vrmc-vrm-1.0";
 import { VRMC_VRM } from "./constants.ts";
 
 const NAME = VRMC_VRM;

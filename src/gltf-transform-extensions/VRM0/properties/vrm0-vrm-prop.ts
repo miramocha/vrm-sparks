@@ -6,10 +6,11 @@ import {
 } from "@gltf-transform/core";
 import * as VRM0Type from "@pixiv/types-vrm-0.0";
 import { VRM0 as NAME } from "../constants.ts";
-import { MetaProp } from "../../meta-prop.ts";
-import { HumanoidProp } from "../../humanoid-prop.ts";
-import { FirstPersonProp } from "../../first-person-prop.ts";
+import { MetaProp } from "../../properties/meta-prop.ts";
+import { HumanoidProp } from "../../properties/humanoid/humanoid-prop.ts";
+import { FirstPersonProp } from "../../properties/first-person/first-person-prop.ts";
 import { PropertyType as VRMPropertyType } from "../../constants.ts";
+import { LookAtProp } from "../../properties/look-at/look-at-prop.ts";
 
 interface IVRM0Prop extends IProperty {
   metaProp: MetaProp;
@@ -17,6 +18,7 @@ interface IVRM0Prop extends IProperty {
   exporterVersion: string;
   humanoidProp: HumanoidProp;
   firstPersonProp: FirstPersonProp;
+  lookAtProp: LookAtProp;
   serializedFirstPerson: string;
   serializedBlendShapeMaster: string;
   serializedSecondaryAnimation: string;
@@ -41,6 +43,7 @@ export default class VRM0Prop extends ExtensionProperty<IVRM0Prop> {
       exporterVersion: "VRM Sparks 0.0",
       humanoidProp: null,
       firstPersonProp: null,
+      lookAtProp: null,
       serializedFirstPerson: "{}",
       serializedBlendShapeMaster: "{}",
       serializedSecondaryAnimation: "{}",
@@ -75,6 +78,13 @@ export default class VRM0Prop extends ExtensionProperty<IVRM0Prop> {
   }
   public getFirstPersonProp(): FirstPersonProp | null {
     return this.getRef("firstPersonProp");
+  }
+
+  public setLookAtProp(lookAtProp: LookAtProp): this {
+    return this.setRef("lookAtProp", lookAtProp);
+  }
+  public getLookAtProp(): LookAtProp | null {
+    return this.getRef("lookAtProp");
   }
 
   // Remove this

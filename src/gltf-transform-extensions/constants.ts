@@ -14,6 +14,10 @@ export enum PropertyType {
   MATERIAL_MTOON_PROP = "VRMC_materialsMToon.materialMToon",
 }
 
+export type LookAtType = "bone" | "expression";
+
+export type RangeMap = { inputMaxValue: number; outputScale: number };
+
 export type FirstPersonFlag =
   | "auto"
   | "both"

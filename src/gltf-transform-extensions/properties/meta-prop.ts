@@ -6,7 +6,7 @@ import {
   TextureChannel,
   TextureInfo,
 } from "@gltf-transform/core";
-import { PropertyType as VRMPropertyType } from "./constants.ts";
+import { PropertyType as VRMPropertyType } from "../constants.ts";
 
 const { R, G, B } = TextureChannel;
 

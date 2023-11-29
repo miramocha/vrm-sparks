@@ -10,11 +10,12 @@ import VRM0Prop from "./properties/vrm0-vrm-prop.ts";
 import { VRM0 as NAME } from "./constants.ts";
 import * as VRMConstants from "../constants.ts";
 import VRM0MaterialMToonProp from "./properties/vrm0-material-mtoon-prop.ts";
-import { FirstPersonProp } from "../first-person-prop.ts";
-import { HumanoidProp } from "../humanoid-prop.ts";
-import { MetaProp } from "../meta-prop.ts";
-import { HumanoidHumanBoneProp } from "../humanoid-human-bone-prop.ts";
-import { FirstPersonMeshAnnotationProp } from "../first-person-mesh-annotation-prop.ts";
+import { FirstPersonProp } from "../properties/first-person/first-person-prop.ts";
+import { HumanoidProp } from "../properties/humanoid/humanoid-prop.ts";
+import { MetaProp } from "../properties/meta-prop.ts";
+import { HumanBoneProp } from "../properties/humanoid/human-bone-prop.ts";
+import { MeshAnnotationProp } from "../properties/first-person/mesh-annotation-prop.ts";
+import { LookAtProp } from "../properties/look-at/look-at-prop.ts";
 
 export default class VRM0VRM extends Extension {
   public readonly extensionName = NAME;
@@ -109,9 +110,7 @@ export default class VRM0VRM extends Extension {
         vrmProp.setHumanoidProp(vrmHumanoidProp);
 
         vrmDef.humanoid.humanBones?.forEach((humanbone) => {
-          const humanBoneProp = new HumanoidHumanBoneProp(
-            this.document.getGraph()
-          );
+          const humanBoneProp = new HumanBoneProp(this.document.getGraph());
           const node = context.nodes[humanbone.node!];
           humanBoneProp.setNode(node!);
 
@@ -120,10 +119,7 @@ export default class VRM0VRM extends Extension {
           );
 
           if (normalizedBoneName) {
-            vrmHumanoidProp.setHumanoidHumanBoneProp(
-              normalizedBoneName,
-              humanBoneProp
-            );
+            vrmHumanoidProp.setHumanBoneProp(normalizedBoneName, humanBoneProp);
           }
         });
       }
@@ -140,7 +136,7 @@ export default class VRM0VRM extends Extension {
         vrmProp.setFirstPersonProp(vrmFirstPersonProp);
         firstPersonDef.meshAnnotations?.forEach((meshAnnotationDef) => {
           const node = context.nodes[meshAnnotationDef.mesh!];
-          const meshAnnotationProp = new FirstPersonMeshAnnotationProp(
+          const meshAnnotationProp = new MeshAnnotationProp(
             this.document.getGraph()
           );
           meshAnnotationProp.setFirstPersonFlag(
@@ -149,6 +145,7 @@ export default class VRM0VRM extends Extension {
           meshAnnotationProp.setNode(node);
 
           // Setting up VRMC LookAt
+          new LookAtProp(this.document.getGraph());
         });
       }
 
@@ -431,8 +428,7 @@ export default class VRM0VRM extends Extension {
         const humanBonesDef = [] as VRM0Type.HumanoidBone[];
         VRMConstants.VRM1_BONE_ORDER.forEach(
           (vrm1Bone: VRM1Type.HumanoidHumanBoneName) => {
-            const humanoidBoneProp =
-              vrmHumanoidProp.getHumanoidHumanBoneProp(vrm1Bone);
+            const humanoidBoneProp = vrmHumanoidProp.getHumanBoneProp(vrm1Bone);
             const vrm0Bone = VRMConstants.VRM1_BONE_TO_VRM0_BONE.get(vrm1Bone);
             const node = humanoidBoneProp?.getNode();
             if (node) {
