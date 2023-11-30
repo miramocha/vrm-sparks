@@ -21,7 +21,11 @@ interface IVRM0Prop extends IProperty {
   firstPersonProp: FirstPersonProp;
   lookAtProp: LookAtProp;
   firstPersonBoneNode: Node;
-  serializedFirstPerson: string;
+  lookAtHorizontalInnerCurve: number[];
+  lookAtHorizontalOuterCurve: number[];
+  lookAtVerticalDownCurve: number[];
+  lookAtVerticalUpCurve: number[];
+
   serializedBlendShapeMaster: string;
   serializedSecondaryAnimation: string;
   serializedMaterialProperties: string;
@@ -32,6 +36,10 @@ export default class VRM0Prop extends ExtensionProperty<IVRM0Prop> {
   public declare extensionName: typeof NAME;
   public declare propertyType: VRMPropertyType.VRM_PROP;
   public declare parentTypes: [PropertyType.ROOT];
+
+  public readonly DEFAULT_FIRST_PERSON_CURVE: number[] = [
+    0, 0, 0, 1, 1, 1, 1, 0,
+  ];
 
   protected init(): void {
     this.extensionName = NAME;
@@ -47,7 +55,11 @@ export default class VRM0Prop extends ExtensionProperty<IVRM0Prop> {
       firstPersonProp: null,
       lookAtProp: null,
       firstPersonBoneNode: null,
-      serializedFirstPerson: "{}",
+      lookAtHorizontalInnerCurve: this.DEFAULT_FIRST_PERSON_CURVE,
+      lookAtHorizontalOuterCurve: this.DEFAULT_FIRST_PERSON_CURVE,
+      lookAtVerticalDownCurve: this.DEFAULT_FIRST_PERSON_CURVE,
+      lookAtVerticalUpCurve: this.DEFAULT_FIRST_PERSON_CURVE,
+
       serializedBlendShapeMaster: "{}",
       serializedSecondaryAnimation: "{}",
       serializedMaterialProperties: "[]",
@@ -83,32 +95,11 @@ export default class VRM0Prop extends ExtensionProperty<IVRM0Prop> {
     return this.getRef("firstPersonProp");
   }
 
-  public setFirstPersonBoneNode(firstPersonBoneNode: Node): this {
-    return this.setRef("firstPersonBoneNode", firstPersonBoneNode);
-  }
-  public getFirstPersonBoneNode() {
-    return this.getRef("firstPersonBoneNode");
-  }
-
   public setLookAtProp(lookAtProp: LookAtProp): this {
     return this.setRef("lookAtProp", lookAtProp);
   }
   public getLookAtProp(): LookAtProp | null {
     return this.getRef("lookAtProp");
-  }
-
-  // Remove this
-  public setFirstPerson(firstPerson: VRM0Type.FirstPerson): this {
-    return this.set("serializedFirstPerson", JSON.stringify(firstPerson));
-  }
-  public getFirstPerson(): VRM0Type.FirstPerson | undefined {
-    const serializedFirstPerson = this.get("serializedFirstPerson");
-
-    if (serializedFirstPerson) {
-      return JSON.parse(serializedFirstPerson) as VRM0Type.FirstPerson;
-    }
-
-    return undefined;
   }
 
   public setBlendShapeMaster(blendShapeMaster: VRM0Type.BlendShape): this {
@@ -168,5 +159,44 @@ export default class VRM0Prop extends ExtensionProperty<IVRM0Prop> {
     }
 
     return undefined;
+  }
+
+  /**********************************************************************************************
+   * VRM0 Specifics
+   */
+
+  public setFirstPersonBoneNode(firstPersonBoneNode: Node): this {
+    return this.setRef("firstPersonBoneNode", firstPersonBoneNode);
+  }
+  public getFirstPersonBoneNode() {
+    return this.getRef("firstPersonBoneNode");
+  }
+
+  public getLookAtHorizontalInnerCurve(): number[] {
+    return this.get("lookAtHorizontalInnerCurve");
+  }
+  public setLookAtHorizontalInnerCurve(lookAtCurve: number[]) {
+    return this.set("lookAtHorizontalInnerCurve", lookAtCurve);
+  }
+
+  public getLookAtHorizontalOuterCurve(): number[] {
+    return this.get("lookAtHorizontalOuterCurve");
+  }
+  public setLookAtHorizontalOuterCurve(lookAtCurve: number[]) {
+    return this.set("lookAtHorizontalOuterCurve", lookAtCurve);
+  }
+
+  public getLookAtVerticalDownCurve(): number[] {
+    return this.get("lookAtVerticalDownCurve");
+  }
+  public setLookAtVerticalDownCurve(lookAtCurve: number[]) {
+    return this.set("lookAtVerticalDownCurve", lookAtCurve);
+  }
+
+  public getLookAtVerticalUpCurve(): number[] {
+    return this.get("lookAtVerticalUpCurve");
+  }
+  public setLookAtVerticalUpCurve(lookAtCurve: number[]) {
+    return this.set("lookAtVerticalUpCurve", lookAtCurve);
   }
 }

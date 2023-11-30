@@ -127,7 +127,6 @@ export default class VRM0VRM extends Extension {
       // LookAt & First Person
       if (vrmDef.firstPerson) {
         const firstPersonDef = vrmDef.firstPerson;
-        vrmProp.setFirstPerson(vrmDef.firstPerson);
 
         // Setting up VRMC First Person
         const vrmFirstPersonProp = new FirstPersonProp(
@@ -143,56 +142,85 @@ export default class VRM0VRM extends Extension {
             meshAnnotationDef.firstPersonFlag as VRMConstants.FirstPersonFlag
           );
           meshAnnotationProp.setNode(node);
-
-          // Setting up VRMC LookAt
-          const lookAtProp = new LookAtProp(this.document.getGraph());
-          vrmProp.setLookAtProp(lookAtProp);
-          vrmProp.setFirstPersonBoneNode(
-            context.nodes[firstPersonDef.firstPersonBone!]
-          ); // Just in case when converting back to VRM0
-          lookAtProp.setRangeMapHorizontalInner({
-            inputMaxValue:
-              firstPersonDef.lookAtHorizontalInner?.xRange ||
-              lookAtProp.getRangeMapHorizontalInner().inputMaxValue,
-            outputScale:
-              firstPersonDef.lookAtHorizontalInner?.yRange ||
-              lookAtProp.getRangeMapHorizontalInner().outputScale,
-          });
-          lookAtProp.setRangeMapHorizontalOuter({
-            inputMaxValue:
-              firstPersonDef.lookAtHorizontalOuter?.xRange ||
-              lookAtProp.getRangeMapHorizontalOuter().inputMaxValue,
-            outputScale:
-              firstPersonDef.lookAtHorizontalOuter?.yRange ||
-              lookAtProp.getRangeMapHorizontalOuter().outputScale,
-          });
-          lookAtProp.setRangeMapVerticalDown({
-            inputMaxValue:
-              firstPersonDef.lookAtVerticalDown?.xRange ||
-              lookAtProp.getRangeMapVerticalDown().inputMaxValue,
-            outputScale:
-              firstPersonDef.lookAtVerticalDown?.yRange ||
-              lookAtProp.getRangeMapVerticalDown().outputScale,
-          });
-          lookAtProp.setRangeMapVerticalUp({
-            inputMaxValue:
-              firstPersonDef.lookAtVerticalUp?.xRange ||
-              lookAtProp.getRangeMapVerticalUp().inputMaxValue,
-            outputScale:
-              firstPersonDef.lookAtVerticalUp?.yRange ||
-              lookAtProp.getRangeMapVerticalUp().outputScale,
-          });
-
-          if (firstPersonDef.firstPersonBoneOffset) {
-            const offsetFromHeadBone = lookAtProp.getOffsetFromHeadBone();
-            offsetFromHeadBone[0] =
-              firstPersonDef.firstPersonBoneOffset.x || offsetFromHeadBone[0];
-            offsetFromHeadBone[1] =
-              firstPersonDef.firstPersonBoneOffset.y || offsetFromHeadBone[1];
-            offsetFromHeadBone[2] =
-              firstPersonDef.firstPersonBoneOffset.z || offsetFromHeadBone[2];
-          }
+          vrmFirstPersonProp.listMeshAnnotationProps().push(meshAnnotationProp);
         });
+
+        // Setting up VRMC LookAt
+        const lookAtProp = new LookAtProp(this.document.getGraph());
+        vrmProp.setLookAtProp(lookAtProp);
+        vrmProp.setFirstPersonBoneNode(
+          context.nodes[firstPersonDef.firstPersonBone!]
+        ); // Just in case when converting back to VRM0
+
+        if (firstPersonDef.lookAtTypeName === "Bone") {
+          lookAtProp.setType("bone");
+        } else if (firstPersonDef.lookAtTypeName === "BlendShape") {
+          lookAtProp.setType("expression");
+        }
+
+        if (firstPersonDef.lookAtHorizontalInner?.curve) {
+          vrmProp.setLookAtHorizontalInnerCurve(
+            firstPersonDef.lookAtHorizontalInner.curve
+          );
+        }
+        if (firstPersonDef.lookAtHorizontalOuter?.curve) {
+          vrmProp.setLookAtHorizontalOuterCurve(
+            firstPersonDef.lookAtHorizontalOuter.curve
+          );
+        }
+        if (firstPersonDef.lookAtVerticalDown?.curve) {
+          vrmProp.setLookAtVerticalDownCurve(
+            firstPersonDef.lookAtVerticalDown.curve
+          );
+        }
+        if (firstPersonDef.lookAtVerticalUp?.curve) {
+          vrmProp.setLookAtVerticalUpCurve(
+            firstPersonDef.lookAtVerticalUp.curve
+          );
+        }
+
+        lookAtProp.setRangeMapHorizontalInner({
+          inputMaxValue:
+            firstPersonDef.lookAtHorizontalInner?.xRange ||
+            lookAtProp.getRangeMapHorizontalInner().inputMaxValue,
+          outputScale:
+            firstPersonDef.lookAtHorizontalInner?.yRange ||
+            lookAtProp.getRangeMapHorizontalInner().outputScale,
+        });
+        lookAtProp.setRangeMapHorizontalOuter({
+          inputMaxValue:
+            firstPersonDef.lookAtHorizontalOuter?.xRange ||
+            lookAtProp.getRangeMapHorizontalOuter().inputMaxValue,
+          outputScale:
+            firstPersonDef.lookAtHorizontalOuter?.yRange ||
+            lookAtProp.getRangeMapHorizontalOuter().outputScale,
+        });
+        lookAtProp.setRangeMapVerticalDown({
+          inputMaxValue:
+            firstPersonDef.lookAtVerticalDown?.xRange ||
+            lookAtProp.getRangeMapVerticalDown().inputMaxValue,
+          outputScale:
+            firstPersonDef.lookAtVerticalDown?.yRange ||
+            lookAtProp.getRangeMapVerticalDown().outputScale,
+        });
+        lookAtProp.setRangeMapVerticalUp({
+          inputMaxValue:
+            firstPersonDef.lookAtVerticalUp?.xRange ||
+            lookAtProp.getRangeMapVerticalUp().inputMaxValue,
+          outputScale:
+            firstPersonDef.lookAtVerticalUp?.yRange ||
+            lookAtProp.getRangeMapVerticalUp().outputScale,
+        });
+
+        if (firstPersonDef.firstPersonBoneOffset) {
+          const offsetFromHeadBone = lookAtProp.getOffsetFromHeadBone();
+          offsetFromHeadBone[0] =
+            firstPersonDef.firstPersonBoneOffset.x || offsetFromHeadBone[0];
+          offsetFromHeadBone[1] =
+            firstPersonDef.firstPersonBoneOffset.y || offsetFromHeadBone[1];
+          offsetFromHeadBone[2] =
+            firstPersonDef.firstPersonBoneOffset.z || offsetFromHeadBone[2];
+        }
       }
 
       // Expressions
@@ -490,10 +518,78 @@ export default class VRM0VRM extends Extension {
         humanoidDef.humanBones = humanBonesDef;
       }
 
-      console.log("WRITE HUMANOID:", vrmDef.humanoid);
+      const firstPersonProp = vrmProp.getFirstPersonProp();
+      vrmDef.firstPerson = vrmDef.firstPerson || {};
+      if (firstPersonProp) {
+        const firstPersonDef = vrmDef.firstPerson;
 
-      if (vrmProp.getFirstPerson()) {
-        vrmDef.firstPerson = vrmProp.getFirstPerson();
+        const node = vrmProp.getFirstPersonBoneNode();
+        if (node) {
+          firstPersonDef.firstPersonBone = context.nodeIndexMap.get(node);
+        }
+
+        firstPersonDef.meshAnnotations = firstPersonProp
+          .listMeshAnnotationProps()
+          .map((meshAnnotationProp) => {
+            const meshNode = meshAnnotationProp.getNode();
+            return {
+              mesh: context.nodeIndexMap.get(meshNode!),
+              firstPersonFlag: meshAnnotationProp.getFirstPersonFlag(),
+            };
+          });
+      }
+
+      const lookAtProp = vrmProp.getLookAtProp();
+      if (lookAtProp) {
+        const firstPersonDef = vrmDef.firstPerson;
+        if (lookAtProp.getType() === "bone") {
+          firstPersonDef.lookAtTypeName = "Bone";
+        } else if (lookAtProp.getType() === "expression") {
+          firstPersonDef.lookAtTypeName = "BlendShape";
+        }
+
+        firstPersonDef.lookAtHorizontalInner =
+          firstPersonDef.lookAtHorizontalInner || {};
+        if (lookAtProp.getRangeMapHorizontalInner()) {
+          firstPersonDef.lookAtHorizontalInner.xRange =
+            lookAtProp.getRangeMapHorizontalInner().inputMaxValue;
+          firstPersonDef.lookAtHorizontalInner.yRange =
+            lookAtProp.getRangeMapHorizontalInner().outputScale;
+          firstPersonDef.lookAtHorizontalInner.curve =
+            vrmProp.getLookAtHorizontalInnerCurve();
+        }
+
+        firstPersonDef.lookAtHorizontalOuter =
+          firstPersonDef.lookAtHorizontalOuter || {};
+        if (lookAtProp.getRangeMapHorizontalOuter()) {
+          firstPersonDef.lookAtHorizontalOuter.xRange =
+            lookAtProp.getRangeMapHorizontalOuter().inputMaxValue;
+          firstPersonDef.lookAtHorizontalOuter.yRange =
+            lookAtProp.getRangeMapHorizontalOuter().outputScale;
+          firstPersonDef.lookAtHorizontalOuter.curve =
+            vrmProp.getLookAtHorizontalOuterCurve();
+        }
+
+        firstPersonDef.lookAtVerticalDown =
+          firstPersonDef.lookAtVerticalDown || {};
+        if (lookAtProp.getRangeMapVerticalDown()) {
+          firstPersonDef.lookAtVerticalDown.xRange =
+            lookAtProp.getRangeMapVerticalDown().inputMaxValue;
+          firstPersonDef.lookAtVerticalDown.yRange =
+            lookAtProp.getRangeMapVerticalDown().outputScale;
+          firstPersonDef.lookAtVerticalDown.curve =
+            vrmProp.getLookAtVerticalDownCurve();
+        }
+
+        firstPersonDef.lookAtVerticalUp = firstPersonDef.lookAtVerticalUp || {};
+        if (lookAtProp.getRangeMapVerticalUp()) {
+          firstPersonDef.lookAtVerticalUp.xRange =
+            lookAtProp.getRangeMapVerticalUp().inputMaxValue;
+          firstPersonDef.lookAtVerticalUp.yRange =
+            lookAtProp.getRangeMapVerticalUp().outputScale;
+          firstPersonDef.lookAtVerticalUp.curve =
+            vrmProp.getLookAtVerticalUpCurve();
+        }
       }
 
       if (vrmProp.getBlendShapeMaster()) {
