@@ -28,7 +28,6 @@ interface IVRM0Prop extends IProperty {
 
   serializedBlendShapeMaster: string;
   serializedSecondaryAnimation: string;
-  serializedMaterialProperties: string;
 }
 
 export default class VRM0Prop extends ExtensionProperty<IVRM0Prop> {
@@ -62,7 +61,6 @@ export default class VRM0Prop extends ExtensionProperty<IVRM0Prop> {
 
       serializedBlendShapeMaster: "{}",
       serializedSecondaryAnimation: "{}",
-      serializedMaterialProperties: "[]",
     });
   }
 
@@ -108,7 +106,6 @@ export default class VRM0Prop extends ExtensionProperty<IVRM0Prop> {
       JSON.stringify(blendShapeMaster)
     );
   }
-
   public getBlendShapeMaster(): VRM0Type.BlendShape | undefined {
     const serializedBlendShapeMaster = this.get("serializedBlendShapeMaster");
 
@@ -127,7 +124,6 @@ export default class VRM0Prop extends ExtensionProperty<IVRM0Prop> {
       JSON.stringify(secondaryAnimation)
     );
   }
-
   public getSecondaryAnimation(): VRM0Type.SecondaryAnimation | undefined {
     const serializedSecondaryAnimation = this.get(
       "serializedSecondaryAnimation"
@@ -137,25 +133,6 @@ export default class VRM0Prop extends ExtensionProperty<IVRM0Prop> {
       return JSON.parse(
         serializedSecondaryAnimation
       ) as VRM0Type.SecondaryAnimation;
-    }
-
-    return undefined;
-  }
-
-  public setMaterialProperties(materialProperties: VRM0Type.Material[]): this {
-    return this.set(
-      "serializedMaterialProperties",
-      JSON.stringify(materialProperties)
-    );
-  }
-
-  public getMaterialProperties(): VRM0Type.Material[] | undefined {
-    const serializedMaterialProperties = this.get(
-      "serializedMaterialProperties"
-    );
-
-    if (serializedMaterialProperties) {
-      return JSON.parse(serializedMaterialProperties) as VRM0Type.Material[];
     }
 
     return undefined;

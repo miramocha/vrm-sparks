@@ -10,6 +10,7 @@ export enum PropertyType {
   FIRST_PERSON_PROP = "VRMC_vrm.firstPerson",
   FIRST_PERSON_MESH_ANNOTATION_PROP = "VRMC_vrm.firstPerson.meshAnnotation",
   LOOK_AT_PROP = "VRMC_vrm.lookAt",
+  EXPRESSIONS_PROP = "VRMC_vrm.expressions",
   MATERIALS_MTOON_EXTENSION = "VRMC_materialsMToon",
   MATERIAL_MTOON_PROP = "VRMC_materialsMToon.materialMToon",
 }
