@@ -11,6 +11,10 @@ export enum PropertyType {
   FIRST_PERSON_MESH_ANNOTATION_PROP = "VRMC_vrm.firstPerson.meshAnnotation",
   LOOK_AT_PROP = "VRMC_vrm.lookAt",
   EXPRESSIONS_PROP = "VRMC_vrm.expressions",
+  EXPRESSIONS_EXPRESSION_PROP = "VRMC_vrm.expressions.expression",
+  EXPRESSIONS_MORPH_TARGET_BIND_PROP = "VRMC_vrm.expressions.expression.morphTargetBind",
+  EXPRESSIONS_MATERIAL_COLOR_BIND_PROP = "VRMC_vrm.expressions.expression.materialColorBind",
+  EXPRESSIONS_TEXTURE_TRANSFORM_BIND_PROP = "VRMC_vrm.expressions.expression.textureTransformBind",
   MATERIALS_MTOON_EXTENSION = "VRMC_materialsMToon",
   MATERIAL_MTOON_PROP = "VRMC_materialsMToon.materialMToon",
 }

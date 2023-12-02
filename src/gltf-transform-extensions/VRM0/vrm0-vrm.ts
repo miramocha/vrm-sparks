@@ -16,6 +16,8 @@ import { MetaProp } from "../properties/meta-prop.ts";
 import { HumanBoneProp } from "../properties/humanoid/human-bone-prop.ts";
 import { MeshAnnotationProp } from "../properties/first-person/mesh-annotation-prop.ts";
 import { LookAtProp } from "../properties/look-at/look-at-prop.ts";
+import { ExpressionsProp } from "../properties/expressions/expressions-prop.ts";
+import { ExpressionProp } from "../properties/expressions/expression-prop.ts";
 
 export default class VRM0VRM extends Extension {
   public readonly extensionName = NAME;
@@ -36,78 +38,78 @@ export default class VRM0VRM extends Extension {
       }
 
       if (vrmDef.meta) {
-        const vrmMetaProp = new MetaProp(this.document.getGraph());
-        vrmProp.setMetaProp(vrmMetaProp);
+        const metaProp = new MetaProp(this.document.getGraph());
+        vrmProp.setMetaProp(metaProp);
         const metaDef = vrmDef.meta;
 
         if (metaDef.title !== undefined) {
-          vrmMetaProp.setName(metaDef.title);
+          metaProp.setName(metaDef.title);
         }
         if (metaDef.version !== undefined) {
-          vrmMetaProp.setVersion(metaDef.version);
+          metaProp.setVersion(metaDef.version);
         }
         if (metaDef.author !== undefined) {
-          vrmMetaProp.setAuthors([metaDef.author]);
+          metaProp.setAuthors([metaDef.author]);
         }
         if (metaDef.contactInformation !== undefined) {
-          vrmMetaProp.setContactInformation(metaDef.contactInformation);
+          metaProp.setContactInformation(metaDef.contactInformation);
         }
         if (metaDef.reference !== undefined) {
-          vrmMetaProp.setReferences([metaDef.reference]);
+          metaProp.setReferences([metaDef.reference]);
         }
         if (metaDef.texture !== undefined) {
           const texture =
             context.textures[textureDefs[metaDef.texture].source!];
-          vrmMetaProp.setThumbnailImageTexture(texture);
-          context.setTextureInfo(vrmMetaProp.getThumbnailImageTextureInfo()!, {
+          metaProp.setThumbnailImageTexture(texture);
+          context.setTextureInfo(metaProp.getThumbnailImageTextureInfo()!, {
             index: metaDef.texture,
           });
         }
         if (metaDef.allowedUserName !== undefined) {
           if (metaDef.allowedUserName === "ExplicitlyLicensedPerson") {
-            vrmMetaProp.setAvatarPermission("onlySeparatelyLicensedPerson");
+            metaProp.setAvatarPermission("onlySeparatelyLicensedPerson");
           } else if (metaDef.allowedUserName === "OnlyAuthor") {
-            vrmMetaProp.setAvatarPermission("onlyAuthor");
+            metaProp.setAvatarPermission("onlyAuthor");
           } else if (metaDef.allowedUserName === "Everyone") {
-            vrmMetaProp.setAvatarPermission("everyone");
+            metaProp.setAvatarPermission("everyone");
           }
         }
         if (metaDef.violentUssageName !== undefined) {
-          vrmMetaProp.setAllowExcessivelyViolentUsage(
+          metaProp.setAllowExcessivelyViolentUsage(
             metaDef.violentUssageName === "Allow"
           );
         }
         if (metaDef.sexualUssageName !== undefined) {
-          vrmMetaProp.setAllowExcessivelySexualUsage(
+          metaProp.setAllowExcessivelySexualUsage(
             metaDef.sexualUssageName === "Allow"
           );
         }
         if (metaDef.commercialUssageName !== undefined) {
           if (metaDef.commercialUssageName === "Allow") {
-            vrmMetaProp.setCommercialUsage("personalProfit");
+            metaProp.setCommercialUsage("personalProfit");
           }
           if (metaDef.commercialUssageName === "Disallow") {
-            vrmMetaProp.setCommercialUsage("personalNonProfit");
+            metaProp.setCommercialUsage("personalNonProfit");
           }
           // Not sure about corporation commercial usage in VRM0. Will disallow for now if it's converted to VRM1
         }
         if (metaDef.licenseName !== undefined) {
-          vrmMetaProp.setAllowRedistribution(
+          metaProp.setAllowRedistribution(
             metaDef.licenseName !== "Redistribution_Prohibited"
           );
 
-          vrmMetaProp.setLicenseUrl(
+          metaProp.setLicenseUrl(
             VRMConstants.LICENSE_TO_URL_MAP.get(metaDef.licenseName)!
           );
         }
         if (metaDef.otherLicenseUrl !== undefined) {
-          vrmMetaProp.setOtherLicenseUrl(metaDef.otherLicenseUrl);
+          metaProp.setOtherLicenseUrl(metaDef.otherLicenseUrl);
         }
       }
 
       if (vrmDef.humanoid) {
-        const vrmHumanoidProp = new HumanoidProp(this.document.getGraph());
-        vrmProp.setHumanoidProp(vrmHumanoidProp);
+        const humanoidProp = new HumanoidProp(this.document.getGraph());
+        vrmProp.setHumanoidProp(humanoidProp);
 
         vrmDef.humanoid.humanBones?.forEach((humanbone) => {
           const humanBoneProp = new HumanBoneProp(this.document.getGraph());
@@ -119,7 +121,7 @@ export default class VRM0VRM extends Extension {
           );
 
           if (normalizedBoneName) {
-            vrmHumanoidProp.setHumanBoneProp(normalizedBoneName, humanBoneProp);
+            humanoidProp.setHumanBoneProp(normalizedBoneName, humanBoneProp);
           }
         });
       }
@@ -129,10 +131,8 @@ export default class VRM0VRM extends Extension {
         const firstPersonDef = vrmDef.firstPerson;
 
         // Setting up VRMC First Person
-        const vrmFirstPersonProp = new FirstPersonProp(
-          this.document.getGraph()
-        );
-        vrmProp.setFirstPersonProp(vrmFirstPersonProp);
+        const firstPersonProp = new FirstPersonProp(this.document.getGraph());
+        vrmProp.setFirstPersonProp(firstPersonProp);
         firstPersonDef.meshAnnotations?.forEach((meshAnnotationDef) => {
           const node = context.nodes[meshAnnotationDef.mesh!];
           const meshAnnotationProp = new MeshAnnotationProp(
@@ -142,7 +142,7 @@ export default class VRM0VRM extends Extension {
             meshAnnotationDef.firstPersonFlag as VRMConstants.FirstPersonFlag
           );
           meshAnnotationProp.setNode(node);
-          vrmFirstPersonProp.listMeshAnnotationProps().push(meshAnnotationProp);
+          firstPersonProp.listMeshAnnotationProps().push(meshAnnotationProp);
         });
 
         // Setting up VRMC LookAt
@@ -225,7 +225,18 @@ export default class VRM0VRM extends Extension {
 
       // Expressions
       if (vrmDef.blendShapeMaster) {
-        vrmProp.setBlendShapeMaster(vrmDef.blendShapeMaster);
+        // vrmProp.setBlendShapeMaster(vrmDef.blendShapeMaster);
+        const blendShapeMasterDef = vrmDef.blendShapeMaster;
+
+        const expressionsProp = new ExpressionsProp(this.document.getGraph());
+        vrmProp.setExpressionsProp(expressionsProp);
+
+        blendShapeMasterDef.blendShapeGroups?.forEach((blendShapeGroupDef) => {
+          expressionsProp.setCustomExpressionProp(
+            blendShapeGroupDef.name!,
+            new ExpressionProp(this.document.getGraph())
+          );
+        });
       }
 
       // Spring bones
@@ -409,88 +420,86 @@ export default class VRM0VRM extends Extension {
         vrmDef.exporterVersion = "GLTF Transformer";
       }
 
-      const vrmMetaProp = vrmProp.getMetaProp();
+      const metaProp = vrmProp.getMetaProp();
       vrmDef.meta = vrmDef.meta || {};
 
-      if (vrmMetaProp) {
+      if (metaProp) {
         const metaDef = vrmDef.meta;
 
-        if (vrmMetaProp.getName() !== undefined) {
-          metaDef.title = vrmMetaProp.getName();
+        if (metaProp.getName() !== undefined) {
+          metaDef.title = metaProp.getName();
         }
-        if (vrmMetaProp.getVersion() !== undefined) {
-          metaDef.version = vrmMetaProp.getVersion();
+        if (metaProp.getVersion() !== undefined) {
+          metaDef.version = metaProp.getVersion();
         }
-        if (vrmMetaProp.getAuthors() !== undefined) {
-          metaDef.author = vrmMetaProp.getAuthors().join(",");
+        if (metaProp.getAuthors() !== undefined) {
+          metaDef.author = metaProp.getAuthors().join(",");
         }
-        if (vrmMetaProp.getContactInformation() !== undefined) {
-          metaDef.contactInformation = vrmMetaProp.getContactInformation();
+        if (metaProp.getContactInformation() !== undefined) {
+          metaDef.contactInformation = metaProp.getContactInformation();
         }
-        if (vrmMetaProp.getReferences() !== undefined) {
-          metaDef.reference = vrmMetaProp.getReferences().join(",");
+        if (metaProp.getReferences() !== undefined) {
+          metaDef.reference = metaProp.getReferences().join(",");
         }
 
-        if (vrmMetaProp.getThumbnailImageTexture()) {
+        if (metaProp.getThumbnailImageTexture()) {
           metaDef.texture = context.createTextureInfoDef(
-            vrmMetaProp.getThumbnailImageTexture()!,
-            vrmMetaProp.getThumbnailImageTextureInfo()!
+            metaProp.getThumbnailImageTexture()!,
+            metaProp.getThumbnailImageTextureInfo()!
           ).index;
         }
 
-        if (vrmMetaProp.getAvatarPermission() !== undefined) {
+        if (metaProp.getAvatarPermission() !== undefined) {
           if (
-            vrmMetaProp.getAvatarPermission() === "onlySeparatelyLicensedPerson"
+            metaProp.getAvatarPermission() === "onlySeparatelyLicensedPerson"
           ) {
             metaDef.allowedUserName = "ExplicitlyLicensedPerson";
-          } else if (vrmMetaProp.getAvatarPermission() === "onlyAuthor") {
+          } else if (metaProp.getAvatarPermission() === "onlyAuthor") {
             metaDef.allowedUserName = "OnlyAuthor";
-          } else if (vrmMetaProp.getAvatarPermission() === "everyone") {
+          } else if (metaProp.getAvatarPermission() === "everyone") {
             metaDef.allowedUserName = "Everyone";
           }
         }
 
-        if (vrmMetaProp.getAllowExcessivelyViolentUsage() !== undefined) {
+        if (metaProp.getAllowExcessivelyViolentUsage() !== undefined) {
           metaDef.violentUssageName =
-            vrmMetaProp.getAllowExcessivelyViolentUsage() === true
+            metaProp.getAllowExcessivelyViolentUsage() === true
               ? "Allow"
               : "Disallow";
         }
 
-        if (vrmMetaProp.getAllowExcessivelySexualUsage() !== undefined) {
+        if (metaProp.getAllowExcessivelySexualUsage() !== undefined) {
           metaDef.sexualUssageName =
-            vrmMetaProp.getAllowExcessivelySexualUsage() === true
+            metaProp.getAllowExcessivelySexualUsage() === true
               ? "Allow"
               : "Disallow";
         }
 
-        if (vrmMetaProp.getCommercialUsage() !== undefined) {
+        if (metaProp.getCommercialUsage() !== undefined) {
           metaDef.commercialUssageName =
-            vrmMetaProp.getCommercialUsage() !== "personalNonProfit"
+            metaProp.getCommercialUsage() !== "personalNonProfit"
               ? "Allow"
               : "Disallow";
         }
 
-        if (vrmMetaProp.getAllowRedistribution() !== undefined) {
-          if (vrmMetaProp.getAllowRedistribution() === false) {
+        if (metaProp.getAllowRedistribution() !== undefined) {
+          if (metaProp.getAllowRedistribution() === false) {
             metaDef.licenseName = "Redistribution_Prohibited";
           } else {
             metaDef.licenseName =
-              VRMConstants.URL_TO_LICENSE_MAP.get(
-                vrmMetaProp.getLicenseUrl()
-              ) || "Other";
+              VRMConstants.URL_TO_LICENSE_MAP.get(metaProp.getLicenseUrl()) ||
+              "Other";
           }
         }
 
-        if (vrmMetaProp.getOtherLicenseUrl() !== undefined) {
-          metaDef.otherLicenseUrl = vrmMetaProp.getOtherLicenseUrl();
+        if (metaProp.getOtherLicenseUrl() !== undefined) {
+          metaDef.otherLicenseUrl = metaProp.getOtherLicenseUrl();
         }
       }
 
-      const vrmHumanoidProp = vrmProp.getHumanoidProp();
+      const humanoidProp = vrmProp.getHumanoidProp();
       vrmDef.humanoid = vrmDef.humanoid || {};
-
-      if (vrmHumanoidProp) {
+      if (humanoidProp) {
         const humanoidDef = vrmDef.humanoid;
 
         // WARNING - potential data loss when converted from VRM1
@@ -500,7 +509,7 @@ export default class VRM0VRM extends Extension {
         const humanBonesDef = [] as VRM0Type.HumanoidBone[];
         VRMConstants.VRM1_BONE_ORDER.forEach(
           (vrm1Bone: VRM1Type.HumanoidHumanBoneName) => {
-            const humanoidBoneProp = vrmHumanoidProp.getHumanBoneProp(vrm1Bone);
+            const humanoidBoneProp = humanoidProp.getHumanBoneProp(vrm1Bone);
             const vrm0Bone = VRMConstants.VRM1_BONE_TO_VRM0_BONE.get(vrm1Bone);
             const node = humanoidBoneProp?.getNode();
             if (node) {

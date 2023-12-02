@@ -12,6 +12,7 @@ import { HumanoidProp } from "../../properties/humanoid/humanoid-prop.ts";
 import { FirstPersonProp } from "../../properties/first-person/first-person-prop.ts";
 import { PropertyType as VRMPropertyType } from "../../constants.ts";
 import { LookAtProp } from "../../properties/look-at/look-at-prop.ts";
+import { ExpressionsProp } from "../../properties/expressions/expressions-prop.ts";
 
 interface IVRM0Prop extends IProperty {
   metaProp: MetaProp;
@@ -20,6 +21,9 @@ interface IVRM0Prop extends IProperty {
   humanoidProp: HumanoidProp;
   firstPersonProp: FirstPersonProp;
   lookAtProp: LookAtProp;
+  expressionsProp: ExpressionsProp;
+
+  // VRM0
   firstPersonBoneNode: Node;
   lookAtHorizontalInnerCurve: number[];
   lookAtHorizontalOuterCurve: number[];
@@ -53,6 +57,9 @@ export default class VRM0Prop extends ExtensionProperty<IVRM0Prop> {
       humanoidProp: null,
       firstPersonProp: null,
       lookAtProp: null,
+      expressionsProp: null,
+
+      // VRM0
       firstPersonBoneNode: null,
       lookAtHorizontalInnerCurve: this.DEFAULT_FIRST_PERSON_CURVE,
       lookAtHorizontalOuterCurve: this.DEFAULT_FIRST_PERSON_CURVE,
@@ -98,6 +105,13 @@ export default class VRM0Prop extends ExtensionProperty<IVRM0Prop> {
   }
   public getLookAtProp(): LookAtProp | null {
     return this.getRef("lookAtProp");
+  }
+
+  public setExpressionsProp(expressionsProp: ExpressionsProp): this {
+    return this.setRef("expressionsProp", expressionsProp);
+  }
+  public getExpressionsProp(): ExpressionsProp | null {
+    return this.getRef("expressionsProp");
   }
 
   public setBlendShapeMaster(blendShapeMaster: VRM0Type.BlendShape): this {
